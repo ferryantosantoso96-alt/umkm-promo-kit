@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adegan 1 · Kopi Teras</title>
+<script>
+/* ================= UBAH DI SINI ================= */
+const CONFIG = {
+  logo: '',                        // path logo (PNG tanpa latar), mis. 'assets/logo.png'. Kosong = logo sementara
+  nama: ['KOPI', 'TERAS'],
+  produk: 'ES KOPI SUSU GULA AREN'
+};
+</script>
+<script src="vendor/gsap.min.js"></script>
+<style>
+@font-face{font-family:'Anton';font-weight:400;src:url(vendor/fonts/anton-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:800;src:url(vendor/fonts/poppins-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:900;src:url(vendor/fonts/poppins-latin-900-normal.woff2) format('woff2')}
+@font-face{font-family:'Caveat';font-weight:700;src:url(vendor/fonts/caveat-latin-700-normal.woff2) format('woff2')}
+:root{--espresso:#2A170E;--karamel:#C46F2C;--krem:#FFF3E2;--aren:#5B2C12}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#120A06}
+#stage{position:fixed;left:50%;top:50%;width:1080px;height:1920px;overflow:hidden;background:#E9C79A;transform-origin:50% 50%}
+#sv{position:absolute;inset:0;width:1080px;height:1920px;display:block}
+#judul{position:absolute;left:0;right:0;top:96px;text-align:center;font-family:'Anton',Impact,sans-serif;color:var(--espresso);
+  font-size:300px;line-height:.86;letter-spacing:.012em;pointer-events:none}
+#judul .baris{display:block;white-space:nowrap}
+#judul .h{display:inline-block;text-shadow:0 12px 0 var(--karamel),0 24px 34px rgba(60,25,5,.35)}
+#produk{position:absolute;left:50%;top:1668px;opacity:0;white-space:nowrap;font-family:'Poppins',sans-serif;font-weight:900;font-size:54px;
+  letter-spacing:.01em;color:var(--espresso);background:var(--krem);padding:20px 46px 18px;border-radius:70px;
+  box-shadow:0 10px 0 var(--karamel),0 22px 40px rgba(20,8,2,.45)}
+#flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#FFFBF2 0%,#FFE6C2 60%,#F4C98F 100%);opacity:0;pointer-events:none}
+#mft-ui{position:fixed;left:16px;right:16px;bottom:14px;z-index:99;display:none;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(20,10,4,.85);color:#fff;font:600 13px/1 ui-monospace,monospace}
+#mft-ui.on{display:flex}#mft-ui input{flex:1}
+</style>
+</head>
+<body>
+<div id="stage">
+<svg id="sv" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+  <!-- cairan: krem susu di atas, kopi di tengah, gula aren di dasar -->
+  <linearGradient id="gCairanA" gradientUnits="userSpaceOnUse" x1="0" y1="1070" x2="0" y2="1920">
+    <stop offset="0" stop-color="#A9683A"/><stop offset=".2" stop-color="#7E4322"/><stop offset=".6" stop-color="#5A2A10"/><stop offset="1" stop-color="#2E1205"/>
+  </linearGradient>
+  <linearGradient id="gUdaraA" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#E8B678"/><stop offset=".55" stop-color="#C98848"/><stop offset="1" stop-color="#A2602C"/>
+  </linearGradient>
+  <linearGradient id="gCairanB" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#5E2F14"/><stop offset=".22" stop-color="#8A522C"/><stop offset=".34" stop-color="#D8B791"/><stop offset=".44" stop-color="#F2E4CF"/><stop offset=".74" stop-color="#ECDCC2"/><stop offset=".84" stop-color="#7A3E19"/><stop offset="1" stop-color="#341505"/>
+  </linearGradient>
+  <linearGradient id="gCairanC" gradientUnits="userSpaceOnUse" x1="0" y1="900" x2="0" y2="1512">
+    <stop offset="0" stop-color="#6A3618"/><stop offset=".22" stop-color="#8C532D"/><stop offset=".36" stop-color="#D2AF86"/><stop offset=".44" stop-color="#F3E6D2"/><stop offset=".74" stop-color="#EEDFC6"/><stop offset=".82" stop-color="#C69A6C"/><stop offset=".88" stop-color="#6E3515"/><stop offset="1" stop-color="#3A1806"/>
+  </linearGradient>
+  <linearGradient id="gEs" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFFFFF" stop-opacity=".96"/><stop offset=".45" stop-color="#E4EEF0" stop-opacity=".72"/><stop offset="1" stop-color="#B9CED3" stop-opacity=".62"/>
+  </linearGradient>
+  <linearGradient id="gEsHangat" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F2C48E" stop-opacity="0"/><stop offset="1" stop-color="#D98F4E" stop-opacity=".42"/>
+  </linearGradient>
+  <linearGradient id="gDinding" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F5E2C4"/><stop offset=".7" stop-color="#E7C597"/><stop offset="1" stop-color="#D8AE78"/>
+  </linearGradient>
+  <linearGradient id="gLuar" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFFCF2"/><stop offset=".6" stop-color="#FFEFD0"/><stop offset="1" stop-color="#FFDDA6"/>
+  </linearGradient>
+  <linearGradient id="gMeja" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#9A6038"/><stop offset=".25" stop-color="#7E4A28"/><stop offset="1" stop-color="#4B2914"/>
+  </linearGradient>
+  <linearGradient id="gSinar" gradientUnits="userSpaceOnUse" x1="200" y1="250" x2="820" y2="1650">
+    <stop offset="0" stop-color="#FFF8E6" stop-opacity=".75"/><stop offset=".7" stop-color="#FFE7BD" stop-opacity=".22"/><stop offset="1" stop-color="#FFE7BD" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="gSapu" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity=".55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="gSedotan" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#9C6534"/><stop offset=".35" stop-color="#D9A46A"/><stop offset=".7" stop-color="#C08447"/><stop offset="1" stop-color="#8A5328"/>
+  </linearGradient>
+  <radialGradient id="gVignet" cx=".5" cy=".5" r=".75">
+    <stop offset=".55" stop-color="#2A1208" stop-opacity="0"/><stop offset="1" stop-color="#2A1208" stop-opacity=".55"/>
+  </radialGradient>
+  <linearGradient id="gTetes" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3A1A08" stop-opacity=".42"/><stop offset=".45" stop-color="#FFFFFF" stop-opacity=".05"/><stop offset="1" stop-color="#FFF8EC" stop-opacity=".7"/>
+  </linearGradient>
+  <linearGradient id="gMahkota" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#E2BF95"/><stop offset=".6" stop-color="#B07448"/><stop offset="1" stop-color="#7E4322"/>
+  </linearGradient>
+  <linearGradient id="gAren" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#6B3415"/><stop offset="1" stop-color="#2E1205"/>
+  </linearGradient>
+  <mask id="mKabutB" maskUnits="userSpaceOnUse" x="-600" y="-200" width="2400" height="2400">
+    <rect x="-600" y="-200" width="2400" height="2400" fill="#fff"/><g id="jejakMaskB" filter="url(#fBlur3)"></g>
+  </mask>
+  <mask id="mKabutC" maskUnits="userSpaceOnUse" x="250" y="780" width="560" height="820">
+    <rect x="250" y="780" width="560" height="820" fill="#fff"/>
+    <rect x="452" y="1060" width="22" height="440" rx="11" fill="#000"/>
+    <rect x="652" y="930" width="18" height="300" rx="9" fill="#000"/>
+  </mask>
+  <filter id="fBlur8" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="fBlur20" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="20"/></filter>
+  <filter id="fBlur40" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+  <filter id="fBlur3" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="fGerakY" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="2 26"/></filter>
+  <clipPath id="cGelasC"><path d="M325 820L365 1546A175 14 0 0 0 715 1546L755 820Z"/></clipPath>
+  <clipPath id="cCairanC"><path d="M339 900L741 900L707 1500A167 12 0 0 1 373 1500Z"/></clipPath>
+  <clipPath id="cAtasCairan"><rect x="0" y="0" width="1080" height="901"/></clipPath>
+  <clipPath id="cBawahCairan"><rect x="0" y="901" width="1080" height="1100"/></clipPath>
+
+  <!-- LOGO SEMENTARA (diganti otomatis bila CONFIG.logo diisi) -->
+  <symbol id="logoPH" viewBox="-150 -150 300 300" overflow="visible">
+    <circle r="140" fill="none" stroke="currentColor" stroke-width="7"/>
+    <!-- kanopi teras -->
+    <path d="M-78 -96L78 -96L92 -62L-92 -62Z" fill="currentColor"/>
+    <path d="M-92 -62q11.5 18 23 0q11.5 18 23 0q11.5 18 23 0q11.5 18 23 0q11.5 18 23 0q11.5 18 23 0q11.5 18 23 0q11.5 18 23 0" fill="currentColor"/>
+    <!-- gelas -->
+    <path d="M-34 -34L34 -34L28 28Q27 34 21 34L-21 34Q-27 34 -28 28Z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M-30 -8L30 -8L28 28Q27 34 21 34L-21 34Q-27 34 -28 28Z" fill="currentColor"/>
+    <path d="M10 -34L22 -60" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+    <text y="100" text-anchor="middle" font-family="Anton" font-size="44" letter-spacing="3" fill="currentColor">KOPI TERAS</text>
+  </symbol>
+</defs>
+
+<!-- ============ POTONGAN A · close-up es batu jatuh (0 – 1,25) ============ -->
+<g id="sA">
+  <g id="camA">
+    <rect x="-200" y="-200" width="1480" height="2320" fill="url(#gUdaraA)"/>
+    <g id="bokehA" filter="url(#fBlur20)"></g>
+    <!-- lengkung dinding gelas -->
+    <path d="M40 -100Q20 900 60 2000" fill="none" stroke="#FFFFFF" stroke-width="46" opacity=".32" filter="url(#fBlur20)"/>
+    <path d="M1030 -100Q1060 900 1020 2000" fill="none" stroke="#FFFFFF" stroke-width="30" opacity=".26" filter="url(#fBlur20)"/>
+    <g id="jendelaA" filter="url(#fBlur40)" opacity=".9">
+      <rect x="-40" y="40" width="380" height="520" rx="30" fill="#FFFCF4"/><rect x="380" y="40" width="380" height="520" rx="30" fill="#FFF8EA"/>
+      <rect x="-40" y="600" width="380" height="380" rx="30" fill="#FFF3DC"/><rect x="380" y="600" width="380" height="380" rx="30" fill="#FFEFD2"/>
+    </g>
+    <rect x="-200" y="1080" width="1480" height="1100" fill="url(#gCairanA)"/>
+    <g id="pusaranA" opacity=".55"></g>
+    <g id="esLamaA"></g>
+    <g id="es1"></g>
+    <g id="es2"></g>
+    <!-- cairan di depan: bagian es yang terendam jadi berwarna kopi -->
+    <rect x="-200" y="1080" width="1480" height="1100" fill="url(#gCairanA)" opacity=".68"/>
+    <g id="riakA"></g>
+    <path id="permukaanA" d="M-200 1080L1280 1080" stroke="#FFF1DC" stroke-width="7" opacity=".8"/>
+    <rect x="-200" y="1084" width="1480" height="60" fill="#FFF3E2" opacity=".18" filter="url(#fBlur8)"/>
+    <g id="gelembungA"></g>
+    <g id="cipratA"></g>
+    <g id="embunA" filter="url(#fBlur3)"></g>
+  </g>
+  <rect x="-60" y="-60" width="1200" height="2040" fill="url(#gVignet)" opacity=".8"/>
+</g>
+
+<!-- ============ POTONGAN B · macro embun & logo (1,25 – 2,05) ============ -->
+<g id="sB" opacity="0">
+  <g id="parB">
+    <rect x="-300" y="-100" width="1800" height="2120" fill="url(#gCairanB)"/>
+    <g id="pusaranB" filter="url(#fBlur40)"></g>
+    <g id="esBelakangB" filter="url(#fBlur20)" opacity=".75"></g>
+  </g>
+  <g id="panB">
+    <g mask="url(#mKabutB)"><rect x="-600" y="-200" width="2400" height="2400" fill="#FFF6EA" opacity=".14"/><g id="logoB"></g><g id="kabutB"></g></g>
+    <g id="jejakB"></g>
+    <g id="embunB"></g>
+    <g id="tetesTurunB"></g>
+  </g>
+  <rect width="1080" height="1920" fill="url(#gVignet)" opacity=".7"/>
+  <rect id="sapuB" x="-700" y="-400" width="520" height="2800" fill="url(#gSapu)" transform="rotate(18 540 960)"/>
+</g>
+
+<!-- ============ POTONGAN C · produk utama di meja dekat jendela (2,05 – 4) ============ -->
+<g id="sC" opacity="0">
+  <g id="camC">
+    <rect x="-200" y="-200" width="1480" height="1700" fill="url(#gDinding)"/>
+    <!-- jendela -->
+    <g id="jendela">
+      <rect x="30" y="90" width="560" height="760" rx="10" fill="#7A4A28"/>
+      <rect x="58" y="118" width="504" height="704" fill="url(#gLuar)"/>
+      <circle cx="210" cy="300" r="230" fill="#FFFFFF" opacity=".9" filter="url(#fBlur40)"/>
+      <g id="daunLuar" filter="url(#fBlur20)" opacity=".42"></g>
+      <rect x="296" y="118" width="26" height="704" fill="#7A4A28"/>
+      <rect x="58" y="452" width="504" height="24" fill="#7A4A28"/>
+      <rect x="18" y="838" width="590" height="34" rx="6" fill="#6A3E20"/>
+    </g>
+    <g id="sinar" filter="url(#fBlur20)">
+      <path d="M70 140L300 130L930 1680L560 1700Z" fill="url(#gSinar)" opacity=".55"/>
+      <path d="M320 140L560 150L1180 1560L900 1620Z" fill="url(#gSinar)" opacity=".42"/>
+      <path d="M60 480L300 470L640 1720L340 1720Z" fill="url(#gSinar)" opacity=".35"/>
+    </g>
+    <!-- meja kayu -->
+    <rect x="-200" y="1470" width="1480" height="700" fill="url(#gMeja)"/>
+    <rect x="-200" y="1470" width="1480" height="10" fill="#B47A4A" opacity=".8"/>
+    <g id="seratMeja" opacity=".35"></g>
+    <g filter="url(#fBlur20)">
+      <path d="M380 1560L700 1560L1060 1760L560 1780Z" fill="#FFE3B0" opacity=".28"/>
+      <path d="M-60 1520L230 1520L420 1700L60 1720Z" fill="#FFE3B0" opacity=".2"/>
+    </g>
+    <!-- bayangan & kilau kopi di meja -->
+    <ellipse cx="620" cy="1562" rx="280" ry="34" fill="#1E0C04" opacity=".55" filter="url(#fBlur20)"/>
+    <ellipse cx="800" cy="1598" rx="190" ry="30" fill="#FFAA52" opacity=".5" filter="url(#fBlur20)"/>
+    <g id="debu"></g>
+    <!-- gelas -->
+    <g id="cahayaDinding" filter="url(#fBlur8)" opacity=".5">
+      <path d="M700 260L860 300L860 640L700 610Z" fill="#FFF3D8"/><path d="M878 304L1040 344L1040 680L878 644Z" fill="#FFF3D8"/>
+      <path d="M700 640L860 672L860 1010L700 990Z" fill="#FFF3D8"/><path d="M878 676L1040 712L1040 1050L878 1014Z" fill="#FFF3D8"/>
+    </g>
+    <g id="gelas" transform="translate(540 1546) scale(1.27) translate(-540 -1546)">
+      <path d="M325 820L365 1546A175 14 0 0 0 715 1546L755 820Z" fill="#FFF7EC" opacity=".18"/>
+      <g clip-path="url(#cCairanC)">
+        <rect x="300" y="890" width="480" height="640" fill="url(#gCairanC)"/>
+        <g id="pusaranC" opacity=".6"></g>
+        <path d="M300 1420C380 1395 460 1445 540 1418S700 1398 780 1425L780 1530L300 1530Z" fill="url(#gAren)" filter="url(#fBlur8)"/>
+      </g>
+      <ellipse cx="540" cy="900" rx="201" ry="17" fill="#9A5E34"/><ellipse cx="530" cy="898" rx="150" ry="9" fill="#C08452" opacity=".6"/>
+      <g id="sedotan"></g>
+      <g id="esC"></g>
+      <!-- kaca dasar tebal -->
+      <path d="M373 1500A167 12 0 0 0 707 1500L715 1546A175 14 0 0 1 365 1546Z" fill="#FFF4E6" opacity=".42"/>
+      <g clip-path="url(#cGelasC)">
+        <g mask="url(#mKabutC)"><rect x="300" y="800" width="480" height="780" fill="#FFFAF2" opacity=".1"/><g id="kabutC"></g></g>
+        <g id="logoC"></g>
+        <g id="embunC"></g>
+        <path d="M352 850L392 1520" stroke="#FFFFFF" stroke-width="22" stroke-linecap="round" opacity=".5" filter="url(#fBlur8)"/>
+        <path d="M372 860L404 1380" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+        <path d="M722 860L690 1500" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity=".4" filter="url(#fBlur3)"/>
+        <rect id="sapuC" x="140" y="700" width="140" height="1000" fill="url(#gSapu)" transform="rotate(14 540 1180)"/>
+      </g>
+      <path d="M325 820L365 1546A175 14 0 0 0 715 1546L755 820" fill="none" stroke="#FFFFFF" stroke-width="3" opacity=".55"/>
+      <ellipse cx="540" cy="820" rx="215" ry="21" fill="#FFFFFF" fill-opacity=".1" stroke="#FFFFFF" stroke-width="4" stroke-opacity=".85"/>
+    </g>
+    <g id="kilauC"></g>
+  </g>
+  <rect width="1080" height="1920" fill="url(#gVignet)" pointer-events="none"/>
+</g>
+</svg>
+<div id="judul"></div>
+<div id="produk"></div>
+<div id="flash"></div>
+</div>
+<div id="mft-ui"><button id="pp">▶︎/❚❚</button><input id="sk" type="range" min="0" max="1000" value="0"><span id="tt">0.00</span></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, at, par) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (par) par.appendChild(e); return e; }
+let seed = 20261119;
+function rnd() { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+const R = (a, b) => a + (b - a) * rnd();
+
+/* ---------- bahan gambar ---------- */
+// es batu bening: kotak membulat, sisi miring, gelembung udara, retakan
+function esBatu(par, s, warmth = 1) {
+  const g = el('g', {}, par);
+  const h = s / 2, r = s * .2;
+  el('rect', { x: -h, y: -h, width: s, height: s, rx: r, fill: 'url(#gEs)', stroke: '#FFFFFF', 'stroke-width': s * .022, 'stroke-opacity': .9 }, g);
+  el('rect', { x: -h, y: -h, width: s, height: s, rx: r, fill: 'url(#gEsHangat)', opacity: warmth }, g);
+  el('rect', { x: -h + s * .14, y: -h + s * .14, width: s * .72, height: s * .72, rx: r * .7, fill: '#FFFFFF', 'fill-opacity': .1, stroke: '#FFFFFF', 'stroke-width': s * .02, 'stroke-opacity': .55 }, g);
+  el('path', { d: `M${-h + r * .6} ${-h + s * .08}Q${-h + s * .1} ${-h + s * .1} ${-h + s * .08} ${-h + r * .9}L${-h + s * .08} ${h - r * 1.2}`, fill: 'none', stroke: '#FFFFFF', 'stroke-width': s * .05, 'stroke-linecap': 'round', opacity: .95 }, g);
+  el('path', { d: `M${-h + r * .9} ${-h + s * .07}L${h - r * 1.1} ${-h + s * .07}`, fill: 'none', stroke: '#FFFFFF', 'stroke-width': s * .035, 'stroke-linecap': 'round', opacity: .85 }, g);
+  el('path', { d: `M${-s * .1} ${-s * .05}l${s * .14} ${s * .09}l${s * .03} ${s * .16}M${s * .04} ${s * .04}l${s * .16} ${-s * .06}`, fill: 'none', stroke: '#FFFFFF', 'stroke-width': s * .012, opacity: .75 }, g);
+  for (let i = 0; i < 7; i++) el('circle', { cx: R(-h * .6, h * .6), cy: R(-h * .6, h * .6), r: R(s * .008, s * .022), fill: '#FFFFFF', opacity: R(.5, .9) }, g);
+  el('ellipse', { cx: h * .42, cy: h * .5, rx: s * .14, ry: s * .07, fill: '#FFFFFF', opacity: .35, transform: `rotate(-30 ${h * .42} ${h * .5})` }, g);
+  return g;
+}
+// butir embun: lensa air (gelap di atas, terang di bawah karena membiaskan cahaya), bayangan, kilau kecil
+function tetes(par, x, y, r, o = 1) {
+  const g = el('g', { opacity: o }, par);
+  el('ellipse', { cx: x + r * .16, cy: y + r * .3, rx: r * .96, ry: r * .92, fill: '#2A1206', opacity: .2 }, g);
+  el('ellipse', { cx: x, cy: y, rx: r, ry: r * 1.05, fill: 'url(#gTetes)' }, g);
+  if (r > 7) el('path', { d: `M${x - r * .62} ${y + r * .42}Q${x} ${y + r * 1.02} ${x + r * .62} ${y + r * .42}`, fill: 'none', stroke: '#FFFFFF', 'stroke-width': r * .13, 'stroke-linecap': 'round', opacity: .55 }, g);
+  el('ellipse', { cx: x - r * .34, cy: y - r * .44, rx: Math.max(.8, r * .22), ry: Math.max(.6, r * .14), fill: '#FFFFFF', opacity: .95, transform: `rotate(-32 ${x - r * .34} ${y - r * .44})` }, g);
+  return g;
+}
+// kabut embun: ribuan titik halus dalam satu path
+function kabut(par, x0, x1, y0, y1, n, r0, r1, o) {
+  let d = '';
+  for (let i = 0; i < n; i++) { const x = R(x0, x1), y = R(y0, y1), r = R(r0, r1); d += `M${(x - r).toFixed(1)} ${y.toFixed(1)}a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(2 * r).toFixed(2)} 0a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(-2 * r).toFixed(2)} 0`; }
+  return el('path', { d, fill: '#FFFDF8', opacity: o }, par);
+}
+// logo: gambar user bila ada, kalau tidak logo sementara
+function logoDi(par, cx, cy, r, warna, o = 1) {
+  if (CONFIG.logo) return el('image', { href: CONFIG.logo, x: cx - r, y: cy - r, width: r * 2, height: r * 2, opacity: o, preserveAspectRatio: 'xMidYMid meet' }, par);
+  return el('use', { href: '#logoPH', x: cx - r, y: cy - r, width: r * 2, height: r * 2, color: warna, opacity: o }, par);
+}
+function goyang(tl, target, at, amp = 14, dur = .28) {
+  tl.to(target, { keyframes: [{ x: amp, y: -amp * .6 }, { x: -amp * .8, y: amp * .5 }, { x: amp * .45, y: -amp * .2 }, { x: 0, y: 0 }], duration: dur, ease: 'none' }, at);
+}
+
+function bangun(tl) {
+  const plan = window.AUDIO_PLAN;
+  const sfx = (nama, at, vol = .5) => plan.sfx.push({ at, src: `sfx/${nama}.mp3`, vol });
+  const SURF = 1080;
+
+  /* ===================== POTONGAN A (0 – 1,25): es batu jatuh, close-up ===================== */
+  const bk = $('#bokehA');
+  for (let i = 0; i < 16; i++) el('circle', { cx: R(-50, 1130), cy: R(-80, SURF - 40), r: R(40, 150), fill: i % 3 ? '#FFF4DC' : '#FFD08A', opacity: R(.35, .75) }, bk);
+  const pa = $('#pusaranA');
+  ['M-100 1300C200 1220 380 1380 640 1310S980 1220 1200 1340', 'M-100 1520C160 1460 420 1600 700 1520S1000 1440 1220 1560', 'M-80 1170C240 1130 520 1230 820 1160S1120 1140 1220 1190', 'M-100 1760C200 1700 500 1820 800 1740S1100 1700 1220 1780'].forEach((d, i) =>
+    el('path', { d, fill: 'none', stroke: i % 2 ? '#2A1004' : '#E9C9A0', 'stroke-width': [40, 90, 30, 120][i], opacity: [.45, .5, .5, .55][i], filter: 'url(#fBlur20)', 'stroke-linecap': 'round' }, pa));
+  tl.fromTo(pa, { x: 0 }, { x: -110, duration: 1.3, ease: 'none' }, 0);
+  const el1 = esBatu($('#esLamaA'), 320); el1.setAttribute('transform', `translate(60 ${SURF + 20}) rotate(-14)`);
+  const el2 = esBatu($('#esLamaA'), 280); el2.setAttribute('transform', `translate(1030 ${SURF + 40}) rotate(20)`);
+  tl.fromTo('#esLamaA', { y: 0 }, { y: 10, duration: .5, ease: 'sine.inOut', yoyo: true, repeat: 2 }, 0);
+
+  // es batu 1: sudah melesat di frame pertama, menghantam permukaan di 0,34
+  esBatu($('#es1'), 430);
+  const ghost1 = esBatu($('#es1'), 430); ghost1.setAttribute('filter', 'url(#fGerakY)'); ghost1.setAttribute('opacity', .5);
+  tl.fromTo('#es1', { x: 520, y: 330, rotation: -10 }, { y: SURF - 70, rotation: 4, duration: .34, ease: 'power2.in' }, 0)
+    .fromTo(ghost1, { y: -70, scaleY: 1.2 }, { y: -130, scaleY: 1.42, duration: .34, ease: 'none' }, 0)
+    .set(ghost1, { opacity: 0 }, .34)
+    .to('#es1', { y: SURF + 150, rotation: 13, duration: .55, ease: 'power2.out' }, .34)
+    .to('#es1', { y: SURF + 118, rotation: 9, duration: .36, ease: 'sine.inOut' }, .89);
+
+  // es batu 2: lebih kecil, di kanan, setelah potong lompat
+  esBatu($('#es2'), 300);
+  const ghost2 = esBatu($('#es2'), 300); ghost2.setAttribute('filter', 'url(#fGerakY)'); ghost2.setAttribute('opacity', .5);
+  gsap.set('#es2', { x: 830, y: -400, rotation: 18 });
+  tl.fromTo('#es2', { y: -260, rotation: 18 }, { y: SURF - 50, rotation: 30, duration: .3, ease: 'power2.in', immediateRender: false }, .58)
+    .fromTo(ghost2, { y: -50, scaleY: 1.3 }, { y: -90, scaleY: 1.45, duration: .3, ease: 'none', immediateRender: false }, .58)
+    .set(ghost2, { opacity: 0 }, .88)
+    .to('#es2', { y: SURF + 110, rotation: 36, duration: .4, ease: 'power2.out' }, .88);
+
+  // cipratan: mahkota cairan + butiran + riak + gelembung
+  const cp = $('#cipratA'), rk = $('#riakA'), gb = $('#gelembungA');
+  function ciprat(cx, at, n, k) {
+    const m = el('g', {}, cp);
+    el('ellipse', { cx, cy: SURF + 4, rx: 210 * k, ry: 34 * k, fill: '#F3E3CC', opacity: .85, filter: 'url(#fBlur8)' }, m);
+    const sudut = [-66, -42, -20, 0, 20, 42, 66], pjg = [190, 280, 320, 350, 310, 270, 180];
+    sudut.forEach((a, i) => { const L = pjg[i] * k * .85, w = 38 * k;
+      const g = el('g', { transform: `translate(${cx + a * 2.2 * k} ${SURF}) rotate(${a})` }, m);
+      el('path', { d: `M${-w} 0C${-w * .8} ${-L * .4} ${-w * .25} ${-L * .8} 0 ${-L}C${w * .25} ${-L * .8} ${w * .8} ${-L * .4} ${w} 0Z`, fill: 'url(#gMahkota)', opacity: .96 }, g);
+      el('path', { d: `M${-w * .45} ${-L * .08}C${-w * .35} ${-L * .45} ${-w * .1} ${-L * .75} 0 ${-L * .9}`, stroke: '#FFF7EA', 'stroke-width': 4 * k, fill: 'none', opacity: .75 }, g);
+      el('circle', { cx: 0, cy: -L - 18 * k, r: 13 * k, fill: '#C79062', stroke: '#FFF3E0', 'stroke-width': 2.5 }, g);
+      el('circle', { cx: -4 * k, cy: -L - 22 * k, r: 4 * k, fill: '#FFFFFF' }, g); });
+    gsap.set(m, { opacity: 0 });
+    tl.fromTo(m, { scaleY: 0, scaleX: .5, opacity: 1, svgOrigin: `${cx} ${SURF}` }, { scaleY: 1, scaleX: 1.1, duration: .17, ease: 'power3.out', immediateRender: false }, at)
+      .to(m, { scaleY: .12, scaleX: 1.35, opacity: 0, duration: .32, ease: 'power2.in' }, at + .2);
+    for (let i = 0; i < n; i++) {
+      const a = R(-155, -25) * Math.PI / 180, v = R(380, 820) * k, r = R(8, 28) * k;
+      const g = el('g', { opacity: 0 }, cp);
+      el('circle', { cx: 0, cy: 0, r, fill: i % 3 ? '#9C5E33' : '#F2E2CA' }, g);
+      el('circle', { cx: -r * .3, cy: -r * .35, r: r * .3, fill: '#FFFFFF', opacity: .9 }, g);
+      const x0 = cx + R(-90, 90) * k, dx = Math.cos(a) * v * .9, up = Math.sin(a) * v, T = R(.45, .72);
+      tl.set(g, { x: x0, y: SURF - 30 * k, opacity: 1, scale: 1 }, at + .03)
+        .to(g, { x: x0 + dx, duration: T, ease: 'none' }, at + .03)
+        .to(g, { y: SURF + up, duration: T * .45, ease: 'power2.out' }, at + .03)
+        .to(g, { y: SURF + up + Math.abs(up) * 1.4 + 200, duration: T * .55, ease: 'power2.in' }, at + .03 + T * .45)
+        .to(g, { opacity: 0, scale: .6, duration: .12 }, at + .03 + T - .12);
+    }
+    for (let i = 0; i < 3; i++) {
+      const e = el('ellipse', { cx, cy: SURF + 4, rx: 40, ry: 8, fill: 'none', stroke: '#FFF3E0', 'stroke-width': 7 - i * 1.5, opacity: 0 }, rk);
+      tl.fromTo(e, { attr: { rx: 60, ry: 8 }, opacity: .95 }, { attr: { rx: (460 - i * 100) * k, ry: (48 - i * 10) * k }, opacity: 0, duration: .75, ease: 'power2.out', immediateRender: false }, at + i * .09);
+    }
+    for (let i = 0; i < 16; i++) {
+      const b = el('circle', { cx: cx + R(-170, 170) * k, cy: 0, r: R(4, 14), fill: '#FFF6EA', 'fill-opacity': .3, stroke: '#FFF6EA', 'stroke-width': 2.5, opacity: 0 }, gb);
+      const y0 = R(SURF + 140, SURF + 480);
+      tl.fromTo(b, { y: y0, opacity: 0 }, { y: y0 - R(100, 220), opacity: .9, duration: R(.5, .8), ease: 'power1.out', immediateRender: false }, at + R(.02, .2));
+    }
+  }
+  ciprat(520, .34, 24, 1); ciprat(830, .88, 14, .7);
+  const ea = $('#embunA');
+  for (let i = 0; i < 30; i++) { const left = i % 2, x = left ? R(-10, 170) : R(910, 1090); tetes(ea, x, R(40, 1880), R(9, 28), .9); }
+
+  // kamera: dorong pelan, potong lompat di 0,62, getar saat es menghantam
+  tl.fromTo('#camA', { scale: 1, svgOrigin: `540 ${SURF}` }, { scale: 1.08, duration: .62, ease: 'none' }, 0)
+    .set('#camA', { scale: 1.26, svgOrigin: `700 ${SURF}` }, .62)
+    .to('#camA', { scale: 1.34, duration: .6, ease: 'none' }, .62);
+  goyang(tl, '#sA', .34, 24, .3); goyang(tl, '#sA', .88, 15, .24);
+  sfx('whoosh-cepat', 0, .32); sfx('dentang-logam', .34, .2); sfx('pop-gelembung', .36, .5); sfx('pop-gelembung', .9, .35);
+
+  /* ===================== POTONGAN B (1,25 – 2,05): macro embun & logo ===================== */
+  tl.to('#sA', { x: -700, duration: .12, ease: 'power2.in' }, 1.15)
+    .set('#sA', { opacity: 0 }, 1.27)
+    .set('#sB', { opacity: 1 }, 1.25)
+    .fromTo('#sB', { x: 700 }, { x: 0, duration: .22, ease: 'power3.out', immediateRender: false }, 1.25);
+  sfx('swish-tipis', 1.15, .45);
+  const pb = $('#pusaranB');
+  [['M-300 520C100 380 500 700 900 520S1400 420 1600 560', '#FFF5E6', 120, .7], ['M-300 980C120 880 520 1120 920 980S1380 900 1600 1040', '#F2D7B3', 90, .55],
+   ['M-300 1300C60 1220 520 1440 900 1300S1400 1220 1600 1360', '#3A1606', 170, .5], ['M-300 760C200 700 600 840 1000 740S1400 700 1600 780', '#D7A876', 60, .6]].forEach(([d, c, w, o]) =>
+    el('path', { d, fill: 'none', stroke: c, 'stroke-width': w, opacity: o, 'stroke-linecap': 'round' }, pb));
+  const eb = $('#esBelakangB');
+  [[200, 190, 380, -10], [720, 140, 420, 14], [1180, 230, 360, -18]].forEach(([x, y, s, rot]) => { const g = esBatu(eb, s, .6); g.setAttribute('transform', `translate(${x} ${y}) rotate(${rot})`); });
+  tl.fromTo('#parB', { x: 160 }, { x: -60, duration: .9, ease: 'power2.out' }, 1.25);
+  logoDi($('#logoB'), 640, 1010, 320, '#2A170E', .92);
+  kabut($('#kabutB'), -400, 1600, -100, 2020, 2600, 1, 3.2, .5);
+  const emB = $('#embunB');
+  for (let i = 0; i < 230; i++) { const big = rnd() < .14; tetes(emB, R(-300, 1500), R(-40, 1960), big ? R(18, 40) : R(5, 13), 1); }
+  // dua butir besar menetes turun, kabut di belakangnya terhapus (jejak bening)
+  const jm = $('#jejakMaskB'), tt = $('#tetesTurunB');
+  [[600, 300, 46, 1.25, 1150], [1010, 560, 32, 1.4, 900]].forEach(([x, y0, r, at, jarak]) => {
+    const m = el('rect', { x: x - r * .62, y: y0, width: r * 1.24, height: 0, rx: r * .62, fill: '#000' }, jm);
+    const g = el('g', {}, tt); tetes(g, 0, 0, r, 1);
+    tl.fromTo(g, { x, y: y0 }, { y: y0 + jarak, duration: .8, ease: 'power1.in', immediateRender: false }, at)
+      .fromTo(m, { attr: { height: 0 } }, { attr: { height: jarak }, duration: .8, ease: 'power1.in', immediateRender: false }, at);
+  });
+  tl.fromTo('#panB', { x: 360 }, { x: -80, duration: .8, ease: 'power2.out' }, 1.25)
+    .fromTo('#panB', { scale: 1.08, svgOrigin: '540 960' }, { scale: 1, duration: .8, ease: 'power1.out' }, 1.25)
+    .fromTo('#sapuB', { x: -400 }, { x: 1900, duration: .55, ease: 'power2.inOut' }, 1.42);
+  sfx('teks-muncul', 1.45, .25);
+
+  /* ===================== POTONGAN C (2,05 – 4,0): produk utama di meja dekat jendela ===================== */
+  tl.to('#flash', { opacity: .85, duration: .08, ease: 'power1.in' }, 1.97)
+    .set('#sB', { opacity: 0 }, 2.05).set('#sC', { opacity: 1 }, 2.05)
+    .to('#flash', { opacity: 0, duration: .3, ease: 'power1.out' }, 2.05)
+    .fromTo('#camC', { scale: 1.45, svgOrigin: '540 1180' }, { scale: 1, duration: .45, ease: 'power3.out', immediateRender: false }, 2.05)
+    .to('#camC', { scale: 1.045, duration: 1.5, ease: 'none' }, 2.5);
+  sfx('whoosh-berat', 1.95, .35);
+  const dl = $('#daunLuar');
+  for (let i = 0; i < 9; i++) { const x = R(380, 600), y = R(100, 520), s = R(50, 110), a = R(-60, 60);
+    el('ellipse', { cx: x, cy: y, rx: s, ry: s * .42, fill: '#7C8A4A', transform: `rotate(${a} ${x} ${y})` }, dl); }
+  const sm = $('#seratMeja');
+  for (let i = 0; i < 14; i++) { const y = 1490 + i * 32 + R(-8, 8);
+    el('path', { d: `M-200 ${y}C200 ${y + R(-14, 14)} 600 ${y + R(-14, 14)} 1280 ${y + R(-10, 10)}`, fill: 'none', stroke: i % 3 ? '#3A1C0B' : '#B57E4E', 'stroke-width': R(2, 5) }, sm); }
+  const pc = $('#pusaranC');
+  [['M300 1110C360 1170 420 1080 470 1150S560 1210 600 1130S700 1100 780 1170', '#8C532D', 22, .55], ['M340 1060C380 1120 430 1140 450 1200', '#7A4322', 14, .5],
+   ['M640 1080C660 1140 700 1170 690 1230', '#7A4322', 12, .45], ['M300 1040C380 1010 460 1060 540 1030S700 1000 780 1040', '#E7CFAE', 18, .5]].forEach(([d, c, w, o]) =>
+    el('path', { d, fill: 'none', stroke: c, 'stroke-width': w, opacity: o, filter: 'url(#fBlur8)', 'stroke-linecap': 'round' }, pc));
+  tl.fromTo(pc, { x: 0 }, { x: -40, duration: 2, ease: 'sine.inOut' }, 2.05);
+  const sd = $('#sedotan');
+  const sedotan = c => { const g = el('g', { 'clip-path': c }, sd);
+    el('rect', { x: -16, y: -330, width: 32, height: 680, rx: 6, fill: 'url(#gSedotan)', transform: 'translate(618 1140) rotate(9)' }, g);
+    for (let i = 0; i < 7; i++) el('rect', { x: -16, y: -330 + i * 100, width: 32, height: 40, fill: '#FFF1DC', opacity: .55, transform: 'translate(618 1140) rotate(9)' }, g);
+    return g; };
+  sedotan('url(#cAtasCairan)'); sedotan('url(#cBawahCairan)').setAttribute('opacity', .25);
+  const ec = $('#esC');
+  [[430, 905, 128, -14], [628, 912, 120, 18], [530, 960, 140, 6], [690, 1010, 96, -24], [395, 1015, 92, 30]].forEach(([x, y, s, rot], i) => {
+    const w = el('g', { transform: `translate(${x} ${y}) rotate(${rot})`, opacity: y > 950 ? .6 : 1 }, ec), g = esBatu(w, s, .8);
+    tl.fromTo(g, { y: 0 }, { y: i % 2 ? 6 : -6, duration: .6, ease: 'sine.inOut', yoyo: true, repeat: 2, immediateRender: false }, 2.4 + i * .05);
+  });
+  logoDi($('#logoC'), 540, 1262, 118, '#2A170E', .92);
+  kabut($('#kabutC'), 320, 760, 845, 1545, 1500, .7, 2.1, .55);
+  const emC = $('#embunC');
+  for (let i = 0; i < 150; i++) tetes(emC, R(325, 755), R(850, 1540), rnd() < .14 ? R(6, 11) : R(2.5, 5), 1);
+  tetes(emC, 463, 1510, 13, 1); tetes(emC, 661, 1240, 11, 1);
+  tl.fromTo('#sapuC', { x: -240 }, { x: 760, duration: .7, ease: 'power2.inOut' }, 2.85);
+  const db = $('#debu');
+  for (let i = 0; i < 28; i++) { const c = el('circle', { cx: R(120, 960), cy: R(250, 1450), r: R(2, 5), fill: '#FFF8E8', opacity: R(.4, .9) }, db);
+    tl.fromTo(c, { x: 0, y: 0 }, { x: R(-30, 40), y: R(-60, 20), duration: 1.95, ease: 'sine.inOut', immediateRender: false }, 2.05); }
+  tl.fromTo('#sinar', { opacity: .75 }, { opacity: 1, duration: .6, ease: 'sine.inOut', yoyo: true, repeat: 2, immediateRender: false }, 2.2);
+
+  // NAMA PRODUK BESAR: huruf menghentak satu per satu
+  const jd = $('#judul');
+  jd.innerHTML = CONFIG.nama.map(b => `<span class="baris">${[...b].map(h => `<span class="h">${h}</span>`).join('')}</span>`).join('');
+  const baris = [...jd.querySelectorAll('.baris')].map(b => [...b.querySelectorAll('.h')]);
+  gsap.set(jd, { opacity: 0 });
+  tl.set(jd, { opacity: 1 }, 2.16);
+  baris.forEach((hs, i) => {
+    const at = 2.16 + i * .26;
+    tl.fromTo(hs, { scale: 2.8, opacity: 0, y: -60, rotation: () => R(-14, 14) }, { scale: 1, opacity: 1, y: 0, rotation: 0, duration: .26, ease: 'back.out(1.7)', stagger: .045, immediateRender: false }, at);
+    goyang(tl, '#camC', at + .2, 10, .22);
+  });
+  sfx('impact-sinematik', 2.22, .42); sfx('drop-sub', 2.48, .35);
+  const pr = $('#produk'); pr.textContent = CONFIG.produk;
+  gsap.set(pr, { xPercent: -50 });
+  tl.fromTo(pr, { y: 140, opacity: 0, scale: .7 }, { y: 0, opacity: 1, scale: 1, duration: .42, ease: 'back.out(2)', immediateRender: false }, 2.82)
+    .to(pr, { scale: 1.04, duration: .3, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 3.3);
+  sfx('pop-ganda', 2.84, .38);
+  const kl = $('#kilauC');
+  [[276, 600, 36], [812, 640, 26], [330, 1520, 22]].forEach(([x, y, s], i) => {
+    const p = el('path', { d: `M${x} ${y - s}L${x + s * .22} ${y - s * .22}L${x + s} ${y}L${x + s * .22} ${y + s * .22}L${x} ${y + s}L${x - s * .22} ${y + s * .22}L${x - s} ${y}L${x - s * .22} ${y - s * .22}Z`, fill: '#FFFFFF' }, kl);
+    gsap.set(p, { scale: 0, svgOrigin: `${x} ${y}` });
+    tl.fromTo(p, { scale: 0, rotation: -90, svgOrigin: `${x} ${y}` }, { scale: 1, rotation: 0, duration: .3, ease: 'back.out(3)', yoyo: true, repeat: 1, repeatDelay: .2, immediateRender: false }, 3.0 + i * .14);
+  });
+  sfx('kaching', 3.05, .18);
+}
+
+/* ---------- jam timeline deterministik (untuk potret & render) ---------- */
+const DURASI = 4.0;
+window.OPENER = { ready: false, W: 1080, H: 1920 };
+function paskan() { const s = Math.min(innerWidth / 1080, innerHeight / 1920); $('#stage').style.transform = `translate(-50%,-50%) scale(${s})`; }
+addEventListener('resize', paskan); paskan();
+document.fonts.ready.then(() => Promise.all(['400 100px Anton', '900 54px Poppins', '800 13px Poppins'].map(f => document.fonts.load(f)))).then(() => {
+  const tl = gsap.timeline({ paused: true }); window.AUDIO_PLAN = { vo: [], sfx: [], music: null };
+  bangun(tl); tl.to({}, { duration: .001 }, DURASI - .001);
+  const seek = t => { tl.pause(); tl.time(Math.min(t, DURASI), false); };
+  Object.assign(window.OPENER, { tl, DURATION: DURASI, seek, seekFrame: t => { seek(t); return Promise.resolve(); }, ready: true });
+  const Q = new URLSearchParams(location.search);
+  if (Q.has('t')) seek(+Q.get('t'));
+  else if (!Q.has('render')) { tl.play(0); tl.eventCallback('onComplete', () => setTimeout(() => tl.play(0), 700)); }
+  if (Q.has('debug')) { const ui = $('#mft-ui'), sk = $('#sk'), tt = $('#tt'); ui.classList.add('on');
+    sk.oninput = () => { seek(sk.value / 1000 * DURASI); };
+    $('#pp').onclick = () => tl.paused() ? tl.play() : tl.pause();
+    gsap.ticker.add(() => { tt.textContent = tl.time().toFixed(2); if (!tl.paused()) sk.value = tl.time() / DURASI * 1000; }); }
+});
+</script>
+</body>
+</html>
