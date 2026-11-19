@@ -267,7 +267,16 @@
     const roof = new T.Mesh(new T.CircleGeometry(BELL_R + 0.2, 64), mGen); roof.rotation.x = -Math.PI / 2; roof.position.y = TOP_Y; tower.add(roof);
     const rail2 = rail.clone(); rail2.geometry = new T.TorusGeometry(BELL_R + 0.05, 0.03, 6, 120); rail2.position.y = TOP_Y + 0.9; tower.add(rail2);
 
+    // fondasi dangkal: drum batu ±3 m di bawah lantai dasar (ikut berotasi bersama menara)
+    const fTex = paintMarble({ wM: 6, hM: 3, ppm: 60, seed: 5, course: 0.6, repeatX: 10, base: [0.62, 0.58, 0.52] });
+    const found = new T.Mesh(new T.CylinderGeometry(9.8, 9.8, 3, 96), mat(fTex));
+    found.position.y = -1.5; found.castShadow = found.receiveShadow = true; tower.add(found);
     const pivot = new T.Group(); pivot.add(tower); pivot.rotation.z = -LEAN; // miring ke +X (kanan layar)
+    pivot.userData.tower = tower;
+    // potongan atas (untuk menara yang belum selesai, 1178)
+    const clipTop = new T.Plane(new T.Vector3(0, -1, 0), 1e5);
+    tower.traverse(o => { if (o.material) { o.material.clippingPlanes = [clipTop]; o.material.clipShadows = true; if (o.material.side === T.FrontSide) o.material.side = T.DoubleSide; } });
+    pivot.userData.clipTop = clipTop;
     return pivot;
   }
 
@@ -278,11 +287,14 @@
     cx.putImageData(im, 0, 0); const t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping; if (rep) t.repeat.set(rep[0], rep[1]); t.anisotropy = 8; return t;
   }
 
+  const clipZ = new T.Plane(new T.Vector3(0, 0, -1), 1e5);   // memotong tanah: simpan z <= konstanta
+  const groups = {};
   function buildGround(scene) {
+    const modern = new T.Group(), bg = new T.Group(); scene.add(modern, bg); groups.modern = modern; groups.bg = bg;
     const g1 = fbmMaker(8, 8, 51, 5), g2 = fbmMaker(64, 64, 52, 3);
     const grass = canvasTex(512, 512, (u, v) => { const n = g1(u, v), m = g2(u, v); const stripe = (Math.floor(u * 4) % 2) ? 1.06 : 0.94; const k = (0.72 + n * 0.45 + (m - 0.5) * 0.4) * stripe; return [0.25 * k, 0.32 * k, 0.1 * k]; }, [90, 90]);
     const lawn = new T.Mesh(new T.PlaneGeometry(1600, 1600), new T.MeshStandardMaterial({ map: grass, roughness: 0.95 }));
-    lawn.rotation.x = -Math.PI / 2; lawn.receiveShadow = true; scene.add(lawn);
+    lawn.rotation.x = -Math.PI / 2; lawn.receiveShadow = true; scene.add(lawn); groups.lawn = lawn;
     // jalan batu dari kamera ke menara
     const s1 = fbmMaker(4, 16, 61, 4);
     const stone = canvasTex(256, 1024, (u, v) => {
@@ -292,24 +304,24 @@
       return [0.62 * k, 0.56 * k, 0.48 * k];
     }, [3, 30]);
     const path = new T.Mesh(new T.PlaneGeometry(9, 240), new T.MeshStandardMaterial({ map: stone, roughness: 0.85 }));
-    path.rotation.x = -Math.PI / 2; path.position.set(4, 0.02, 120 + 6); path.receiveShadow = true; scene.add(path);
+    path.rotation.x = -Math.PI / 2; path.position.set(4, 0.02, 120 + 6); path.receiveShadow = true; modern.add(path);
     const ring = new T.Mesh(new T.RingGeometry(R0 + 0.5, 15, 96), new T.MeshStandardMaterial({ map: stone, roughness: 0.85 }));
-    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.025; ring.receiveShadow = true; scene.add(ring);
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.025; ring.receiveShadow = true; modern.add(ring);
     // tiang & rantai pembatas (bayangan panjang)
     const postM = new T.MeshStandardMaterial({ color: 0x1a1714, roughness: 0.6, metalness: 0.4 });
     const pg = new T.CylinderGeometry(0.035, 0.045, 0.6, 6);
     for (const side of [-1, 1]) for (let z = 16; z < 240; z += 3.2) {
-      const p = new T.Mesh(pg, postM); p.position.set(4 + side * 4.8, 0.3, z); p.castShadow = true; scene.add(p);
+      const p = new T.Mesh(pg, postM); p.position.set(4 + side * 4.8, 0.3, z); p.castShadow = true; modern.add(p);
       const pts = []; for (let k = 0; k <= 8; k++) { const f = k / 8; pts.push(new T.Vector3(4 + side * 4.8, 0.55 - Math.sin(f * Math.PI) * 0.18, z + f * 3.2)); }
-      const ch = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 8, 0.012, 3), postM); ch.castShadow = true; scene.add(ch);
+      const ch = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 8, 0.012, 3), postM); ch.castShadow = true; modern.add(ch);
     }
     // Camposanto & tembok kota di belakang (siluet terkena kabut)
     const wallTex = paintMarble({ wM: 6, hM: 11, ppm: 40, seed: 71, course: 0.6, repeatX: 50, joints: false,
       deco: (x, y) => { const cx = 3, hw = 1.7, sp = 6.2, dx = Math.abs(x - cx); const ins = (y < sp && y > 0 && dx < hw) || Math.hypot(dx, y - sp) < hw; return ins ? { mul: 0.72, h: -1 } : null; } });
     const camposanto = new T.Mesh(new T.BoxGeometry(300, 11, 8), mat(wallTex, { color: new T.Color(0.55, 0.5, 0.45) }));
-    camposanto.position.set(-30, 5.5, -150); camposanto.receiveShadow = camposanto.castShadow = true; scene.add(camposanto);
+    camposanto.position.set(-30, 5.5, -150); camposanto.receiveShadow = camposanto.castShadow = true; modern.add(camposanto); // Camposanto baru dibangun 1278
     const cityWall = new T.Mesh(new T.BoxGeometry(900, 12, 3), new T.MeshStandardMaterial({ color: 0x8a6b4e, roughness: 1 }));
-    cityWall.position.set(0, 6, -230); scene.add(cityWall);
+    cityWall.position.set(0, 6, -230); bg.add(cityWall);
     // pohon cemara
     const cyp = new T.MeshStandardMaterial({ color: 0x0c140a, roughness: 1 });
     const r = rng(81);
@@ -318,15 +330,118 @@
       const c = new T.Mesh(new T.SphereGeometry(1, 14, 10), cyp);
       if (r() < 0.75) { c.scale.set(1.8 + r(), h / 2, 1.8 + r()); c.position.set(x, h / 2, z); }          // cemara
       else { c.scale.set(5 + r() * 3, 2.2 + r(), 5 + r() * 3); c.position.set(x, h * 0.75, z);           // pinus payung
-        const tr = new T.Mesh(new T.CylinderGeometry(0.3, 0.4, h * 0.75, 6), cyp); tr.position.set(x, h * 0.37, z); scene.add(tr); }
-      c.castShadow = true; scene.add(c);
+        const tr = new T.Mesh(new T.CylinderGeometry(0.3, 0.4, h * 0.75, 6), cyp); tr.position.set(x, h * 0.37, z); bg.add(tr); }
+      c.castShadow = true; bg.add(c);
     }
+    for (const o of [lawn, modern]) o.traverse(m => { if (m.material) { m.material.clippingPlanes = [clipZ]; m.material.clipShadows = true; } });
+    // muka potongan tanah (lapisan menurut Burland: ±6 m lanau Arno, ±30 m lempung laut lunak, lalu pasir padat)
+    const sf = fbmMaker(16, 16, 201, 5), sg = fbmMaker(128, 64, 202, 2);
+    const soilTex = canvasTex(1024, 1024, (u, v) => {
+      const y = -v * 80, n = sf(u, v), g = sg(u, v);
+      let c;
+      if (y > -0.6) c = [0.2, 0.15, 0.09];                                            // tanah atas
+      else if (y > -6 + (n - 0.5) * 0.8) c = [0.5, 0.39, 0.25];                           // lanau & pasir
+      else if (y > -36 + (n - 0.5) * 1.5) { const lam = 0.94 + 0.06 * Math.sin(y * 9 + n * 6); c = [0.33 * lam, 0.35 * lam, 0.36 * lam]; } // lempung laut lunak
+      else c = [0.6, 0.52, 0.36];                                                       // pasir padat
+      const k = 0.8 + n * 0.3 + (g - 0.5) * 0.25; return [c[0] * k, c[1] * k, c[2] * k];
+    }, [4, 1]);
+    soilTex.wrapT = T.ClampToEdgeWrapping;
+    const cap = new T.Mesh(new T.PlaneGeometry(400, 80), new T.MeshStandardMaterial({ map: soilTex, roughness: 1, emissive: 0xffffff, emissiveMap: soilTex, emissiveIntensity: 0.25 }));
+    cap.position.set(0, -40.02, 0); cap.visible = false; scene.add(cap); groups.cap = cap;
+  }
+
+  // ---------- perancah kayu (masa pembangunan 1178) ----------
+  function buildScaffold(scene) {
+    const g = new T.Group(), m = new T.MeshStandardMaterial({ color: 0x5a3f28, roughness: 0.9 });
+    for (let i = 0; i < 24; i++) {
+      const a = i / 24 * Math.PI * 2, r = 9.2;
+      const p = new T.Mesh(new T.CylinderGeometry(0.09, 0.11, 27, 5), m); p.position.set(Math.sin(a) * r, 13.5, Math.cos(a) * r); p.castShadow = true; g.add(p);
+    }
+    for (let y = 3; y < 27; y += 3.2) { const t = new T.Mesh(new T.TorusGeometry(9.2, 0.06, 4, 48), m); t.rotation.x = Math.PI / 2; t.position.y = y; g.add(t); }
+    g.visible = false; scene.add(g); return g;
+  }
+
+  // ---------- kabel baja penahan (1990-an), dari lantai 3 sisi utara ke jangkar ----------
+  function buildCables(scene) {
+    const m = new T.MeshStandardMaterial({ color: 0x15171a, metalness: 0.8, roughness: 0.35 });
+    const cs = [0, 1].map(() => { const c = new T.Mesh(new T.CylinderGeometry(0.06, 0.06, 1, 6), m); c.castShadow = true; scene.add(c); return c; });
+    const anchors = [new T.Vector3(-62, 0, 20), new T.Vector3(-62, 0, -20)];
+    const grp = { visible: false, cs, update(pivot) {
+      cs.forEach((c, i) => {
+        c.visible = grp.visible; if (!grp.visible) return;
+        const a = new T.Vector3(-7.7, G_TOP + 2 * FL + 0.5, i ? -1.8 : 1.8).applyMatrix4(pivot.matrixWorld), b = anchors[i];
+        c.position.copy(a).add(b).multiplyScalar(0.5); c.scale.set(1, a.distanceTo(b), 1);
+        c.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), b.clone().sub(a).normalize());
+      });
+    } };
+    return grp;
+  }
+
+  // ---------- Torre Civica Pavia (bata, ±60 m) untuk kilas balik runtuh 1989 ----------
+  function buildPavia(scene) {
+    const g = new T.Group(); g.visible = false; scene.add(g);
+    const bn = fbmMaker(8, 8, 301, 4);
+    const brick = canvasTex(256, 256, (u, v) => {
+      const row = Math.floor(v * 32), off = (row % 2) * 0.5, col = Math.floor(u * 8 + off), fy = v * 32 - row, fx = u * 8 + off - col;
+      const r = rng(row * 31 + col)(), n = bn(u, v); let k = 0.75 + r * 0.25 + n * 0.2; if (fy < 0.12 || fx < 0.05) k = 0.45;
+      return [0.52 * k, 0.28 * k, 0.18 * k];
+    }, [3, 1]);
+    const bm = new T.MeshStandardMaterial({ map: brick, roughness: 0.95 });
+    const pieces = [], L = 20, S = 11, Hh = 3;
+    const r = rng(311);
+    const dk = new T.MeshStandardMaterial({ color: 0x080605, roughness: 1 });
+    for (let i = 0; i < L; i++) for (let k = 0; k < 4; k++) for (let j = 0; j < 3; j++) {
+      const a = k * Math.PI / 2, off = (j - 1) * S / 3;
+      const w = new T.Mesh(new T.BoxGeometry(S / 3 - 0.05, Hh - 0.05, 1.4), bm);
+      const cx = Math.sin(a) * (S / 2 - 0.7) + Math.cos(a) * off, cz = Math.cos(a) * (S / 2 - 0.7) - Math.sin(a) * off;
+      w.position.set(cx, Hh / 2 + i * Hh, cz); w.rotation.y = a;
+      if ((i === 16 || i === 17) && j === 1) { const win = new T.Mesh(new T.BoxGeometry(1.6, i === 17 ? 2.2 : 3, 1.5), dk); w.add(win); }  // bukaan lonceng
+      if (i % 5 === 4 && j !== 1) { const sl = new T.Mesh(new T.BoxGeometry(0.4, 0.9, 1.5), dk); w.add(sl); }                            // celah jendela
+      w.castShadow = w.receiveShadow = true; g.add(w);
+      const ang = Math.atan2(cx, cz);
+      w.userData = { y0: w.position.y, x0: cx, z0: cz, a: ang, ry: a, i, rx: (r() - 0.5) * 3, rz: (r() - 0.5) * 3, out: 1 + r() * 5, rest: 0.8 + r() * (i < 6 ? 7 : 3.5), dl: r() * 0.25 };
+      pieces.push(w);
+    }
+    // atap bata & mahkota
+    const crown = new T.Mesh(new T.BoxGeometry(S + 0.6, 1.2, S + 0.6), bm); crown.position.y = L * Hh + 0.6; crown.castShadow = true; g.add(crown);
+    crown.userData = { y0: crown.position.y, x0: 0, z0: 0, a: 0.4, ry: 0, i: L, rx: 0.9, rz: -0.6, out: 2, rest: 3, dl: 0 }; pieces.push(crown);
+    // bangunan kota di sekitarnya
+    const hm = new T.MeshStandardMaterial({ color: 0x3a2f28, roughness: 1 });
+    for (let i = 0; i < 18; i++) { const h = 10 + r() * 14, x = (r() - 0.5) * 160, z = -30 - r() * 80; if (Math.abs(x) < 14 && z > -40) continue; const b = new T.Mesh(new T.BoxGeometry(14 + r() * 16, h, 14), hm); b.position.set(x, h / 2, z); b.castShadow = true; g.add(b); }
+    const pav = new T.Mesh(new T.PlaneGeometry(400, 400), new T.MeshStandardMaterial({ color: 0x3b3835, roughness: 1 })); pav.rotation.x = -Math.PI / 2; pav.position.y = 0.04; pav.receiveShadow = true; g.add(pav);
+    // debu
+    const dt = canvasTex(128, 128, (u, v) => { const d = Math.hypot(u - 0.5, v - 0.5) * 2; const a = Math.max(0, 1 - d); return [0.55, 0.5, 0.45, a * a]; });
+    const dust = [];
+    for (let i = 0; i < 90; i++) {
+      const sp = new T.Sprite(new T.SpriteMaterial({ map: dt, transparent: true, depthWrite: false, opacity: 0, color: 0xd8cfc4 }));
+      sp.userData = { a: r() * 6.28, sp: 4 + r() * 14, up: r() * 30, d: r() * 1.4, s: 6 + r() * 14 }; g.add(sp); dust.push(sp);
+    }
+    // tc = detik sejak mulai runtuh (<0 = masih berdiri)
+    g.userData.collapse = tc => {
+      for (const w of pieces) {
+        const u = w.userData, d = Math.max(0, tc - u.dl - (L - u.i) * 0.012);
+        const fall = tc > 0 ? 0.5 * 9.8 * d * d : 0;
+        const y = Math.max(u.rest, u.y0 - fall);
+        const landed = y <= u.rest + 0.01 && tc > 0;
+        const spread = tc > 0 ? Math.min(1, fall / Math.max(1, u.y0)) : 0;
+        w.position.set(u.x0 + Math.sin(u.a) * u.out * spread, y, u.z0 + Math.cos(u.a) * u.out * spread);
+        w.rotation.set(u.rx * spread, u.ry, u.rz * spread);
+      }
+      dust.forEach(sp => {
+        const u = sp.userData, k = Math.max(0, tc - u.d);
+        sp.material.opacity = tc > 0 ? Math.min(0.9, k * 1.6) * Math.max(0, 1 - k / 10) : 0;
+        const rr = 4 + k * u.sp; sp.position.set(Math.sin(u.a) * rr, 2 + Math.min(u.up, k * 9) + (1 - Math.exp(-k)) * 8, Math.cos(u.a) * rr * 0.7 + 4);
+        const sc = u.s * (0.5 + k * 0.8); sp.scale.set(sc, sc, 1);
+      });
+    };
+    g.userData.collapse(-1);
+    return g;
   }
 
   // ---------- langit senja dengan awan gelap ----------
   const skyVS = `varying vec3 vDir; void main(){ vDir = position; vec4 p = modelViewMatrix*vec4(position,1.0); gl_Position = projectionMatrix*p; gl_Position.z = gl_Position.w; }`;
   const skyFS = `
-    varying vec3 vDir; uniform vec3 sunDir; uniform float time; uniform float gloom;
+    varying vec3 vDir; uniform vec3 sunDir; uniform float time; uniform float gloom; uniform float night; uniform float flash;
     float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
     float noise(vec2 p){ vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.0-2.0*f);
       return mix(mix(hash(i),hash(i+vec2(1,0)),u.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x), u.y); }
@@ -348,12 +463,16 @@
       float rim = smoothstep(0.45,0.55,dens) * (1.0 - smoothstep(0.55,0.75,dens));
       cloud += vec3(1.0,0.55,0.25) * rim * pow(sd, 2.0) * 0.45;
       col = mix(col, cloud, clamp(cover, 0.0, 0.95));
+      vec3 nc = mix(vec3(0.012,0.016,0.03), vec3(0.002,0.003,0.008), smoothstep(0.0,0.6,h));
+      nc = mix(nc, vec3(0.006,0.007,0.01) + vec3(0.05,0.06,0.09)*rim, cover);
+      col = mix(col, nc, night);
+      col += vec3(0.7,0.75,0.9) * flash * (0.4 + cover * 1.2);
       gl_FragColor = vec4(col, 1.0);
     }`;
 
   // ---------- pasca-proses: ACES, grading teal-amber, vinyet, grain ----------
   const postFS = `
-    varying vec2 vUv; uniform sampler2D tDiffuse; uniform float exposure, seed, vig, fade, sat;
+    varying vec2 vUv; uniform sampler2D tDiffuse; uniform float exposure, seed, vig, fade, sat, grain, flick, sepia;
     vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0); }
     float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))+seed)*43758.5453); }
     vec3 toSRGB(vec3 c){ return mix(c*12.92, 1.055*pow(c, vec3(1.0/2.4))-0.055, step(0.0031308, c)); }
@@ -369,9 +488,10 @@
       c += vec3(-0.012,0.006,0.02)*(1.0-smoothstep(0.0,0.35,l));   // bayangan kebiruan
       c *= mix(vec3(1.0), vec3(1.05,1.0,0.92), smoothstep(0.45,0.9,l)); // sorot ambar
       c = toSRGB(c);
+      float l2 = dot(c, vec3(0.299,0.587,0.114)); c = mix(c, vec3(l2)*vec3(1.08,0.98,0.84), sepia);
       c = (c-0.5)*1.06+0.5;
       vec2 q = vUv-0.5; q.y *= 1.4; c *= 1.0 - vig*smoothstep(0.25, 0.85, length(q));
-      c += (h(vUv*vec2(1080.0,1920.0))-0.5)*0.035;
+      c += (h(vUv*vec2(1080.0,1920.0))-0.5)*grain; c *= flick;
       gl_FragColor = vec4(c*fade, 1.0);
     }`;
 
@@ -385,7 +505,7 @@
       const body = new T.Mesh(new T.SphereGeometry(0.16, 8, 6), m); body.scale.set(1, 0.7, 2.2); g.add(body);
       const wl = new T.Mesh(wing, m), wr = new T.Mesh(wing, m); wr.scale.x = -1; g.add(wl, wr);
       g.userData = { wl, wr, rad: 11 + r() * 9, y: 47 + r() * 14, sp: 0.18 + r() * 0.12, ph: r() * 6.28, fl: 9 + r() * 4, dir: r() > 0.3 ? 1 : -1 };
-      g.scale.setScalar(1.25); scene.add(g); crows.push(g);
+      g.scale.setScalar(1.25); g.userData.isCrow = true; scene.add(g); crows.push(g);
     }
     return t => crows.forEach(c => {
       const u = c.userData, a = u.ph + t * u.sp * u.dir;
@@ -405,7 +525,7 @@
     for (let i = 0; i < 14; i++) {
       const m = new T.Mesh(new T.PlaneGeometry(70, 7), new T.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.06 + r() * 0.06, depthWrite: false, color: new T.Color(1.0, 0.82, 0.68) }));
       m.position.set(-60 + r() * 120, 1.2 + r() * 1.8, -70 + r() * 60); m.userData = { x0: m.position.x, sp: 0.4 + r() * 0.6, off: r() };
-      tex.offset.x = r(); scene.add(m); ms.push(m);
+      tex.offset.x = r(); m.userData.isMist = true; scene.add(m); ms.push(m);
     }
     return (t, cam) => ms.forEach(m => { m.position.x = m.userData.x0 + t * m.userData.sp; m.lookAt(cam.position.x, m.position.y, cam.position.z); });
   }
@@ -419,7 +539,7 @@
     init(canvas) {
       const renderer = new T.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: true });
       renderer.setPixelRatio(1); renderer.setSize(W, H, false);
-      renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+      renderer.localClippingEnabled = true; renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
       const scene = new T.Scene();
       scene.fog = new T.FogExp2(new T.Color(0.5, 0.33, 0.22), 0.0026);
       const camera = new T.PerspectiveCamera(55, W / H, 0.5, 4000);
@@ -430,21 +550,45 @@
       Object.assign(sun.shadow.camera, { left: -60, right: 200, top: 75, bottom: -30, near: 50, far: 1400 });
       sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04;
       scene.add(sun, sun.target);
-      scene.add(new T.HemisphereLight(new T.Color(0.3, 0.4, 0.62), new T.Color(0.14, 0.1, 0.06), 0.32));
-      const sky = new T.Mesh(new T.SphereGeometry(2000, 64, 32), new T.ShaderMaterial({ vertexShader: skyVS, fragmentShader: skyFS, side: T.BackSide, depthWrite: false, fog: false, uniforms: { sunDir: { value: sunDir }, time: { value: 0 }, gloom: { value: 0 } } }));
+      const hemi = new T.HemisphereLight(new T.Color(0.3, 0.4, 0.62), new T.Color(0.14, 0.1, 0.06), 0.32); scene.add(hemi);
+      const sky = new T.Mesh(new T.SphereGeometry(2000, 64, 32), new T.ShaderMaterial({ vertexShader: skyVS, fragmentShader: skyFS, side: T.BackSide, depthWrite: false, fog: false, uniforms: { sunDir: { value: sunDir }, time: { value: 0 }, gloom: { value: 0 }, night: { value: 0 }, flash: { value: 0 } } }));
       sky.renderOrder = -1; scene.add(sky);
       const tower = buildTower(); scene.add(tower);
       buildGround(scene);
       const crows = buildCrows(scene), mist = buildMist(scene);
+      const scaffold = buildScaffold(scene), cables = buildCables(scene), pavia = buildPavia(scene);
+      const moon = new T.DirectionalLight(new T.Color(0.55, 0.65, 0.95), 0); moon.position.set(120, 260, 160); scene.add(moon);
+      const DEF = { sun: 8.0, sunColor: [1.0, 0.58, 0.3], hemi: 0.32, moon: 0, fogColor: [0.5, 0.33, 0.22], fog: 0.0026, night: 0, flash: 0, gloom: 0,
+                    exposure: 1.0, sat: 0.9, vig: 0.6, grain: 0.035, flick: 1, sepia: 0 };
+      this.mood = (o = {}) => {
+        const m = Object.assign({}, DEF, o);
+        sun.intensity = m.sun; sun.color.setRGB(...m.sunColor); hemi.intensity = m.hemi; moon.intensity = m.moon;
+        scene.fog.color.setRGB(...m.fogColor); scene.fog.density = m.fog;
+        const su = sky.material.uniforms; su.night.value = m.night; su.flash.value = m.flash; su.gloom.value = m.gloom;
+        const pu = post.uniforms; pu.exposure.value = m.exposure; pu.sat.value = m.sat; pu.vig.value = m.vig; pu.grain.value = m.grain; pu.flick.value = m.flick; pu.sepia.value = m.sepia;
+      };
+      this.setLean = deg => { tower.rotation.z = -deg * Math.PI / 180; tower.updateMatrixWorld(true);
+        const L = deg * Math.PI / 180; this.axisTop.set(Math.sin(L) * TOP_Y, Math.cos(L) * TOP_Y, 0);
+        tower.userData.clipTop.normal.set(-Math.sin(L), -Math.cos(L), 0); };
+      this.setBuiltHeight = h => { tower.userData.clipTop.constant = h; };   // h meter sepanjang sumbu menara
+      this.setCut = z => { clipZ.constant = z; groups.cap.visible = z < 400; groups.cap.position.z = z; };
+      this.show = o => { for (const k in o) { const v = o[k];
+        if (k === 'modern') groups.modern.visible = v; else if (k === 'bg') groups.bg.visible = v; else if (k === 'lawn') groups.lawn.visible = v;
+        else if (k === 'tower') tower.visible = v; else if (k === 'scaffold') scaffold.visible = v; else if (k === 'cables') cables.visible = v;
+        else if (k === 'pavia') pavia.visible = v; else if (k === 'crows') this.crowsOn = v; else if (k === 'mist') this.mistOn = v; } };
+      this.paviaCollapse = tc => pavia.userData.collapse(tc);
+      this.crowsOn = true; this.mistOn = true;
       const rt = new T.WebGLRenderTarget(W, H, { type: T.HalfFloatType, samples: 4 });
       const post = new T.ShaderMaterial({ vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0);} ', fragmentShader: postFS,
-        uniforms: { tDiffuse: { value: rt.texture }, exposure: { value: 1.0 }, seed: { value: 0 }, vig: { value: 0.6 }, fade: { value: 1 }, sat: { value: 0.9 } } });
+        uniforms: { tDiffuse: { value: rt.texture }, exposure: { value: 1.0 }, seed: { value: 0 }, vig: { value: 0.6 }, fade: { value: 1 }, sat: { value: 0.9 }, grain: { value: 0.035 }, flick: { value: 1 }, sepia: { value: 0 } } });
       const postScene = new T.Scene(); postScene.add(new T.Mesh(new T.PlaneGeometry(2, 2), post));
       const postCam = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      this.renderer = renderer; this.scene = scene; this.camera = camera; this.sky = sky; this.post = post; this.tower = tower; this.sun = sun;
-      this.frame = (t) => {
+      this.renderer = renderer; this.groups = groups; this.scene = scene; this.camera = camera; this.sky = sky; this.post = post; this.tower = tower; this.sun = sun;
+      this.frame = (t, skyT = t) => {
         crows(t); mist(t, camera);
-        sky.position.copy(camera.position); sky.material.uniforms.time.value = t;
+        scene.traverse(o => { if (o.userData && o.userData.isCrow) o.visible = this.crowsOn; if (o.userData && o.userData.isMist) o.visible = this.mistOn; });
+        tower.updateMatrixWorld(true); cables.update(tower);
+        sky.position.copy(camera.position); sky.material.uniforms.time.value = skyT;
         post.uniforms.seed.value = (t * 37.13) % 100;
         renderer.setRenderTarget(rt); renderer.render(scene, camera);
         renderer.setRenderTarget(null); renderer.render(postScene, postCam);

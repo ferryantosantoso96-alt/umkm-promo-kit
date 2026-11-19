@@ -3,16 +3,20 @@
 Shorts 9:16 (TikTok/Reels), 1080×1920, 30 fps. Gaya: 3D realistik sinematik, nuansa misterius-horor.
 Dibuat dengan HTML + Three.js (`pisa3d.js`, `adegan1.html`), dirender lewat `tools/render.js` — **tanpa kredit ElevenLabs**.
 `arsip-kling/` = percobaan lama dengan Kling (tidak dipakai).
-Durasi rencana: **±42 detik** (6 adegan). Voiceover ElevenLabs (narator perempuan, misterius) dibuat setelah gambar disetujui.
+Durasi: **48 detik** (7 adegan), semua dalam satu halaman `video.html`. Musik & efek suara disintesis (`tools/audio.py`).
+Voiceover ElevenLabs (narator perempuan, misterius) dibuat **hanya setelah perkiraan kredit disetujui**.
 
-| Detik | Adegan | Visual | Narasi (draf) |
+| Detik | Adegan | Visual | Narasi (draf = teks subtitle) |
 |---|---|---|---|
-| 0 – 9 | 1 · Hook | Menara saat golden hour, piazza kosong, kabut tipis, gagak. Dolly-in → tilt-up → diam. Judul + subtitle. Garis tegak vs garis sumbu menara. | "Delapan ratus tahun… ia terus condong ke tanah. Tapi entah kenapa… ia tak pernah jatuh." |
-| 8 – 15 | 2 · Kutukan sejak awal | Batu fondasi 1173, menara baru 3 lantai sudah mulai miring; konstruksi terhenti hampir seabad. | "Baru tiga lantai dibangun, menara ini sudah mulai miring. Tahun 1178, pembangunan dihentikan… hampir seratus tahun." |
-| 15 – 23 | 3 · Rahasia di bawah tanah | Potongan melintang: fondasi cuma ±3 m, lumpur sungai purba & lempung lunak puluhan meter. | "Rahasianya ada di bawah. Fondasinya hanya sedalam tiga meter… bertumpu di atas lumpur sungai purba." |
-| 23 – 30 | 4 · Malam yang mencekam | Malam, menara gelap, lonceng diturunkan, kabel baja; kilas balik debu runtuhan. | "Maret 1989, sebuah menara tua di Pavia runtuh tiba-tiba. Empat orang tewas. Sepuluh bulan kemudian, Pisa ditutup. Kemiringannya sudah lima setengah derajat." |
-| 30 – 37 | 5 · Diselamatkan | Animasi tanah disedot dari sisi utara, menara kembali tegak ±45 cm. | "Para insinyur diam-diam menyedot tanah dari sisi utara. Pelan… menara kembali tegak empat puluh lima senti." |
-| 37 – 42 | 6 · Ironi | Gempa mengguncang, menara tetap berdiri; kembali ke senja, gagak. | "Ironisnya… tanah lunak yang membuatnya miring, justru meredam empat gempa besar. Ia miring… untuk tetap hidup." |
+| 0 – 9 | 1 · Hook | Golden hour, dolly-in → tilt-up, judul di langit, garis TEGAK vs MIRING ±4° | Delapan ratus tahun… ia terus condong ke tanah. / Tapi entah kenapa… ia tak pernah jatuh. |
+| 9 – 18 | 2 · Di bawah tanah | Tanah "diiris" mulus → potongan melintang: fondasi ±3 m, lanau ±6 m, lempung laut lunak ±30 m, pasir padat; panah tekanan | Rahasianya tersembunyi di bawah tanah. / Fondasinya hanya sedalam tiga meter… di atas lumpur dan lempung lunak. |
+| 18 – 25 | 3 · 1178 | Menara baru 3 tingkat, muram; penghitung tahun 1173 → 1178 → 1272, langit berpacu | Tahun 1178, belum separuh berdiri… menara ini sudah mulai miring. / Pembangunan pun terhenti… hampir seratus tahun. |
+| 25 – 29,6 | 4 · Pavia 1989 | Kilas balik sepia berbintik: menara bata runtuh dalam debu; "PAVIA · 17 MARET 1989", "4 TEWAS · 15 LUKA" | Maret 1989. Menara tua di Pavia runtuh tiba-tiba. / Empat orang tewas. |
+| 29,6 – 35,2 | 5 · Pisa ditutup | Malam, petir, hujan, kabel baja penahan; "DITUTUP · 7 JANUARI 1990", garis MIRING 5,5° | Sepuluh bulan kemudian, Pisa ditutup. / Kemiringannya sudah 5,5 derajat… nyaris tumbang. |
+| 35,2 – 41,6 | 6 · Penyelamatan | Potongan melintang lebar, pipa penyedot di sisi utara, menara berputar balik 5,5° → 3,97°, "PUNCAK KEMBALI 45 CM" | Para insinyur menyedot tanah sedikit demi sedikit dari sisi utara. / Perlahan… puncaknya kembali sekitar 45 senti. |
+| 41,6 – 48 | 7 · Gempa & penutup | Kamera naik ke permukaan, guncangan gempa, "≥4 GEMPA KUAT SEJAK 1280 · TETAP BERDIRI", judul akhir | Ironisnya, tanah lunak itu juga yang meredam guncangan gempa. / Ia miring… untuk tetap hidup. |
+
+Catatan: angka 5,5° (1990) → 3,97° dan "kembali ±45 cm" sama-sama dari History.com; sumber teknik (Burland) menyebut koreksinya ±10% / ±38 cm.
 
 ## Sumber fakta
 
