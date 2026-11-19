@@ -319,7 +319,7 @@
     const wallTex = paintMarble({ wM: 6, hM: 11, ppm: 40, seed: 71, course: 0.6, repeatX: 50, joints: false,
       deco: (x, y) => { const cx = 3, hw = 1.7, sp = 6.2, dx = Math.abs(x - cx); const ins = (y < sp && y > 0 && dx < hw) || Math.hypot(dx, y - sp) < hw; return ins ? { mul: 0.72, h: -1 } : null; } });
     const camposanto = new T.Mesh(new T.BoxGeometry(300, 11, 8), mat(wallTex, { color: new T.Color(0.55, 0.5, 0.45) }));
-    camposanto.position.set(-30, 5.5, -150); camposanto.receiveShadow = camposanto.castShadow = true; modern.add(camposanto); // Camposanto baru dibangun 1278
+    camposanto.position.set(-30, 5.5, -185); camposanto.receiveShadow = camposanto.castShadow = true; modern.add(camposanto); // Camposanto baru dibangun 1278
     const cityWall = new T.Mesh(new T.BoxGeometry(900, 12, 3), new T.MeshStandardMaterial({ color: 0x8a6b4e, roughness: 1 }));
     cityWall.position.set(0, 6, -230); bg.add(cityWall);
     // pohon cemara
@@ -348,6 +348,71 @@
     soilTex.wrapT = T.ClampToEdgeWrapping;
     const cap = new T.Mesh(new T.PlaneGeometry(400, 80), new T.MeshStandardMaterial({ map: soilTex, roughness: 1, emissive: 0xffffff, emissiveMap: soilTex, emissiveIntensity: 0.25 }));
     cap.position.set(0, -40.02, 0); cap.visible = false; scene.add(cap); groups.cap = cap;
+  }
+
+  // ---------- Katedral (Duomo) di belakang-kiri menara: salib Latin, kubah di persilangan ----------
+  function buildDuomo(scene) {
+    const g = new T.Group();
+    const wallTex = (seed, wM, hM, tiers) => paintMarble({ wM, hM, ppm: 22, seed, course: 0.5, joints: false, repeatX: 1,
+      deco: (x, y) => {
+        let r = {};
+        if (Math.floor(y / 0.9) % 2 === 0 && y < hM * 0.62) r.mul = 0.86;             // garis abu-putih khas Pisa
+        const bay = 4.6, cx = (x % bay) - bay / 2;
+        if (y < hM * 0.6) { const sp = hM * 0.45, hw = 1.5;                             // lengkung buta bawah
+          if ((y < sp && Math.abs(cx) < hw) || Math.hypot(cx, y - sp) < hw) { r.mul = (r.mul || 1) * 0.78; r.h = -1; } }
+        else if (tiers) { const b2 = 2.3, c2 = (x % b2) - b2 / 2, sp = hM * 0.82, hw = 0.75;  // galeri kecil atas
+          if ((y < sp && y > hM * 0.66 && Math.abs(c2) < hw) || Math.hypot(c2, y - sp) < hw) { r.mul = 0.45; r.h = -1; } }
+        return r;
+      } });
+    const roofM = new T.MeshStandardMaterial({ color: 0x5c5a58, roughness: 0.7, metalness: 0.3 });
+    const cache = {};
+    const wallMat = (L, H, tiers) => { const k = `${L}|${H}|${tiers}`; if (!cache[k]) { const tx = wallTex(400 + Object.keys(cache).length, L, H, tiers); cache[k] = mat(tx, { color: new T.Color(0.86, 0.84, 0.8) }); } return cache[k]; };
+    // kotak berdinding marmer: cx,cz pusat; w (x), d (z), h
+    const block = (cx, cz, w, d, h, tiers = true, roof = 'gable', ridgeAlongZ = true) => {
+      const faces = [[w, 0, d / 2, 0], [w, 0, -d / 2, Math.PI], [d, w / 2, 0, Math.PI / 2], [d, -w / 2, 0, -Math.PI / 2]];
+      for (const [L, ox, oz, ry] of faces) {
+        const m = new T.Mesh(new T.PlaneGeometry(L, h), wallMat(Math.round(L), Math.round(h), tiers));
+        m.position.set(cx + ox, h / 2, cz + oz); m.rotation.y = ry; m.receiveShadow = m.castShadow = true; g.add(m);
+      }
+      const span = ridgeAlongZ ? w : d, len = ridgeAlongZ ? d : w, rh = span * 0.28;
+      const sh = new T.Shape(); sh.moveTo(-span / 2 - 0.4, 0); sh.lineTo(0, rh); sh.lineTo(span / 2 + 0.4, 0); sh.lineTo(-span / 2 - 0.4, 0);
+      const rg = new T.ExtrudeGeometry(sh, { depth: len + 0.6, bevelEnabled: false }); rg.translate(0, 0, -(len + 0.6) / 2);
+      const r = new T.Mesh(rg, roofM); r.position.set(cx, h, cz); if (!ridgeAlongZ) r.rotation.y = Math.PI / 2; r.castShadow = true; g.add(r);
+    };
+    const X = -26, Z0 = -58, Z1 = -154;                     // apsis dekat menara, fasad di belakang
+    const L = Z0 - Z1, zc = (Z0 + Z1) / 2;
+    block(X, zc, 15, L, 33);                                  // nave
+    block(X - 12, zc, 9, L, 21, false); block(X + 12, zc, 9, L, 21, false);   // lorong samping
+    block(X, -90, 72, 15, 30, true, 'gable', false);         // transept
+    // apsis setengah lingkaran
+    const apT = wallTex(470, 24, 28, true);
+    const ap = new T.Mesh(new T.CylinderGeometry(7.5, 7.5, 28, 48, 1, true, -Math.PI / 2, Math.PI), mat(apT, { color: new T.Color(0.86, 0.84, 0.8), side: T.DoubleSide }));
+    ap.position.set(X, 14, Z0); ap.castShadow = ap.receiveShadow = true; g.add(ap);
+    const apr = new T.Mesh(new T.SphereGeometry(7.6, 32, 12, -Math.PI / 2, Math.PI, 0, Math.PI / 2), roofM); apr.scale.y = 0.45; apr.position.set(X, 28, Z0); g.add(apr);
+    // kubah elips di persilangan
+    const drT = wallTex(480, 50, 7, true);
+    const drum = new T.Mesh(new T.CylinderGeometry(8, 8, 7, 48), mat(drT, { color: new T.Color(0.88, 0.86, 0.82) }));
+    drum.scale.z = 1.25; drum.position.set(X, 36.5, -90); drum.castShadow = true; g.add(drum);
+    const dome = new T.Mesh(new T.SphereGeometry(8, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), roofM);
+    dome.scale.set(1, 1.05, 1.25); dome.position.set(X, 40, -90); dome.castShadow = true; g.add(dome);
+    const lant = new T.Mesh(new T.CylinderGeometry(1.0, 1.2, 3.2, 12), wallMat(6, 3, false)); lant.position.set(X, 49.8, -90); g.add(lant);
+    const lc = new T.Mesh(new T.ConeGeometry(1.3, 2.0, 12), roofM); lc.position.set(X, 52.4, -90); g.add(lc);
+    scene.add(g); return g;
+  }
+
+  // ---------- pemberat timah 1993 di sisi utara (cincin beton + balok timah) ----------
+  function buildLead(scene) {
+    const g = new T.Group(); g.visible = false;
+    const lm = new T.MeshStandardMaterial({ color: 0x3d4146, metalness: 0.7, roughness: 0.45 });
+    const cm = new T.MeshStandardMaterial({ color: 0x9a948a, roughness: 0.95 });
+    const ring = new T.Mesh(new T.CylinderGeometry(13.2, 13.2, 0.8, 64, 1, true, Math.PI * 1.15, Math.PI * 0.7), cm);
+    ring.position.y = 0.4; ring.material.side = T.DoubleSide; g.add(ring);
+    for (let lay = 0; lay < 4; lay++) for (let i = 0; i < 22; i++) {
+      const a = Math.PI * 1.17 + (i + (lay % 2) * 0.5) / 22 * Math.PI * 0.66;
+      const b = new T.Mesh(new T.BoxGeometry(1.6, 0.7, 1.1), lm);
+      b.position.set(Math.sin(a) * 12.6, 1.15 + lay * 0.72, Math.cos(a) * 12.6); b.rotation.y = a; b.castShadow = b.receiveShadow = true; g.add(b);
+    }
+    scene.add(g); return g;
   }
 
   // ---------- perancah kayu (masa pembangunan 1178) ----------
@@ -557,6 +622,7 @@
       buildGround(scene);
       const crows = buildCrows(scene), mist = buildMist(scene);
       const scaffold = buildScaffold(scene), cables = buildCables(scene), pavia = buildPavia(scene);
+      const duomo = buildDuomo(scene); groups.bg.add(duomo); const lead = buildLead(scene);
       const moon = new T.DirectionalLight(new T.Color(0.55, 0.65, 0.95), 0); moon.position.set(120, 260, 160); scene.add(moon);
       const DEF = { sun: 8.0, sunColor: [1.0, 0.58, 0.3], hemi: 0.32, moon: 0, fogColor: [0.5, 0.33, 0.22], fog: 0.0026, night: 0, flash: 0, gloom: 0,
                     exposure: 1.0, sat: 0.9, vig: 0.6, grain: 0.035, flick: 1, sepia: 0 };
@@ -575,7 +641,7 @@
       this.show = o => { for (const k in o) { const v = o[k];
         if (k === 'modern') groups.modern.visible = v; else if (k === 'bg') groups.bg.visible = v; else if (k === 'lawn') groups.lawn.visible = v;
         else if (k === 'tower') tower.visible = v; else if (k === 'scaffold') scaffold.visible = v; else if (k === 'cables') cables.visible = v;
-        else if (k === 'pavia') pavia.visible = v; else if (k === 'crows') this.crowsOn = v; else if (k === 'mist') this.mistOn = v; } };
+        else if (k === 'pavia') pavia.visible = v; else if (k === 'lead') lead.visible = v; else if (k === 'crows') this.crowsOn = v; else if (k === 'mist') this.mistOn = v; } };
       this.paviaCollapse = tc => pavia.userData.collapse(tc);
       this.crowsOn = true; this.mistOn = true;
       const rt = new T.WebGLRenderTarget(W, H, { type: T.HalfFloatType, samples: 4 });

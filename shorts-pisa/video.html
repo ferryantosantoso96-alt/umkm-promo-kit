@@ -7,65 +7,119 @@
   @font-face { font-family: "Cormorant"; font-weight: 600; src: url(vendor/fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2"); }
   @font-face { font-family: "Montserrat"; font-weight: 300; src: url(vendor/fonts/montserrat-latin-300-normal.woff2) format("woff2"); }
   @font-face { font-family: "Montserrat"; font-weight: 500; src: url(vendor/fonts/montserrat-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Montserrat"; font-weight: 800; src: url(vendor/fonts/montserrat-latin-800-normal.woff2) format("woff2"); }
   html, body { margin: 0; width: 1080px; height: 1920px; background: #000; overflow: hidden; }
   canvas#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; }
-  .o { position: absolute; opacity: 0; color: #fff; text-align: center; left: 0; right: 0; }
-  .serif { font-family: "Cormorant", serif; font-weight: 600; font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; text-shadow: 0 2px 30px rgba(0,0,0,.65), 0 0 2px rgba(0,0,0,.4); }
-  .sans { font-family: "Montserrat", sans-serif; font-weight: 300; letter-spacing: 12px; padding-left: 12px; text-shadow: 0 2px 18px rgba(0,0,0,.8); }
-  #judul { top: 92px; font-size: 80px; line-height: 1.0; }
-  #sub { top: 278px; font-size: 28px; }
-  #cap { top: 1456px; left: 90px; right: 90px; font-family: "Montserrat", sans-serif; font-weight: 500; font-size: 40px; line-height: 1.35;
-         text-shadow: 0 2px 4px rgba(0,0,0,.9), 0 0 24px rgba(0,0,0,.8); }
-  #tahun { top: 170px; font-size: 190px; line-height: 1; }
-  #tahunLbl { top: 380px; font-size: 30px; }
-  #kartu1 { top: 200px; font-size: 92px; line-height: 1.02; }
-  #kartu1s { top: 410px; font-size: 32px; }
-  #akhir { top: 150px; font-size: 88px; line-height: 1.05; }
+  /* SAFE ZONE Reels/TikTok: x 70–950, y 270–1420 (atas: header, bawah: caption & tombol, kanan: ikon) */
+  .o { position: absolute; opacity: 0; color: #fff; text-align: center; left: 70px; width: 880px; }
+  .serif { font-family: "Cormorant", serif; font-weight: 600; font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; text-shadow: 0 2px 30px rgba(0,0,0,.7), 0 0 3px rgba(0,0,0,.5); }
+  .sans { font-family: "Montserrat", sans-serif; font-weight: 500; letter-spacing: 8px; text-shadow: 0 2px 14px rgba(0,0,0,.9), 0 0 3px rgba(0,0,0,.8); }
+  #judul { top: 280px; font-size: 72px; line-height: 1.02; }
+  #sub { top: 440px; font-size: 32px; letter-spacing: 9px; }
+  #tahun { top: 280px; font-size: 170px; line-height: 1; }
+  #tahunLbl { top: 470px; font-size: 40px; }
+  #kartu1 { top: 290px; font-size: 110px; line-height: 1.02; }
+  #kartu1s { top: 430px; font-size: 44px; }
+  #akhir { top: 290px; font-size: 84px; line-height: 1.05; }
   .gold { color: #ffc65a; }
+  /* subtitle besar ala karaoke */
+  #cap { position: absolute; left: 70px; width: 880px; top: 1170px; height: 250px; display: flex; align-items: center; justify-content: center;
+         text-align: center; font-family: "Montserrat", sans-serif; font-weight: 800; line-height: 1.02; color: #fff; }
+  #cap div { white-space: nowrap; }
+  #cap span { display: inline-block; margin: 0 0.12em; text-shadow: 0 0 6px #000, 0 0 14px #000, 0 6px 0 rgba(0,0,0,.55), 0 0 30px rgba(0,0,0,.7); }
   svg { position: absolute; inset: 0; }
-  svg text { font-family: "Montserrat", sans-serif; font-weight: 500; letter-spacing: 5px; }
+  svg text { font-family: "Montserrat", sans-serif; font-weight: 500; letter-spacing: 4px; }
 </style>
 </head>
 <body>
 <canvas id="gl" width="1080" height="1920"></canvas>
 <svg width="1080" height="1920" viewBox="0 0 1080 1920">
   <defs>
-    <filter id="bay" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#000" flood-opacity="0.9"/></filter>
-    <marker id="panah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ffc65a"/></marker>
+    <filter id="bay" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#000" flood-opacity="0.95"/></filter>
+    <marker id="panah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ffc65a"/></marker>
+    <marker id="panahC" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6fd3ff"/></marker>
   </defs>
   <g id="lay" filter="url(#bay)"></g>
 </svg>
 <div id="judul" class="o serif">800 TAHUN<br>MELAWAN KERUNTUHAN?</div>
 <div id="sub" class="o sans">RAHASIA MENARA MIRING PISA</div>
 <div id="tahun" class="o serif">1173</div>
-<div id="tahunLbl" class="o sans">MULAI MIRING</div>
+<div id="tahunLbl" class="o sans"></div>
 <div id="kartu1" class="o serif"></div>
 <div id="kartu1s" class="o sans"></div>
 <div id="akhir" class="o serif">IA MIRING…<br><span class="gold">UNTUK TETAP HIDUP</span></div>
-<div id="cap" class="o"></div>
+<div id="cap"></div>
 <script src="vendor/three.min.js"></script>
 <script src="pisa3d.js"></script>
+<script src="audio/waktu-vo.js" onerror="window.VO_TIMES = null"></script>
 <script>
-// ======================= linimasa (detik) =======================
-const S = { s1: [0, 9], s2: [9, 18], s3: [18, 25], s4: [25, 29.6], s5: [29.6, 35.2], s6: [35.2, 41.6], s7: [41.6, 48] };
-const DUR = 48;
-// Narasi (draf, akan diselaraskan ke voiceover ElevenLabs nanti)
-const CAPS = [
-  [0.8, 4.3, 'Delapan ratus tahun… ia terus condong ke tanah.'],
-  [4.5, 8.6, 'Tapi entah kenapa… ia tak pernah jatuh.'],
-  [9.8, 13.0, 'Rahasianya tersembunyi di bawah tanah.'],
-  [13.2, 17.6, 'Fondasinya hanya sedalam tiga meter… di atas lumpur dan lempung lunak.'],
-  [18.6, 21.7, 'Tahun 1178, belum separuh berdiri… menara ini sudah mulai miring.'],
-  [21.9, 24.8, 'Pembangunan pun terhenti… hampir seratus tahun.'],
-  [25.3, 27.9, 'Maret 1989. Menara tua di Pavia runtuh tiba-tiba.'],
-  [28.0, 29.5, 'Empat orang tewas.'],
-  [29.9, 32.2, 'Sepuluh bulan kemudian, Pisa ditutup.'],
-  [32.3, 35.1, 'Kemiringannya sudah 5,5 derajat… nyaris tumbang.'],
-  [35.5, 38.5, 'Para insinyur menyedot tanah sedikit demi sedikit dari sisi utara.'],
-  [38.7, 41.5, 'Perlahan… puncaknya kembali sekitar 45 senti.'],
-  [42.0, 45.4, 'Ironisnya, tanah lunak itu juga yang meredam guncangan gempa.'],
+// ======================= NASKAH =======================
+// Penanda warna kata: *emas* = angka/tahun, !merah! = bahaya, ~biru~ = tanah & sains.
+// say = bentuk ucapan untuk voiceover (angka dieja). sc = nomor adegan.
+const SENT = [
+  { id: 'h1', sc: 1, t: '*Delapan ratus tahun*… ia terus condong ke tanah.' },
+  { id: 'h2', sc: 1, t: 'Tapi anehnya… tak pernah !jatuh!.' },
+  { id: 'b1', sc: 2, t: 'Rahasianya ada di bawah ~tanah~.' },
+  { id: 'b2', sc: 2, t: '~Fondasinya~ cuma *tiga meter*… di atas ~lumpur~ dan ~lempung~ lunak.' },
+  { id: 'y1', sc: 3, t: 'Tahun *1178*, baru dua lantai, menara ini mulai !miring!.' },
+  { id: 'y2', sc: 3, t: 'Lalu !perang!… pembangunan terhenti hampir *seratus tahun*.' },
+  { id: 'j1', sc: 4, t: 'Jeda itu justru menyelamatkannya: ~tanah~ sempat ~memadat~.' },
+  { id: 'j2', sc: 4, t: 'Tanpa jeda, ia hampir pasti !roboh!.' },
+  { id: 'k1', sc: 5, t: 'Tahun *1272*, pembangunan berlanjut.' },
+  { id: 'k2', sc: 5, t: 'Lantai atasnya dibuat lebih tinggi di sisi miring… jadi menaranya sedikit ~melengkung~.' },
+  { id: 'c1', sc: 6, t: 'Lalu, kenapa tak !roboh!?' },
+  { id: 'c2', sc: 6, t: '~Titik~ ~beratnya~ masih jatuh di atas ~fondasi~.' },
+  { id: 'm1', sc: 7, t: 'Tapi manusia justru !memperparahnya!.' },
+  { id: 'm2', sc: 7, t: 'Penggalian di kakinya, lalu suntikan ~beton~… membuatnya makin !miring!.' },
+  { id: 'p1', sc: 8, t: '*Maret* *1989*, menara tua di Pavia !runtuh!.' },
+  { id: 'p2', sc: 8, t: '*Empat* *orang* !tewas!.' },
+  { id: 'd1', sc: 9, t: 'Sepuluh bulan kemudian, Pisa !ditutup!.' },
+  { id: 'd2', sc: 9, t: 'Miringnya sudah *5,5* *derajat*… nyaris !tumbang!.' },
+  { id: 'r1', sc: 10, t: 'Insinyur memasang ~pemberat~ ~timah~… lalu menyedot ~tanah~ sedikit demi sedikit.' },
+  { id: 'r2', sc: 10, t: 'Perlahan, puncaknya kembali *45* *senti*.' },
+  { id: 'g1', sc: 11, t: 'Ironisnya, tanah lunak itu juga meredam ~gempa~.' },
+  { id: 'g2', sc: 11, t: '*Empat* ~gempa~ ~kuat~ datang… ia tetap berdiri.' },
+  { id: 'z', sc: 11, t: 'Ia miring… untuk tetap hidup.', nocap: true },
 ];
-window.DUR = DUR; window.CAPS = CAPS; window.SCENES = S;
+const SPOKEN_NUM = { '1178': 'seribu seratus tujuh puluh delapan', '1272': 'seribu dua ratus tujuh puluh dua', '1838': 'seribu delapan ratus tiga puluh delapan',
+  '1934': 'seribu sembilan ratus tiga puluh empat', '1989': 'seribu sembilan ratus delapan puluh sembilan', '5,5': 'lima koma lima', '45': 'empat puluh lima', '1280': 'seribu dua ratus delapan puluh' };
+const COLORS = { '*': '#ffc65a', '!': '#ff5a4a', '~': '#6fd3ff' }, ACTIVE = '#ffe45c';
+
+// ---------- kata & waktu ----------
+const syl = w => Math.max(1, (w.toLowerCase().match(/[aiueo]+/g) || []).length);
+const WORDS = [];
+SENT.forEach((s, si) => {
+  s.words = s.t.split(/\s+/).map(raw => {
+    const m = raw.match(/^([*!~])(.+?)\1(.*)$/);
+    const text = m ? m[2] + m[3] : raw, color = m ? COLORS[m[1]] : null;
+    const bare = text.replace(/[.,…?!]/g, '');
+    let w = SPOKEN_NUM[bare] ? SPOKEN_NUM[bare].split(' ').reduce((a, x) => a + syl(x), 0) : syl(bare);
+    if (/…/.test(text)) w += 2.2; else if (/[.?!]$/.test(text)) w += 1.2; else if (/,$/.test(text)) w += 0.9;
+    return { text, color, w, si };
+  });
+});
+// Waktu kalimat: dari voiceover (audio/waktu-vo.js) bila ada, kalau belum ada pakai perkiraan 4,9 suku kata/detik.
+(function timing() {
+  let t = 0.8;
+  SENT.forEach((s, i) => {
+    const tot = s.words.reduce((a, w) => a + w.w, 0);
+    if (window.VO_TIMES && window.VO_TIMES[i]) { s.t0 = window.VO_TIMES[i][0]; s.t1 = window.VO_TIMES[i][1]; }
+    else { if (i > 0) t += (s.sc !== SENT[i - 1].sc) ? 0.9 : 0.3; s.t0 = t; s.t1 = t + tot / 4.9; t = s.t1; }
+    let c = s.t0;
+    s.words.forEach(w => { w.t0 = c; c += (s.t1 - s.t0) * w.w / tot; w.t1 = c; WORDS.push(w); });
+  });
+})();
+// adegan: mulai sedikit sebelum kalimat pertamanya
+const NSC = 11, SC = [];
+for (let k = 1; k <= NSC; k++) { const f = SENT.find(s => s.sc === k); SC[k] = { a: k === 1 ? 0 : f.t0 - 0.45 }; }
+for (let k = 1; k < NSC; k++) SC[k].b = SC[k + 1].a;
+const LAST = SENT[SENT.length - 1];
+SC[NSC].b = LAST.t1 + 4.2 + 1.3;          // penutup ditahan ±4 dtk, lalu memudar ke hitam
+const DUR = Math.ceil(SC[NSC].b * 10) / 10;
+window.DUR = DUR; window.SENT = SENT; window.SC = SC;
+// waktu sebuah kata diucapkan (indeks kalimat global, potongan kata)
+const SI = id => typeof id === 'number' ? id : SENT.findIndex(s => s.id === id);
+const W = (id, frag) => { const si = SI(id); const w = SENT[si].words.find(x => x.text.toLowerCase().includes(frag.toLowerCase())); return w ? w.t0 : SENT[si].t0; };
 
 // ======================= util =======================
 Pisa.init(document.getElementById('gl'));
@@ -73,7 +127,6 @@ const V = (x, y, z) => new THREE.Vector3(x, y, z);
 const cam = Pisa.camera;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-const eOut = t => 1 - Math.pow(1 - t, 3);
 const prog = (t, a, b, f = ease) => f(clamp((t - a) / (b - a)));
 const pulse = (t, a, b, fi = 0.4, fo = 0.4) => prog(t, a, a + fi) * (1 - prog(t, b - fo, b));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -81,53 +134,68 @@ const lerpV = (a, b, t) => a.clone().lerp(b, t);
 const $ = id => document.getElementById(id);
 const P = v => Pisa.project(v);
 const nz = (t, s) => Math.sin(t * 13.1 + s) * 0.5 + Math.sin(t * 27.7 + s * 2.3) * 0.3 + Math.sin(t * 51.3 + s * 4.1) * 0.2;
-const MOODS = {
-  emas:   {},
-  muram:  { sun: 3.2, hemi: 0.4, gloom: 0.6, sat: 0.72, exposure: 0.95, fog: 0.0034, fogColor: [0.32, 0.27, 0.24] },
-  arsip:  { sun: 0, moon: 3.2, hemi: 0.35, night: 0.7, sat: 0.0, sepia: 1, exposure: 1.35, grain: 0.14, vig: 0.85, fog: 0.006, fogColor: [0.09, 0.09, 0.09] },
-  malam:  { sun: 0, moon: 2.4, hemi: 0.14, night: 1, sat: 0.75, exposure: 1.15, fog: 0.0042, fogColor: [0.025, 0.03, 0.045], vig: 0.7 },
-  fajar:  { sun: 6.0, sunColor: [1.0, 0.62, 0.42], hemi: 0.36, gloom: 0.3, exposure: 1.0 },
-};
-function mixMood(a, b, t) {
-  const A = Object.assign({}, DEFM, MOODS[a]), B = Object.assign({}, DEFM, MOODS[b]), o = {};
-  for (const k in A) o[k] = Array.isArray(A[k]) ? A[k].map((v, i) => lerp(v, B[k][i], t)) : lerp(A[k], B[k], t);
-  return o;
-}
 const DEFM = { sun: 8.0, sunColor: [1.0, 0.58, 0.3], hemi: 0.32, moon: 0, fogColor: [0.5, 0.33, 0.22], fog: 0.0026, night: 0, flash: 0, gloom: 0, exposure: 1.0, sat: 0.9, vig: 0.6, grain: 0.035, flick: 1, sepia: 0 };
+const MOODS = {
+  emas: {},
+  muram: { sun: 3.2, hemi: 0.4, gloom: 0.6, sat: 0.72, exposure: 0.95, fog: 0.0034, fogColor: [0.32, 0.27, 0.24] },
+  senja: { sun: 4.5, sunColor: [1.0, 0.45, 0.22], hemi: 0.3, gloom: 0.5, sat: 0.8, exposure: 0.9, vig: 0.7 },
+  xray: { sun: 4.0, hemi: 0.25, sat: 0.45, exposure: 0.72, vig: 0.75, gloom: 0.4 },
+  arsip: { sun: 0, moon: 3.2, hemi: 0.35, night: 0.7, sat: 0.0, sepia: 1, exposure: 1.35, grain: 0.14, vig: 0.85, fog: 0.006, fogColor: [0.09, 0.09, 0.09] },
+  malam: { sun: 0, moon: 2.4, hemi: 0.14, night: 1, sat: 0.75, exposure: 1.15, fog: 0.0042, fogColor: [0.025, 0.03, 0.045], vig: 0.7 },
+  fajar: { sun: 6.0, sunColor: [1.0, 0.62, 0.42], hemi: 0.36, gloom: 0.3, exposure: 1.0 },
+};
+const mood = (a, b, t = 0) => { const A = Object.assign({}, DEFM, MOODS[a]), B = Object.assign({}, DEFM, MOODS[b || a]), o = {};
+  for (const k in A) o[k] = Array.isArray(A[k]) ? A[k].map((v, i) => lerp(v, B[k][i], t)) : lerp(A[k], B[k], t); return o; };
 
 // ---------- elemen SVG ----------
 const lay = $('lay'), NS = 'http://www.w3.org/2000/svg', E = {};
-function el(id, tag, attrs) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); e.style.opacity = 0; lay.appendChild(e); E[id] = e; return e; }
-el('tegak', 'line', { stroke: '#fff', 'stroke-width': 5, 'stroke-dasharray': '20 14', 'stroke-linecap': 'round' });
-el('sumbu', 'line', { stroke: '#ffc65a', 'stroke-width': 6, 'stroke-linecap': 'round' });
-el('lTegak', 'text', { fill: '#fff', 'font-size': 26, 'text-anchor': 'end' }).textContent = 'TEGAK';
-el('lMiring', 'text', { fill: '#ffc65a', 'font-size': 26 }).textContent = 'MIRING ±4°';
-el('bracket', 'path', { fill: 'none', stroke: '#ffc65a', 'stroke-width': 4 });
-el('lFond', 'text', { fill: '#ffc65a', 'font-size': 26, 'letter-spacing': 3 }).textContent = 'FONDASI ±3 M';
-el('lFond2', 'text', { fill: '#fff', 'font-size': 20, 'letter-spacing': 3 }).textContent = 'TERLALU DANGKAL';
-for (const [id, t] of [['ly1', 'LANAU · ±6 M'], ['ly2', 'LEMPUNG LAUT LUNAK · ±30 M'], ['ly3', 'PASIR PADAT']]) {
-  el(id + 'l', 'line', { stroke: '#fff', 'stroke-width': 2, 'stroke-dasharray': '6 8' });
-  el(id, 'text', { fill: '#fff', 'font-size': 26 }).textContent = t;
+function el(id, tag, attrs, txt) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); e.style.opacity = 0; if (txt) e.textContent = txt; lay.appendChild(e); E[id] = e; return e; }
+const LBL = 44, LBL2 = 34;
+el('tegak', 'line', { stroke: '#fff', 'stroke-width': 6, 'stroke-dasharray': '22 15', 'stroke-linecap': 'round' });
+el('sumbu', 'line', { stroke: '#ffc65a', 'stroke-width': 7, 'stroke-linecap': 'round' });
+el('lTegak', 'text', { fill: '#fff', 'font-size': LBL, 'text-anchor': 'end' }, 'TEGAK');
+el('lMiring', 'text', { fill: '#ffc65a', 'font-size': LBL }, 'MIRING ±4°');
+el('bracket', 'path', { fill: 'none', stroke: '#ffc65a', 'stroke-width': 5 });
+el('lFond', 'text', { fill: '#ffc65a', 'font-size': LBL, 'text-anchor': 'middle' }, 'FONDASI ±3 M');
+el('lFond2', 'text', { fill: '#fff', 'font-size': LBL2, 'text-anchor': 'middle' }, 'TERLALU DANGKAL');
+for (const [id, t] of [['ly1', 'LANAU · ±6 M'], ['ly2', 'LEMPUNG LUNAK · ±30 M'], ['ly3', 'PASIR PADAT']]) {
+  el(id + 'l', 'line', { stroke: '#fff', 'stroke-width': 3, 'stroke-dasharray': '8 10' });
+  el(id, 'text', { fill: '#fff', 'font-size': 40 }, t);
 }
-for (let i = 0; i < 3; i++) el('ar' + i, 'line', { stroke: '#ffc65a', 'stroke-width': 5, 'marker-end': 'url(#panah)' });
-for (let i = 0; i < 2; i++) { el('tb' + i, 'line', { stroke: '#e8e2d8', 'stroke-width': 10, 'stroke-linecap': 'round' }); }
-for (let i = 0; i < 10; i++) el('dot' + i, 'circle', { r: 7, fill: '#6b4f33', stroke: '#ffc65a', 'stroke-width': 1.5 });
-el('lSedot', 'text', { fill: '#ffc65a', 'font-size': 26 }).textContent = 'TANAH DISEDOT';
-el('lSedot2', 'text', { fill: '#fff', 'font-size': 22 }).textContent = 'SISI UTARA · SEDIKIT DEMI SEDIKIT';
-el('lCm', 'text', { fill: '#fff', 'font-size': 30, 'text-anchor': 'middle' });
-el('lDeg', 'text', { fill: '#ffc65a', 'font-size': 30 });
-el('lTutup', 'text', { fill: '#ff6b5a', 'font-size': 34, 'text-anchor': 'middle' }).textContent = 'DITUTUP · 7 JANUARI 1990';
-el('lGempa', 'text', { fill: '#fff', 'font-size': 30, 'text-anchor': 'middle' }).textContent = '≥4 GEMPA KUAT SEJAK 1280';
-el('lGempa2', 'text', { fill: '#ffc65a', 'font-size': 30, 'text-anchor': 'middle' }).textContent = 'TETAP BERDIRI';
+for (let i = 0; i < 4; i++) el('ar' + i, 'line', { stroke: '#ffc65a', 'stroke-width': 6, 'marker-end': 'url(#panah)' });
+for (let i = 0; i < 6; i++) el('cp' + i, 'line', { stroke: '#6fd3ff', 'stroke-width': 6, 'marker-end': 'url(#panahC)' });
+el('lPadat', 'text', { fill: '#6fd3ff', 'font-size': LBL, 'text-anchor': 'middle' }, 'TANAH MEMADAT');
+el('ghost', 'line', { stroke: '#ff5a4a', 'stroke-width': 7, 'stroke-dasharray': '18 12', 'stroke-linecap': 'round' });
+el('lGhost', 'text', { fill: '#ff5a4a', 'font-size': LBL, 'text-anchor': 'middle' }, 'TANPA JEDA: ROBOH');
+el('curve', 'path', { fill: 'none', stroke: '#ffc65a', 'stroke-width': 7, 'stroke-linecap': 'round' });
+el('lCurve', 'text', { fill: '#ffc65a', 'font-size': LBL, 'text-anchor': 'middle' }, 'SEDIKIT MELENGKUNG');
+el('lCurve2', 'text', { fill: '#fff', 'font-size': 30, 'text-anchor': 'middle' }, '(DILEBIH-LEBIHKAN)');
+el('lTinggi', 'text', { fill: '#fff', 'font-size': 38, 'text-anchor': 'middle' }, 'SISI MIRING DIBUAT LEBIH TINGGI');
+el('cog', 'circle', { r: 20, fill: '#6fd3ff', stroke: '#fff', 'stroke-width': 4 });
+el('cogRing', 'circle', { r: 30, fill: 'none', stroke: '#6fd3ff', 'stroke-width': 4 });
+el('plumb', 'line', { stroke: '#6fd3ff', 'stroke-width': 6, 'stroke-dasharray': '16 12' });
+el('lCog', 'text', { fill: '#6fd3ff', 'font-size': LBL }, 'TITIK BERAT');
+el('base', 'line', { stroke: '#7cff9b', 'stroke-width': 12, 'stroke-linecap': 'round' });
+el('lBase', 'text', { fill: '#7cff9b', 'font-size': LBL, 'text-anchor': 'middle' }, '✓ MASIH DI ATAS FONDASI');
+el('c1838', 'text', { fill: '#fff', 'font-size': LBL, 'text-anchor': 'middle' });
+el('c1934', 'text', { fill: '#fff', 'font-size': LBL, 'text-anchor': 'middle' });
+for (let i = 0; i < 2; i++) el('tb' + i, 'line', { stroke: '#e8e2d8', 'stroke-width': 12, 'stroke-linecap': 'round' });
+for (let i = 0; i < 10; i++) el('dot' + i, 'circle', { r: 8, fill: '#6b4f33', stroke: '#ffc65a', 'stroke-width': 2 });
+el('lSedot', 'text', { fill: '#ffc65a', 'font-size': LBL }, 'TANAH DISEDOT');
+el('lLead', 'text', { fill: '#6fd3ff', 'font-size': LBL }, 'PEMBERAT TIMAH');
+el('lCm', 'text', { fill: '#fff', 'font-size': LBL, 'text-anchor': 'middle' });
+el('lTutup', 'text', { fill: '#ff6b5a', 'font-size': LBL, 'text-anchor': 'middle' }, 'DITUTUP · 7 JAN 1990');
+el('lGempa', 'text', { fill: '#fff', 'font-size': LBL, 'text-anchor': 'middle' }, '≥4 GEMPA KUAT SEJAK 1280');
+el('lGempa2', 'text', { fill: '#7cff9b', 'font-size': LBL, 'text-anchor': 'middle' }, 'TETAP BERDIRI');
 const at = (id, x, y) => { E[id].setAttribute('x', x); E[id].setAttribute('y', y); };
 const line = (id, a, b, k = 1) => { const e = E[id]; e.setAttribute('x1', a.x); e.setAttribute('y1', a.y); e.setAttribute('x2', a.x + (b.x - a.x) * k); e.setAttribute('y2', a.y + (b.y - a.y) * k); };
 const op = (id, v) => { (E[id] || $(id)).style.opacity = v; };
+const CX = 510;     // tengah safe zone
 
 // ---------- kamera ----------
-// bingkai menara: jarak D, kamera di (x, y), puncak menara di fTop tinggi layar
-function frameTower(D, camX, camY, fTop, lookX = 2.0) {
+function frameTower(D, camX, camY, fTop, lookX = 2.0, topY) {
   cam.position.set(camX, camY, D);
-  const top = Pisa.axisTop.clone().add(V(0, 0.9, 0));
+  const top = topY ? V(0, topY, 0) : Pisa.axisTop.clone().add(V(0, 0.9, 0));
   let yT = 20;
   for (let i = 0; i < 6; i++) { cam.lookAt(lookX, yT, 0); cam.updateMatrixWorld(); yT += (P(top).y - (1 - fTop) * Pisa.H) * -0.035; }
   const target = V(lookX, yT, 0); cam.lookAt(target); cam.updateMatrixWorld();
@@ -135,159 +203,227 @@ function frameTower(D, camX, camY, fTop, lookX = 2.0) {
 }
 function setCam(pos, target, shake = 0, t = 0) {
   cam.position.copy(pos).add(V(nz(t, 1) * shake, nz(t, 2) * shake * 0.6, nz(t, 3) * shake * 0.4));
-  cam.lookAt(target.clone().add(V(nz(t, 4) * shake * 0.6, nz(t, 5) * shake * 0.6, 0)));
-  cam.updateMatrixWorld();
+  cam.lookAt(target.clone().add(V(nz(t, 4) * shake * 0.6, nz(t, 5) * shake * 0.6, 0))); cam.updateMatrixWorld();
 }
-const camS1 = t => { const p = prog(t, 0, 6.4, x => 1 - Math.pow(1 - x, 2.2)); return frameTower(120 - 40 * p, 15 - 5 * p, 1.25 + 0.15 * p, 0.795 - 0.01 * p); };
-const CUT = { pos: V(0, -4, 64), target: V(0, -6.5, 0) };          // potongan melintang dekat
-const CUTW = { pos: V(-4, -6, 128), target: V(-1, 15, 0) };               // potongan melintang lebar
-
-// ---------- garis tegak vs sumbu ----------
-function leanLines(pt, pm, ext = 1.25, labT = 1, labM = 1, mTxt) {
+const camS1 = t => { const p = prog(t, 0, 6.4, x => 1 - Math.pow(1 - x, 2.2)); return frameTower(126 - 40 * p, 15 - 5 * p, 1.25 + 0.15 * p, 0.70 - 0.01 * p); };
+const CUT = { pos: V(0, -4, 64), target: V(0, -6.5, 0) };
+const CUTW = { pos: V(-4, -6, 132), target: V(-1, 13, 0) };
+function leanLines(pt, pm, ext, labT, labM, mTxt) {
   const b = P(Pisa.baseCenter), v = P(V(0, Pisa.axisTop.y * ext, 0)), a = P(Pisa.axisTop.clone().multiplyScalar(ext));
-  line('tegak', b, v, pt); op('tegak', pt > 0 ? 0.8 : 0);
-  line('sumbu', b, a, pm); op('sumbu', pm > 0 ? 0.95 : 0);
-  at('lTegak', v.x - 22, v.y + 10); at('lMiring', a.x + 22, a.y + 10);
-  if (mTxt) E.lMiring.textContent = mTxt;
-  op('lTegak', 0.9 * labT); op('lMiring', labM);
+  line('tegak', b, v, pt); op('tegak', pt > 0 ? 0.85 : 0); line('sumbu', b, a, pm); op('sumbu', pm > 0 ? 0.95 : 0);
+  at('lTegak', v.x - 24, v.y + 14); at('lMiring', a.x + 24, a.y + 14); if (mTxt) E.lMiring.textContent = mTxt;
+  op('lTegak', 0.95 * labT); op('lMiring', labM);
+}
+function yearCounter(txt, lbl, o) { $('tahun').textContent = txt; op('tahun', o); $('tahunLbl').textContent = lbl; op('tahunLbl', 0.95 * o); }
+
+// ======================= subtitle karaoke =======================
+const CAPFS = 160, CAPW = 880;
+const mctx = document.createElement('canvas').getContext('2d');
+const tw = (s, fs) => { mctx.font = `800 ${fs}px Montserrat`; return mctx.measureText(s).width + s.split(' ').length * 0.26 * fs + 0.1 * fs; };  // + margin & efek membesar
+let CHUNKS = null;
+function buildChunks() {
+  CHUNKS = [];
+  SENT.forEach(s => {
+    if (s.nocap) return;
+    let cur = [];
+    const flush = () => { if (cur.length) CHUNKS.push(cur); cur = []; };
+    s.words.forEach(w => {
+      const test = cur.concat([w]).map(x => x.text).join(' ');
+      if (cur.length && (cur.length >= 3 || tw(test, CAPFS) > CAPW)) flush();
+      cur.push(w);
+      if (/[…,.?!]$/.test(w.text)) flush();
+    });
+    flush();
+  });
+  CHUNKS.forEach((c, i) => { c.t0 = c[0].t0 - 0.06; const nx = CHUNKS[i + 1]; c.t1 = nx && nx[0].si === c[0].si ? nx[0].t0 - 0.06 : c[c.length - 1].t1 + 0.35; });
+}
+function drawCaption(T) {
+  if (!CHUNKS) buildChunks();
+  const box = $('cap'); const c = CHUNKS.find(c => T >= c.t0 && T < c.t1);
+  if (!c) { box.innerHTML = ''; return; }
+  const txt = c.map(w => w.text).join(' ');
+  const fs = Math.min(CAPFS, CAPFS * CAPW / tw(txt, CAPFS));
+  const pop = 0.86 + 0.14 * prog(T, c.t0, c.t0 + 0.14, x => 1 - Math.pow(1 - x, 3));
+  const fade = 1 - prog(T, c.t1 - 0.08, c.t1);
+  box.style.fontSize = fs + 'px'; box.style.opacity = fade; box.style.transform = `scale(${pop})`;
+  box.innerHTML = c.map(w => {
+    const on = T >= w.t0 - 0.04 && T < w.t1 + 0.02;
+    const col = on ? (w.color || ACTIVE) : (w.color && T >= w.t1 ? w.color : '#fff');
+    return `<span style="color:${col};transform:scale(${on ? 1.08 : 1})">${w.text}</span>`;
+  }).join(' ');
+  box.innerHTML = '<div>' + box.innerHTML + '</div>';
 }
 
 // ======================= render =======================
 window.render = function (T) {
-  // reset per frame
   for (const k in E) E[k].style.opacity = 0;
   for (const id of ['judul', 'sub', 'tahun', 'tahunLbl', 'kartu1', 'kartu1s', 'akhir']) op(id, 0);
   Pisa.post.uniforms.fade.value = 1;
-  Pisa.show({ modern: true, bg: true, lawn: true, tower: true, scaffold: false, cables: false, pavia: false, crows: true, mist: true });
-  Pisa.setCut(1e5); Pisa.setBuiltHeight(1e5); Pisa.setLean(3.97);
-  Pisa.tower.rotation.x = 0;
-  let mood = Object.assign({}, DEFM), skyT = T;
+  Pisa.show({ modern: true, bg: true, lawn: true, tower: true, scaffold: false, cables: false, pavia: false, lead: false, crows: true, mist: true });
+  Pisa.setCut(1e5); Pisa.setBuiltHeight(1e5); Pisa.setLean(3.97); Pisa.tower.rotation.x = 0; Pisa.tower.position.y = 0;
+  let M = mood('emas'), skyT = T;
+  const sc = SC.findIndex((s, i) => i > 0 && T >= s.a && T < s.b), A = sc > 0 ? SC[sc].a : 0, B = sc > 0 ? SC[sc].b : DUR, u = T - A, L = B - A;
+  const S0 = i => SENT[SI(i)].t0, S1 = i => SENT[SI(i)].t1;
 
-  if (T < S.s1[1]) {                                   // ---------- 1 · HOOK ----------
-    const t = T;
-    camS1(t);
-    Pisa.post.uniforms.fade.value = prog(t, 0, 1.0);
-    const pj = prog(t, 1.0, 2.8), ps = prog(t, 2.0, 3.4), redup = 1 - prog(t, 6.1, 6.7);
-    op('judul', pj * redup); $('judul').style.filter = `blur(${(1 - pj) * 14}px)`; $('judul').style.letterSpacing = `${(1 - pj) * 16}px`;
-    op('sub', ps * 0.92 * redup);
-    leanLines(prog(t, 6.4, 7.3), prog(t, 7.1, 8.0), 1.25, prog(t, 6.9, 7.4), prog(t, 7.6, 8.2), 'MIRING ±4°');
+  if (sc === 1) {                                     // 1 · HOOK
+    camS1(T);
+    Pisa.post.uniforms.fade.value = prog(T, 0, 1.0);
+    const pj = prog(T, 0.9, 2.6), ps = prog(T, 1.8, 3.2), redup = 1 - prog(T, S0('h2') + 0.4, S0('h2') + 1.0);
+    op('judul', pj * redup); $('judul').style.filter = `blur(${(1 - pj) * 14}px)`; $('judul').style.letterSpacing = `${(1 - pj) * 14}px`;
+    op('sub', ps * redup);
+    const l0 = S0('h2') + 0.8;
+    leanLines(prog(T, l0, l0 + 0.9), prog(T, l0 + 0.7, l0 + 1.6), 1.2, prog(T, l0 + 0.5, l0 + 1.0), prog(T, l0 + 1.2, l0 + 1.8), 'MIRING ±4°');
 
-  } else if (T < S.s2[1]) {                            // ---------- 2 · DI BAWAH TANAH ----------
-    const u = T - S.s2[0];
-    const s1 = camS1(9);
-    const k = prog(u, 0.7, 3.2);
+  } else if (sc === 2) {                              // 2 · DI BAWAH TANAH
+    const s1 = camS1(SC[1].b), k = prog(u, 0.6, 3.0);
     setCam(lerpV(s1.pos, CUT.pos, k), lerpV(s1.target, CUT.target, k));
     Pisa.setCut(lerp(150, 0, prog(u, 0.0, 1.9)));
-    const lf = 1 - prog(u, 0, 0.6); leanLines(1, 1, 1.25, lf, lf); op('tegak', 0.8 * lf); op('sumbu', 0.95 * lf);
-    // fondasi
-    const pf = prog(u, 3.4, 4.2);
-    const f0 = P(V(10.4, 0, 0)), f1 = P(V(10.4, -3, 0));
-    E.bracket.setAttribute('d', `M${f0.x - 14},${f0.y} L${f0.x},${f0.y} L${f1.x},${f1.y} L${f1.x - 14},${f1.y}`);
-    op('bracket', pf); const fc = P(V(0, -4.3, 0)); E.lFond.setAttribute('text-anchor', 'middle'); E.lFond2.setAttribute('text-anchor', 'middle');
-    at('lFond', 540, fc.y + 6); op('lFond', pf);
-    at('lFond2', 540, fc.y + 38); op('lFond2', 0.85 * prog(u, 4.0, 4.6));
-    // lapisan
-    const lays = [['ly1', -5.6, 4.6], ['ly2', -18, 5.4], ['ly3', -37.5, 6.2]];
-    for (const [id, y, a] of lays) {
-      const p = prog(u, a, a + 0.6), L0 = P(V(-16, y, 0)), L1 = P(V(-3, y, 0));
-      line(id + 'l', L0, L1, p); op(id + 'l', 0.6 * p); at(id, L0.x, L0.y - 14); E[id].setAttribute('x', 70); op(id, p);
-    }
-    // tekanan: panah turun di bawah fondasi
-    for (let i = 0; i < 3; i++) {
-      const x = -5 + i * 5, ph = ((u * 0.9 + i * 0.33) % 1), a = P(V(x, -3.6 - ph * 2.5, 0)), b = P(V(x, -5.6 - ph * 2.5, 0));
-      line('ar' + i, a, b); op('ar' + i, prog(u, 6.6, 7.2) * Math.sin(ph * Math.PI));
-    }
-    Pisa.post.uniforms.fade.value = 1 - prog(u, 8.4, 9.0);
+    const lf = 1 - prog(u, 0, 0.6); leanLines(1, 1, 1.2, lf, lf); op('tegak', 0.85 * lf); op('sumbu', 0.95 * lf);
+    const pf = prog(T, W('b2', 'tiga') - 0.2, W('b2', 'tiga') + 0.5);
+    const f0 = P(V(10.4, 0, 0)), f1 = P(V(10.4, -3, 0)), fc = P(V(0, -4.4, 0));
+    E.bracket.setAttribute('d', `M${f0.x - 16},${f0.y} L${f0.x},${f0.y} L${f1.x},${f1.y} L${f1.x - 16},${f1.y}`);
+    op('bracket', pf); at('lFond', CX, fc.y + 10); op('lFond', pf); at('lFond2', CX, fc.y + 52); op('lFond2', prog(T, W('b2', 'tiga') + 0.3, W('b2', 'tiga') + 0.9));
+    const lays = [['ly1', -5.4, W('b2', 'lumpur')], ['ly2', -16, W('b2', 'lempung')], ['ly3', -33.5, W('b2', 'lunak')]];
+    for (const [id, y, a] of lays) { const p = prog(T, a - 0.1, a + 0.5), L0 = P(V(-16, y, 0)), L1 = P(V(-2, y, 0)); line(id + 'l', V(80, L0.y + 14, 0), V(L1.x, L0.y + 14, 0), p); op(id + 'l', 0.7 * p); at(id, 80, L0.y); op(id, p); }
+    for (let i = 0; i < 4; i++) { const x = -7 + i * 4.7, ph = ((u * 0.9 + i * 0.27) % 1), a = P(V(x, -3.6 - ph * 2.5, 0)), b = P(V(x, -5.8 - ph * 2.5, 0)); line('ar' + i, a, b); op('ar' + i, prog(T, S1('b2') - 0.6, S1('b2')) * Math.sin(ph * Math.PI)); }
+    Pisa.post.uniforms.fade.value = 1 - prog(u, L - 0.5, L);
 
-  } else if (T < S.s3[1]) {                            // ---------- 3 · 1178 ----------
-    const u = T - S.s3[0];
+  } else if (sc === 3) {                              // 3 · 1178: miring & terhenti
     Pisa.show({ modern: false });
-    Pisa.setLean(lerp(0, 0.9, prog(u, 0.6, 3.2)));
-    Pisa.setBuiltHeight(11.0 + 2 * 6.4 + 0.4);
-    mood = Object.assign({}, DEFM, MOODS.muram);
-    const a = lerp(0.32, -0.12, prog(u, 0, 7, x => x));
-    setCam(V(Math.sin(a) * 50 + 2, 2.2, Math.cos(a) * 50), V(1, 15.5, 0));
-    // jeda ±100 tahun: langit berpacu, cahaya berkedip siang–malam
-    const tl = prog(u, 3.9, 6.2, x => x);
-    if (tl > 0) { skyT = T + tl * 260; const dn = 0.5 + 0.5 * Math.cos(tl * Math.PI * 14); mood.sun *= 0.25 + 0.75 * dn; mood.exposure *= 0.7 + 0.3 * dn; mood.night = (1 - dn) * 0.7; }
-    const yr = u < 3.9 ? Math.round(lerp(1173, 1178, prog(u, 0.5, 1.8, x => x))) : Math.round(lerp(1178, 1272, tl));
-    $('tahun').textContent = yr; op('tahun', prog(u, 0.4, 0.9));
-    $('tahunLbl').textContent = u < 3.9 ? (yr < 1178 ? 'BATU PERTAMA' : 'MULAI MIRING') : (yr < 1272 ? 'PEMBANGUNAN TERHENTI' : 'DILANJUTKAN');
-    op('tahunLbl', 0.92 * prog(u, 0.6, 1.1));
-    Pisa.post.uniforms.fade.value = prog(u, 0, 0.6) * (1 - prog(u, 6.5, 7.0));
+    Pisa.setLean(lerp(0, 0.9, prog(T, W('y1', 'miring') - 0.4, W('y1', 'miring') + 0.8)));
+    Pisa.setBuiltHeight(11.0 + 6.4 + 0.4);           // lantai dasar + 1 galeri = "lantai kedua"
+    M = mood('muram');
+    const a = lerp(0.34, -0.14, prog(u, 0, L, x => x));
+    setCam(V(Math.sin(a) * 46 + 2, 2.0, Math.cos(a) * 46), V(1, 12.5, 0));
+    const tS = W('y2', 'terhenti'), tE = S1('y2') + 0.2, tl = prog(T, tS, tE, x => x);
+    if (tl > 0) { skyT = T + tl * 260; const dn = 0.5 + 0.5 * Math.cos(tl * Math.PI * 14); M.sun *= 0.25 + 0.75 * dn; M.exposure *= 0.7 + 0.3 * dn; M.night = (1 - dn) * 0.7; }
+    const yr = T < tS ? Math.round(lerp(1173, 1178, prog(T, A + 0.3, W('y1', '1178'), x => x))) : Math.round(lerp(1178, 1272, tl));
+    const lbl = T < W('y1', 'miring') ? (yr < 1178 ? 'BATU PERTAMA' : 'LANTAI KEDUA') : T < W('y2', 'perang') ? 'MULAI MIRING' : T < tS ? 'PERANG' : (yr < 1272 ? 'PEMBANGUNAN TERHENTI' : 'DILANJUTKAN');
+    yearCounter(yr, lbl, prog(u, 0.2, 0.7));
+    Pisa.post.uniforms.fade.value = prog(u, 0, 0.5);
 
-  } else if (T < S.s4[1]) {                            // ---------- 4 · PAVIA 1989 (kilas balik) ----------
-    const u = T - S.s4[0];
-    Pisa.show({ tower: false, modern: false, bg: false, pavia: true, crows: false, mist: false });
-    Pisa.paviaCollapse(u - 0.9);
-    mood = Object.assign({}, DEFM, MOODS.arsip);
-    mood.flick = 0.92 + 0.08 * Math.abs(nz(u * 3, 7));
-    const sh = 0.05 + 0.5 * pulse(u, 0.9, 4.0, 0.15, 1.5);
-    setCam(V(12, 1.7, 58), V(0, 26 - prog(u, 1.0, 3.5) * 14, 0), sh, u);
-    $('kartu1').innerHTML = 'PAVIA'; $('kartu1s').innerHTML = '17 MARET 1989';
-    op('kartu1', prog(u, 0.1, 0.6)); op('kartu1s', 0.92 * prog(u, 0.3, 0.8));
-    if (u > 2.8) { $('kartu1s').innerHTML = '<span style="font-weight:500;font-size:40px;color:#fff">4 TEWAS · 15 LUKA</span>'; }
-    Pisa.post.uniforms.fade.value = prog(u, 0, 0.15) * (1 - prog(u, 4.35, 4.6));
+  } else if (sc === 4) {                              // 4 · jeda menyelamatkan: tanah memadat
+    Pisa.show({ modern: false });
+    Pisa.setLean(0.9); Pisa.setBuiltHeight(11.0 + 6.4 + 0.4);
+    Pisa.setCut(lerp(150, 0, prog(u, 0, 1.6)));
+    M = mood('muram', 'emas', prog(u, 0, L));
+    setCam(lerpV(V(8, 3, 60), V(0, -3, 52), prog(u, 0, 2.2)), lerpV(V(1, 10, 0), V(0, -4, 0), prog(u, 0, 2.2)));
+    Pisa.tower.position.y = -0.35 * prog(T, W('j1', 'memadat') - 0.6, W('j1', 'memadat') + 1.4);
+    const pc = prog(T, W('j1', 'tanah') - 0.1, W('j1', 'tanah') + 0.5);
+    for (let i = 0; i < 6; i++) { const side = i < 3 ? -1 : 1, y = -5 - (i % 3) * 3.5, ph = (u * 0.8 + i * 0.2) % 1;
+      const a = P(V(side * (14 - ph * 4), y, 0)), b = P(V(side * (10 - ph * 4), y, 0)); line('cp' + i, a, b); op('cp' + i, pc * Math.sin(ph * Math.PI)); }
+    at('lPadat', CX, 1100); op('lPadat', prog(T, W('j1', 'memadat') - 0.1, W('j1', 'memadat') + 0.4));
+    // skenario tanpa jeda: garis merah merebah
+    const g0 = W('j2', 'roboh') - 0.9, pg = prog(T, g0, g0 + 1.4, x => x * x), bb = P(V(0, 0, 0));
+    const ang = (90 - 1 - 60 * pg) * Math.PI / 180, len = 640;
+    line('ghost', bb, { x: bb.x + Math.cos(ang) * len, y: bb.y - Math.sin(ang) * len }); op('ghost', pulse(T, g0, B, 0.3, 0.3));
+    at('lGhost', CX, 330); op('lGhost', pulse(T, g0 + 0.6, B, 0.3, 0.3));
+    Pisa.post.uniforms.fade.value = 1 - prog(u, L - 0.4, L);
 
-  } else if (T < S.s5[1]) {                            // ---------- 5 · PISA DITUTUP (malam) ----------
-    const u = T - S.s5[0];
-    Pisa.setLean(5.5);
-    Pisa.show({ cables: true, crows: true });
-    mood = Object.assign({}, DEFM, MOODS.malam);
-    const fl = Math.max(pulse(u, 0.0, 0.5, 0.03, 0.35), 0.7 * pulse(u, 3.4, 3.75, 0.03, 0.25));
-    mood.flash = fl * 1.2; mood.moon += fl * 9; mood.exposure += fl * 0.4;
-    const p = prog(u, 0, 5.6, x => x);
-    frameTower(96 - 8 * p, 10 - 2 * p, 1.4, 0.76);
-    op('lTutup', prog(u, 1.0, 1.5)); at('lTutup', 540, 190);
-    leanLines(prog(u, 2.2, 3.0), prog(u, 2.8, 3.6), 1.12, prog(u, 2.6, 3.0), prog(u, 3.3, 3.8), 'MIRING 5,5°');
-    Pisa.post.uniforms.fade.value = prog(u, 0, 0.12) * (1 - prog(u, 5.2, 5.6));
-
-  } else if (T < S.s6[1]) {                            // ---------- 6 · PENYELAMATAN ----------
-    const u = T - S.s6[0];
-    Pisa.setCut(0); Pisa.show({ cables: true });
-    mood = mixMood('fajar', 'emas', prog(u, 0, 6.4));
-    const lean = lerp(5.5, 3.97, prog(u, 1.8, 5.8));
-    Pisa.setLean(lean);
-    setCam(CUTW.pos, CUTW.target);
-    // pipa penyedot di sisi utara (kiri) dan butir tanah yang terangkat
-    const ends = [[V(-34, 0.2, 0.4), V(-10.5, -4.4, 0.4)], [V(-34, 0.2, 0.4), V(-7, -5.2, 0.4)]];
-    const pt = prog(u, 0.6, 1.4);
-    ends.forEach(([a, b], i) => { line('tb' + i, P(a), P(b), pt); op('tb' + i, 0.9 * pt); });
-    for (let i = 0; i < 10; i++) {
-      const [a, b] = ends[i % 2], f = 1 - ((u * 0.55 + i * 0.1) % 1), q = P(lerpV(a, b, f));
-      E['dot' + i].setAttribute('cx', q.x); E['dot' + i].setAttribute('cy', q.y);
-      op('dot' + i, pulse(u, 1.4, 6.0, 0.4, 0.4));
+  } else if (sc === 5) {                              // 5 · 1272–1372: dibangun melengkung
+    Pisa.setLean(2.2);
+    const bh = lerp(11.0 + 6.4 + 0.4, 60, prog(T, W('k1', 'berlanjut'), W('k2', 'melengkung') - 0.2, x => x));
+    Pisa.setBuiltHeight(bh);
+    M = mood('emas');
+    const fr = frameTower(lerp(98, 104, prog(u, 0, L, x => x)), 12, 1.5, 0.70, 2.0, 56.8);
+    Pisa.post.uniforms.fade.value = prog(u, 0, 0.5);
+    const yr = Math.round(lerp(1272, 1372, prog(T, W('k1', 'berlanjut'), W('k2', 'melengkung') - 0.2, x => x)));
+    yearCounter(yr, yr < 1372 ? 'DILANJUTKAN' : 'RUANG LONCENG SELESAI', prog(u, 0.3, 0.8) * (1 - prog(T, W('k2', 'melengkung') - 0.5, W('k2', 'melengkung'))));
+    op('lTinggi', pulse(T, W('k2', 'lebih'), W('k2', 'melengkung') - 0.3)); at('lTinggi', CX, 1110);
+    // garis sumbu melengkung (dilebih-lebihkan)
+    const pc = prog(T, W('k2', 'melengkung') - 0.2, W('k2', 'melengkung') + 0.8);
+    if (pc > 0) {
+      const L0 = Math.PI / 180 * 2.2, pts = [];
+      for (let i = 0; i <= 24; i++) { const s = i / 24 * 57, bend = Math.pow(s / 57, 2) * 6.5;
+        pts.push(P(V(Math.sin(L0) * s - bend, s, 0))); }
+      const n = Math.max(2, Math.round(pts.length * pc));
+      E.curve.setAttribute('d', 'M' + pts.slice(0, n).map(p => `${p.x},${p.y}`).join(' L'));
+      op('curve', 1); at('lCurve', CX, 330); op('lCurve', pc); at('lCurve2', CX, 378); op('lCurve2', pc * 0.9);
     }
-    const q0 = P(V(-34, 0.2, 0.4)); at('lSedot', 60, q0.y + 150); at('lSedot2', 60, q0.y + 186);
-    op('lSedot', prog(u, 1.2, 1.7)); op('lSedot2', 0.85 * prog(u, 1.4, 1.9));
-    leanLines(1, 1, 1.12, prog(u, 0.4, 0.9), prog(u, 0.4, 0.9), `MIRING ${lean.toFixed(1).replace('.', ',')}°`);
-    const cm = Math.round(45 * prog(u, 1.8, 5.8));
-    E.lCm.textContent = `PUNCAK KEMBALI ${cm} CM`; at('lCm', 540, 190); op('lCm', prog(u, 1.9, 2.4));
+
+  } else if (sc === 6) {                              // 6 · titik berat
+    Pisa.setLean(3.97);
+    M = mood('emas', 'xray', prog(u, 0, 1.0));
+    frameTower(lerp(104, 96, prog(u, 0, L, x => x)), 12, 1.5, 0.70);
+    const lean = 3.97 * Math.PI / 180, h = 22.6;
+    const c = P(V(Math.sin(lean) * h, Math.cos(lean) * h, 0)), g = P(V(Math.sin(lean) * h, 0, 0));
+    const pc = prog(T, W('c2', 'titik') - 0.15, W('c2', 'titik') + 0.35);
+    E.cog.setAttribute('cx', c.x); E.cog.setAttribute('cy', c.y); op('cog', pc);
+    const pr = (u * 1.4) % 1; E.cogRing.setAttribute('cx', c.x); E.cogRing.setAttribute('cy', c.y); E.cogRing.setAttribute('r', 22 + pr * 40); op('cogRing', pc * (1 - pr));
+    at('lCog', c.x + 50, c.y + 14); op('lCog', pc);
+    const pp = prog(T, W('c2', 'jatuh') - 0.1, W('c2', 'jatuh') + 0.6); line('plumb', c, g, pp); op('plumb', pp > 0 ? 1 : 0);
+    const pb = prog(T, W('c2', 'fondasi') - 0.1, W('c2', 'fondasi') + 0.4);
+    const b0 = P(V(-9.8 * Math.cos(lean), 9.8 * Math.sin(lean) * 0, 0)), b1 = P(V(9.8 * Math.cos(lean), 0, 0));
+    line('base', b0, b1, pb); op('base', pb ? 1 : 0); at('lBase', CX, 360); op('lBase', prog(T, W('c2', 'fondasi') + 0.4, W('c2', 'fondasi') + 0.9));
+    Pisa.post.uniforms.fade.value = 1 - prog(u, L - 0.35, L);
+
+  } else if (sc === 7) {                              // 7 · manusia memperparah
+    Pisa.setLean(lerp(4.6, 5.5, prog(T, W('m2', 'penggalian'), S1('m2'), x => x)));
+    M = mood('senja');
+    const a = lerp(-0.08, 0.1, prog(u, 0, L, x => x));
+    setCam(V(Math.sin(a) * 92 + 6, 1.6, Math.cos(a) * 92), frameTower(92, 6, 1.6, 0.66).target);
+    Pisa.post.uniforms.fade.value = prog(u, 0, 0.35);
+    E.c1838.textContent = '1838 · KAKI MENARA DIGALI'; at('c1838', CX, 330); op('c1838', pulse(T, W('m2', 'penggalian') - 0.1, B, 0.35, 0.3));
+    E.c1934.textContent = '1934 · ±200 TON BETON'; at('c1934', CX, 400); op('c1934', pulse(T, W('m2', 'beton') - 0.1, B, 0.35, 0.3));
+    const pm = prog(T, W('m2', 'miring') - 0.6, W('m2', 'miring') + 0.3);
+    leanLines(pm, pm, 1.1, 0, pm, 'MIRING ' + (lerp(4.6, 5.5, prog(T, W('m2', 'penggalian'), S1('m2'), x => x))).toFixed(1).replace('.', ',') + '°');
+    Pisa.post.uniforms.fade.value = prog(u, 0, 0.35) * (1 - prog(u, L - 0.3, L));
+
+  } else if (sc === 8) {                              // 8 · PAVIA 1989 (kilas balik)
+    Pisa.show({ tower: false, modern: false, bg: false, pavia: true, crows: false, mist: false });
+    const tc = W('p1', 'runtuh') - 0.35; Pisa.paviaCollapse(T - tc);
+    M = mood('arsip'); M.flick = 0.92 + 0.08 * Math.abs(nz(u * 3, 7));
+    const sh = 0.05 + 0.5 * pulse(T, tc, tc + 3.2, 0.15, 1.5);
+    setCam(V(12, 1.7, 60), V(0, 27 - prog(T, tc + 0.1, tc + 2.6) * 14, 0), sh, u);
+    $('kartu1').innerHTML = 'PAVIA'; op('kartu1', prog(u, 0.1, 0.6));
+    $('kartu1s').innerHTML = T < W('p2', 'tewas') - 0.2 ? '17 MARET 1989' : '<span style="color:#ff5a4a;font-weight:800;font-size:52px">4 TEWAS · 15 LUKA</span>'; op('kartu1s', prog(u, 0.3, 0.8));
+    Pisa.post.uniforms.fade.value = prog(u, 0, 0.15) * (1 - prog(u, L - 0.25, L));
+
+  } else if (sc === 9) {                              // 9 · PISA DITUTUP (malam)
+    Pisa.setLean(5.5); Pisa.show({ cables: true });
+    M = mood('malam');
+    const fl = Math.max(pulse(u, 0.0, 0.5, 0.03, 0.35), 0.7 * pulse(T, W('d2', 'tumbang') - 0.1, W('d2', 'tumbang') + 0.25, 0.03, 0.25));
+    M.flash = fl * 1.2; M.moon += fl * 9; M.exposure += fl * 0.4;
+    frameTower(lerp(98, 90, prog(u, 0, L, x => x)), 10, 1.4, 0.68);
+    at('lTutup', CX, 320); op('lTutup', prog(T, W('d1', 'ditutup') - 0.1, W('d1', 'ditutup') + 0.4));
+    const l0 = W('d2', '5,5') - 0.4;
+    leanLines(prog(T, l0, l0 + 0.7), prog(T, l0 + 0.4, l0 + 1.1), 1.08, prog(T, l0 + 0.3, l0 + 0.7), prog(T, l0 + 0.7, l0 + 1.1), 'MIRING 5,5°');
+    Pisa.post.uniforms.fade.value = prog(u, 0, 0.12) * (1 - prog(u, L - 0.4, L));
+
+  } else if (sc === 10) {                             // 10 · PENYELAMATAN
+    Pisa.setCut(0); Pisa.show({ cables: true, lead: T >= W('r1', 'pemberat') - 0.3 });
+    M = mood('fajar', 'emas', prog(u, 0, L));
+    const s0 = W('r1', 'menyedot'), s1 = S1('r2');
+    const lean = lerp(5.5, 3.97, prog(T, s0, s1, x => x)); Pisa.setLean(lean);
+    setCam(CUTW.pos, CUTW.target);
+    const lq = P(V(-13, 4, 0)); at('lLead', 70, 700); op('lLead', pulse(T, W('r1', 'pemberat') - 0.1, s0 + 0.5, 0.4, 0.4));
+    const ends = [[V(-34, 0.2, 0.4), V(-10.5, -4.4, 0.4)], [V(-34, 0.2, 0.4), V(-7, -5.2, 0.4)]];
+    const pt = prog(T, s0 - 0.3, s0 + 0.5);
+    ends.forEach(([a, b], i) => { line('tb' + i, P(a), P(b), pt); op('tb' + i, 0.95 * pt); });
+    for (let i = 0; i < 10; i++) { const [a, b] = ends[i % 2], f = 1 - ((u * 0.55 + i * 0.1) % 1), q = P(lerpV(a, b, f)); E['dot' + i].setAttribute('cx', q.x); E['dot' + i].setAttribute('cy', q.y); op('dot' + i, pulse(T, s0 + 0.5, s1 + 0.3, 0.4, 0.4)); }
+    const q0 = P(V(-34, 0.2, 0.4)); at('lSedot', 70, 700); op('lSedot', prog(T, s0, s0 + 0.5));
+    leanLines(1, 1, 1.1, prog(u, 0.3, 0.8), prog(u, 0.3, 0.8), `MIRING ${lean.toFixed(1).replace('.', ',')}°`);
+    const cm = Math.round(45 * prog(T, s0, s1, x => x));
+    E.lCm.textContent = `PUNCAK KEMBALI ${cm} CM`; at('lCm', CX, 1090); op('lCm', prog(T, W('r2', 'puncaknya') - 0.2, W('r2', 'puncaknya') + 0.3));
     Pisa.post.uniforms.fade.value = prog(u, 0, 0.4);
 
-  } else {                                             // ---------- 7 · GEMPA & PENUTUP ----------
-    const u = T - S.s7[0];
-    const k = prog(u, 0, 1.8);
-    const end = frameTower(84, 10, 1.4, 0.70);
+  } else {                                            // 11 · GEMPA & PENUTUP
+    const k = prog(u, 0, 1.8), end = frameTower(86, 10, 1.4, 0.66);
     Pisa.setCut(lerp(0, 150, prog(u, 0.2, 1.9)));
-    mood = mixMood('emas', 'emas', 0);
-    const sh = 0.55 * pulse(u, 1.9, 4.4, 0.25, 1.2);
+    const q0 = W('g1', 'gempa') - 0.2, q1 = W('g2', 'berdiri') + 0.4;
+    const sh = 0.55 * pulse(T, q0, q1, 0.25, 1.2);
     setCam(lerpV(CUTW.pos, end.pos, k), lerpV(CUTW.target, end.target, k), sh, u);
     Pisa.tower.rotation.x = nz(u * 1.6, 9) * 0.0012 * (sh / 0.55);
-    op('lGempa', pulse(u, 2.0, 4.6)); at('lGempa', 540, 230);
-    op('lGempa2', pulse(u, 2.8, 4.6)); at('lGempa2', 540, 280);
-    const pa = prog(u, 4.4, 5.4);
+    at('lGempa', CX, 330); op('lGempa', pulse(T, W('g2', 'empat') - 0.1, S1('g2') + 0.6, 0.35, 0.4));
+    at('lGempa2', CX, 395); op('lGempa2', pulse(T, W('g2', 'berdiri') - 0.1, S1('g2') + 0.6, 0.35, 0.4));
+    const pa = prog(T, S0('z') - 0.2, S0('z') + 0.9);
     op('akhir', pa); $('akhir').style.filter = `blur(${(1 - pa) * 12}px)`;
-    Pisa.post.uniforms.fade.value = 1 - prog(u, 5.9, 6.4);
+    Pisa.post.uniforms.fade.value = 1 - prog(T, B - 1.3, B);
   }
 
-  Pisa.mood(mood);
+  Pisa.mood(M);
   Pisa.frame(T, skyT);
-
-  // teks narasi
-  const c = CAPS.find(([a, b]) => T >= a && T < b);
-  if (c) { $('cap').textContent = c[2]; op('cap', pulse(T, c[0], c[1], 0.25, 0.25)); }
-  else op('cap', 0);
+  drawCaption(T);
 };
 window.render(0);
 </script>
