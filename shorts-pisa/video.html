@@ -121,6 +121,22 @@ window.DUR = DUR; window.SENT = SENT; window.SC = SC;
 const SI = id => typeof id === 'number' ? id : SENT.findIndex(s => s.id === id);
 const W = (id, frag) => { const si = SI(id); const w = SENT[si].words.find(x => x.text.toLowerCase().includes(frag.toLowerCase())); return w ? w.t0 : SENT[si].t0; };
 
+// waktu efek suara (dibaca tools/audio.py lewat tools/waktu.js)
+window.AUDIO_EV = () => ({
+  dur: DUR, sc: SC.slice(1).map(x => [x.a, x.b]),
+  bell: [0.4, SENT[1].t0 + 1.4, SENT[SI('z')].t0],
+  crows: [2.3, 2.75, 5.6, SC[11].a + 3.0, SENT[SI('z')].t0 + 1.0, SENT[SI('z')].t0 + 1.45],
+  cut: [SC[2].a, SC[4].a, SC[10].a - 0.2], cutUp: [SC[11].a],
+  thump: [W('b2', 'tiga'), W('j1', 'memadat'), W('c2', 'fondasi')],
+  creak: [W('y1', 'miring'), W('j2', 'roboh') - 0.6, W('m2', 'miring')],
+  timelapse: [W('y2', 'terhenti'), SENT[SI('y2')].t1 + 0.2],
+  build: [W('k1', 'berlanjut'), W('k2', 'melengkung')],
+  pavia: [SC[8].a, SC[8].b, W('p1', 'runtuh') - 0.35],
+  night: [SC[9].a, SC[9].b, W('d2', 'tumbang') - 0.1],
+  motor: [W('r1', 'menyedot'), SENT[SI('r2')].t1],
+  quake: [W('g1', 'gempa') - 0.2, W('g2', 'berdiri') + 0.4],
+  ding: [W('c2', 'fondasi') + 0.4, W('g2', 'berdiri')],
+});
 // ======================= util =======================
 Pisa.init(document.getElementById('gl'));
 const V = (x, y, z) => new THREE.Vector3(x, y, z);

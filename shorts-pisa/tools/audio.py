@@ -1,11 +1,13 @@
 """Musik latar misterius + efek suara, disintesis dari nol (bebas lisensi, tanpa kredit).
-pakai: python3 tools/audio.py hasil/musik-sfx.wav
-Waktu efek mengikuti linimasa video.html (48 dtk)."""
-import sys, wave
+pakai: python3 tools/audio.py hasil/musik-sfx.wav [audio/ev.json]
+Waktu efek dibaca dari audio/ev.json (ditulis tools/waktu.js dari linimasa video.html)."""
+import sys, wave, json
 import numpy as np
 
+EV = json.load(open(sys.argv[2] if len(sys.argv) > 2 else 'audio/ev.json'))
+SC = EV['sc']
 SR = 48000
-DUR = 48.0
+DUR = float(EV['dur'])
 N = int(SR * DUR)
 rng = np.random.default_rng(7)
 mus = np.zeros((N, 2)); sfx = np.zeros((N, 2))
@@ -49,21 +51,19 @@ def pad(ms, d, bright=1.0):
     e = np.minimum(1, tt / 1.6) * np.clip((d - tt) / 1.8, 0, 1)
     return s * e / (len(ms) * 3)
 
-# Dm – Bb – Gm – A (minor, menggantung); senyap saat kilas balik Pavia
-prog = [(0, [62, 65, 69]), (6, [58, 62, 65]), (12, [55, 58, 62]), (18, [57, 61, 64]),
-        (35.2, [62, 65, 69]), (41.6, [58, 62, 65]), (44.5, [62, 65, 69, 74])]
-for i, (t0, ch) in enumerate(prog):
-    d = (prog[i + 1][0] - t0 + 1.8) if i + 1 < len(prog) else DUR - t0
-    put(mus, pad(ch, d, 0.8), t0, 0.16, (-0.3 if i % 2 else 0.3))
-# denyut jantung rendah (Pavia & malam)
+# Dm – Bb – Gm – A berganti tiap adegan; senyap di kilas balik Pavia (adegan 8)
+CH = [[62, 65, 69], [58, 62, 65], [55, 58, 62], [57, 61, 64]]
+for i, (a0, b0) in enumerate(SC):
+    if i == 7: continue
+    br = 0.5 if i in (8,) else 0.8
+    put(mus, pad(CH[i % 4] if i < len(SC) - 1 else [62, 65, 69, 74], b0 - a0 + 1.8, br), a0, 0.16 if i != 8 else 0.1, (-0.3 if i % 2 else 0.3))
 def beat():
     tt = tarr(0.35); f = 45 + 35 * np.exp(-tt * 25)
     return np.sin(2 * np.pi * np.cumsum(f) / SR) * env(tt, 0.004, 0.09)
-for k, tb in enumerate(np.arange(25.0, 35.0, 0.85)):
+for tb in np.arange(SC[7][0], SC[8][1], 0.85):          # denyut jantung: Pavia & malam
     put(mus, beat(), tb, 0.5); put(mus, beat(), tb + 0.22, 0.32)
-# senar tinggi tegang di malam hari
-tt = tarr(5.6); s = np.sin(2 * np.pi * hz(86) * tt + 0.3 * np.sin(2 * np.pi * 5.5 * tt)) * np.minimum(1, tt / 2) * np.clip((5.6 - tt) / 1, 0, 1)
-put(mus, s, 29.6, 0.035, 0.4)
+d9 = SC[8][1] - SC[8][0]; tt = tarr(d9)
+put(mus, np.sin(2 * np.pi * hz(86) * tt + 0.3 * np.sin(2 * np.pi * 5.5 * tt)) * np.minimum(1, tt / 2) * np.clip((d9 - tt) / 1, 0, 1), SC[8][0], 0.035, 0.4)
 
 # ---------------- EFEK SUARA ----------------
 def bell(f0=110, d=7.0):
@@ -131,47 +131,36 @@ def motor(d):
 
 def norm(x): return x / (np.max(np.abs(x)) + 1e-9)
 
-# angin di seluruh adegan Pisa
-put(sfx, norm(wind(25.0)), 0.0, 0.10, -0.2)
-put(sfx, norm(wind(13.0, 520)), 35.2, 0.10, 0.2)
-# 1 · lonceng & gagak
-put(sfx, norm(bell(98)), 0.4, 0.55)
-put(sfx, norm(bell(98, 5)), 6.8, 0.3)
-for tc, pn in [(2.3, -0.5), (2.75, -0.45), (5.4, 0.55), (8.2, 0.3)]: put(sfx, norm(crow()), tc, 0.10, pn)
-# 2 · menembus tanah
-put(sfx, norm(whoosh(1.4, 300, 2200, rev=True)), 8.8, 0.35)
-put(sfx, norm(whoosh(1.8, 1800, 160)), 9.9, 0.4)
-put(sfx, norm(thump()), 11.6, 0.8)
-put(sfx, norm(rumble(4.0, 0.5, 70)), 12.0, 0.35)
-put(sfx, norm(thump()), 12.45, 0.45)
-put(sfx, norm(creak(1.6, 160)), 15.8, 0.22, 0.3)
-put(sfx, norm(whoosh(0.9, 800, 200)), 17.3, 0.3)
-# 3 · 1178: batu berderit, waktu berlalu
-put(sfx, norm(creak(1.8, 140)), 19.8, 0.28, -0.3)
-put(sfx, norm(whoosh(2.6, 200, 3500)), 21.8, 0.32)
-for k in range(14): put(sfx, norm(thump()) * 0.3, 21.9 + k * 0.165, 0.12)
-put(sfx, norm(whoosh(0.8, 1500, 200)), 24.4, 0.3)
-# 4 · Pavia: derak film, retak, runtuh
-put(sfx, norm(crackle(4.6)), 25.0, 0.12)
-put(sfx, norm(bandpass(noise(0.25), 1800, 1.0) * env(tarr(0.25), 0.001, 0.05)), 25.85, 0.6)
-put(sfx, norm(rumble(4.0, 0.2, 110)), 25.9, 0.9)
-put(sfx, norm(debris(3.0)), 26.1, 0.45)
-put(sfx, norm(thump()), 26.7, 0.8)
-# 5 · malam: guntur, hujan
-put(sfx, norm(thunder(4.5)), 29.6, 0.85)
-put(sfx, norm(thunder(3.5)), 33.0, 0.6)
-rain = bandpass(noise(5.6), 4000, 0.6) + 0.4 * lowpass(noise(5.6), 900)
-put(sfx, norm(rain) * np.minimum(1, tarr(5.6) / 0.4) * np.clip((5.6 - tarr(5.6)) / 0.5, 0, 1), 29.6, 0.09)
-# 6 · penyelamatan: mesin bor & sedot
-put(sfx, norm(whoosh(0.8, 300, 1400)), 35.0, 0.25)
-put(sfx, norm(motor(5.2)), 36.0, 0.14)
-put(sfx, norm(creak(2.6, 120)), 37.6, 0.2, -0.2)
-# 7 · gempa & penutup
-put(sfx, norm(whoosh(1.6, 200, 2000)), 41.6, 0.3)
-put(sfx, norm(rumble(3.6, 0.3, 60)), 43.3, 1.0)
-put(sfx, norm(debris(2.2)) * 0.5, 43.7, 0.25)
-put(sfx, norm(bell(98, 5)), 46.0, 0.45)
-for tc, pn in [(45.0, -0.4), (45.45, -0.35)]: put(sfx, norm(crow()), tc, 0.09, pn)
+# angin (tidak di kilas balik Pavia)
+put(sfx, norm(wind(SC[7][0])), 0.0, 0.10, -0.2)
+put(sfx, norm(wind(DUR - SC[8][1])), SC[8][1], 0.10, 0.2)
+for tb in EV['bell'][:2]: put(sfx, norm(bell(98, 6)), tb, 0.45)
+put(sfx, norm(bell(98, 7)), EV['bell'][2], 0.45)
+for k, tc in enumerate(EV['crows']): put(sfx, norm(crow()), tc, 0.10, (-0.5, -0.45, 0.55, 0.3, -0.4, -0.35)[k % 6])
+for tc in EV['cut']:                                      # tanah diiris
+    put(sfx, norm(whoosh(1.4, 300, 2200, rev=True)), tc - 1.2, 0.3)
+    put(sfx, norm(whoosh(1.8, 1800, 160)), tc + 0.1, 0.38)
+    put(sfx, norm(rumble(3.0, 0.4, 70)), tc + 1.2, 0.3)
+for tc in EV['cutUp']: put(sfx, norm(whoosh(1.8, 200, 2000)), tc, 0.3)
+for tc in EV['thump']: put(sfx, norm(thump()), tc, 0.7)
+for tc in EV['creak']: put(sfx, norm(creak(1.6, 150)), tc, 0.25, -0.2)
+t0, t1 = EV['timelapse']; put(sfx, norm(whoosh(t1 - t0, 200, 3500)), t0, 0.3)
+for k in range(int((t1 - t0) / 0.165)): put(sfx, norm(thump()) * 0.3, t0 + k * 0.165, 0.12)
+b0, b1 = EV['build']                                      # batu disusun
+for k in range(int((b1 - b0) / 0.42)): put(sfx, norm(bandpass(noise(0.12), 900 + 300 * (k % 3), 3) * env(tarr(0.12), 0.002, 0.03)), b0 + k * 0.42, 0.22, (k % 2) * 0.4 - 0.2)
+p0, p1, pc = EV['pavia']                                  # kilas balik Pavia
+put(sfx, norm(crackle(p1 - p0)), p0, 0.12)
+put(sfx, norm(bandpass(noise(0.25), 1800, 1.0) * env(tarr(0.25), 0.001, 0.05)), pc - 0.05, 0.6)
+put(sfx, norm(rumble(4.0, 0.2, 110)), pc, 0.9); put(sfx, norm(debris(3.0)), pc + 0.2, 0.45); put(sfx, norm(thump()), pc + 0.8, 0.8)
+n0, n1, nt = EV['night']                                  # malam: guntur & hujan
+put(sfx, norm(thunder(4.5)), n0, 0.85); put(sfx, norm(thunder(3.5)), nt, 0.6)
+dn = n1 - n0; rain = bandpass(noise(dn), 4000, 0.6) + 0.4 * lowpass(noise(dn), 900)
+put(sfx, norm(rain) * np.minimum(1, tarr(dn) / 0.4) * np.clip((dn - tarr(dn)) / 0.5, 0, 1), n0, 0.09)
+m0, m1 = EV['motor']; put(sfx, norm(motor(m1 - m0)), m0, 0.14)
+q0, q1 = EV['quake']; put(sfx, norm(rumble(q1 - q0 + 0.8, 0.3, 60)), q0, 1.0); put(sfx, norm(debris(2.2)) * 0.5, q0 + 0.4, 0.25)
+def ding():
+    tt = tarr(1.2); return (np.sin(2 * np.pi * 1318 * tt) + 0.4 * np.sin(2 * np.pi * 1976 * tt)) * env(tt, 0.003, 0.35)
+for tc in EV['ding']: put(sfx, norm(ding()), tc, 0.12)
 
 # gema sederhana untuk musik & sfx
 def reverb(x, seed, dec=2.2, mix=0.25):

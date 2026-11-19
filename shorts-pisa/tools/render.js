@@ -1,6 +1,7 @@
 // Render halaman adegan (window.render(t), window.DUR) jadi MP4 1080×1920 @30fps, atau potret di detik tertentu.
 // Video:  node tools/render.js adegan1.html hasil/adegan1.mp4
 // Potret: node tools/render.js adegan1.html potret-adegan1 --detik 2,5.5,8.5
+// Segmen: node tools/render.js video.html render/seg1.mp4 --frame 0,1200   (frame awal, frame akhir eksklusif)
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const path = require('path');
@@ -24,11 +25,12 @@ const fs = require('fs');
       fs.writeFileSync(f, await shot(s)); console.log(f);
     }
   } else {
-    const fps = 30, dur = await page.evaluate(() => window.DUR), n = Math.round(dur * fps);
+    const fps = 30, dur = await page.evaluate(() => window.DUR); let n = Math.round(dur * fps), f0 = 0;
+    if (flag === '--frame') { const [a, b] = list.split(',').map(Number); f0 = a; n = Math.min(n, b); }
     fs.mkdirSync(path.dirname(out), { recursive: true });
     const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(fps), '-i', '-', '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-pix_fmt', 'yuv420p', out], { stdio: ['pipe', 'inherit', 'inherit'] });
     const t0 = Date.now();
-    for (let i = 0; i < n; i++) {
+    for (let i = f0; i < n; i++) {
       const buf = await shot(i / fps);
       if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
       if (i % 30 === 0) console.log(`frame ${i}/${n} (${((Date.now() - t0) / 1000).toFixed(0)} dtk)`);
