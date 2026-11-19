@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Overlay Adegan 1</title>
+<style>
+  @font-face { font-family: "Cormorant"; font-weight: 600; src: url(vendor/fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Montserrat"; font-weight: 300; src: url(vendor/fonts/montserrat-latin-300-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Montserrat"; font-weight: 200; src: url(vendor/fonts/montserrat-latin-200-normal.woff2) format("woff2"); }
+  html, body { margin: 0; width: 1080px; height: 1920px; background: transparent; overflow: hidden; }
+  #judul, #sub { position: absolute; left: 0; right: 0; text-align: center; color: #fff; }
+  #judul {
+    top: 210px; font-family: "Cormorant", serif; font-weight: 600;
+    font-size: 104px; line-height: 1.02; letter-spacing: 2px;
+    text-shadow: 0 2px 30px rgba(0,0,0,.55), 0 0 2px rgba(0,0,0,.35);
+  }
+  #sub {
+    top: 470px; font-family: "Montserrat", sans-serif; font-weight: 300;
+    font-size: 34px; letter-spacing: 14px; padding-left: 14px;
+    text-shadow: 0 2px 18px rgba(0,0,0,.6);
+  }
+  svg { position: absolute; inset: 0; }
+</style>
+</head>
+<body>
+<div id="judul">800 TAHUN<br>MELAWAN KERUNTUHAN?</div>
+<div id="sub">RAHASIA MENARA MIRING PISA</div>
+<svg width="1080" height="1920" viewBox="0 0 1080 1920">
+  <!-- garis tegak (pembanding) dan garis sumbu menara; posisi diisi lewat window.GARIS -->
+  <line id="tegak" stroke="#ffffff" stroke-width="4" stroke-dasharray="18 14" stroke-linecap="round"/>
+  <line id="sumbu" stroke="#f2c46d" stroke-width="4" stroke-linecap="round"/>
+  <path id="busur" fill="none" stroke="#ffffff" stroke-width="3"/>
+  <text id="lblTegak" fill="#fff" font-family="Montserrat" font-weight="300" font-size="28" letter-spacing="6">TEGAK</text>
+  <text id="lblMiring" fill="#f2c46d" font-family="Montserrat" font-weight="300" font-size="28" letter-spacing="6">MIRING</text>
+</svg>
+<script>
+// Geometri garis (px, dalam bingkai 1080×1920), disetel setelah melihat posisi menara di klip.
+window.GARIS = window.GARIS || { bx: 540, by: 1600, tx: 600, ty: 700 };
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+const prog = (t, a, b) => ease(clamp((t - a) / (b - a)));
+const $ = id => document.getElementById(id);
+
+window.render = function (t) {
+  const g = window.GARIS;
+  // Judul: fade-in sinematik (blur → tajam, spasi huruf merapat)
+  const pj = prog(t, 1.0, 2.8);
+  $('judul').style.opacity = pj;
+  $('judul').style.filter = `blur(${(1 - pj) * 14}px)`;
+  $('judul').style.letterSpacing = `${2 + (1 - pj) * 18}px`;
+  // Subtitle
+  const ps = prog(t, 2.2, 3.6);
+  $('sub').style.opacity = ps * 0.92;
+  $('sub').style.transform = `translateY(${(1 - ps) * 16}px)`;
+  // Teks memudar sedikit saat garis muncul, agar perhatian pindah ke menara
+  const redup = 1 - 0.45 * prog(t, 5.0, 5.8);
+  $('judul').style.opacity = pj * redup; $('sub').style.opacity = ps * 0.92 * redup;
+
+  // Garis tegak: tumbuh dari fondasi ke atas
+  const len = Math.hypot(g.tx - g.bx, g.ty - g.by);
+  const pt = prog(t, 5.2, 6.4);
+  const tg = $('tegak');
+  tg.setAttribute('x1', g.bx); tg.setAttribute('y1', g.by);
+  tg.setAttribute('x2', g.bx); tg.setAttribute('y2', g.by - len * pt);
+  tg.style.opacity = pt > 0 ? 0.75 : 0;
+  // Garis sumbu menara (kemiringan aktual)
+  const pm = prog(t, 6.1, 7.2);
+  const sm = $('sumbu');
+  sm.setAttribute('x1', g.bx); sm.setAttribute('y1', g.by);
+  sm.setAttribute('x2', g.bx + (g.tx - g.bx) * pm); sm.setAttribute('y2', g.by + (g.ty - g.by) * pm);
+  sm.style.opacity = pm > 0 ? 0.9 : 0;
+  // Busur sudut di antara keduanya
+  const pb = prog(t, 6.9, 7.6);
+  const r = 230, a0 = -Math.PI / 2, a1 = Math.atan2(g.ty - g.by, g.tx - g.bx);
+  const a = a0 + (a1 - a0) * pb;
+  const p0 = [g.bx + r * Math.cos(a0), g.by + r * Math.sin(a0)], p1 = [g.bx + r * Math.cos(a), g.by + r * Math.sin(a)];
+  $('busur').setAttribute('d', `M${p0[0]},${p0[1]} A${r},${r} 0 0 ${a1 > a0 ? 1 : 0} ${p1[0]},${p1[1]}`);
+  $('busur').style.opacity = pb > 0 ? 0.8 : 0;
+  // Label
+  const lt = $('lblTegak'), lm = $('lblMiring');
+  const kiri = g.tx > g.bx; // label tegak di sisi berlawanan dengan arah miring
+  lt.setAttribute('x', kiri ? g.bx - 150 : g.bx + 22); lt.setAttribute('y', g.by - len * 0.55);
+  lm.setAttribute('x', g.bx + (g.tx - g.bx) * 0.55 + (kiri ? 24 : -170)); lm.setAttribute('y', g.by + (g.ty - g.by) * 0.55 + 70);
+  lt.style.opacity = 0.85 * prog(t, 6.0, 6.6);
+  lm.style.opacity = prog(t, 7.0, 7.6);
+};
+window.render(0);
+</script>
+</body>
+</html>
