@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adegan 1 · Paru-paru</title>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/MotionPathPlugin.min.js"></script>
+<style>
+@font-face{font-family:'Fredoka';font-weight:600;src:url(vendor/fonts/fredoka-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fredoka';font-weight:700;src:url(vendor/fonts/fredoka-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:800;src:url(vendor/fonts/nunito-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:900;src:url(vendor/fonts/nunito-latin-900-normal.woff2) format('woff2')}
+:root{--ink:#2E2A66;--kuning:#FFE45C;--pink:#FF7FAE}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#0B0D1C}
+#stage{position:fixed;left:50%;top:50%;width:1080px;height:1920px;overflow:hidden;background:#CDEBFF;transform-origin:50% 50%}
+#sv{position:absolute;inset:0;width:1080px;height:1920px;display:block}
+.jd{font-family:'Fredoka',system-ui,sans-serif;font-weight:700}
+#judul{position:absolute;left:0;right:0;top:78px;text-align:center;color:#fff;line-height:.95;pointer-events:none}
+#judul .l1{font-family:'Nunito';font-weight:900;font-size:50px;color:var(--ink);letter-spacing:.01em;margin-bottom:14px}
+#judul .l1 span{background:#fff;border:5px solid var(--ink);border-radius:40px;padding:6px 26px;display:inline-block}
+#judul .l2{font-size:128px;letter-spacing:.01em;paint-order:stroke fill;-webkit-text-stroke:16px var(--ink);text-shadow:0 10px 0 var(--pink),0 10px 0 var(--pink)}
+#judul .l2 em{font-style:normal;color:var(--kuning)}
+#subs{position:absolute;left:60px;right:60px;top:1590px;height:240px}
+.sub{position:absolute;left:0;right:0;top:0;text-align:center;font-family:'Nunito';font-weight:900;font-size:68px;line-height:1.08;color:#fff;
+  paint-order:stroke fill;-webkit-text-stroke:14px var(--ink);opacity:0}
+.sub em{font-style:normal;color:var(--kuning)}
+.sub .w{display:inline-block}
+#flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 44%,#FFF6F8 0%,#FFC8D6 45%,#F59AB6 100%);opacity:0;pointer-events:none}
+#mft-ui{position:fixed;left:16px;right:16px;bottom:14px;z-index:99;display:none;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(8,12,30,.85);color:#fff;font:600 13px/1 ui-monospace,monospace}
+#mft-ui.on{display:flex}#mft-ui input{flex:1}
+</style>
+</head>
+<body>
+<div id="stage">
+<svg id="sv" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="gLangit" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#BFE6FF"/><stop offset=".55" stop-color="#E6E1FF"/><stop offset="1" stop-color="#FFD9E8"/>
+  </linearGradient>
+  <radialGradient id="gCahaya" cx=".22" cy=".18" r=".6">
+    <stop offset="0" stop-color="#FFFFFF" stop-opacity=".9"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="gIris" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4B3FB8"/><stop offset=".55" stop-color="#7A79E8"/><stop offset="1" stop-color="#9FE4FF"/>
+  </linearGradient>
+  <linearGradient id="gRambut" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#6E63C9"/><stop offset="1" stop-color="#9B8FE6"/>
+  </linearGradient>
+  <linearGradient id="gParu" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFC4D4"/><stop offset="1" stop-color="#FF8DB0"/>
+  </linearGradient>
+  <radialGradient id="gTerowongan" gradientUnits="userSpaceOnUse" cx="540" cy="860" r="1250">
+    <stop offset="0" stop-color="#FFF4F6"/><stop offset=".13" stop-color="#FFD3DE"/><stop offset=".45" stop-color="#F9A3BC"/><stop offset=".85" stop-color="#E5759B"/>
+  </radialGradient>
+  <linearGradient id="gDinding" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="260" y2="0">
+    <stop offset="0" stop-color="#F08AAA"/><stop offset="1" stop-color="#FFC0D0"/>
+  </linearGradient>
+  <radialGradient id="gHangat" cx=".5" cy=".45" r=".7">
+    <stop offset="0" stop-color="#FFC48A" stop-opacity=".0"/><stop offset=".5" stop-color="#FFB070" stop-opacity=".35"/><stop offset="1" stop-color="#FF9A5C" stop-opacity=".55"/>
+  </radialGradient>
+  <filter id="fBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="28"/></filter>
+  <filter id="fGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <clipPath id="cWajah"><path id="pWajah" d="M345 690C345 850 420 950 540 1000C660 950 735 850 735 690C735 540 650 485 540 485C430 485 345 540 345 690Z"/></clipPath>
+  <clipPath id="cSklera"><path d="M398 762C404 724 506 718 512 760C512 802 490 824 455 824C420 824 398 802 398 762Z"/></clipPath>
+  <!-- mata kiri (dicerminkan untuk mata kanan) -->
+  <g id="mataBuka">
+    <path d="M398 762C404 724 506 718 512 760C512 802 490 824 455 824C420 824 398 802 398 762Z" fill="#fff"/>
+    <g clip-path="url(#cSklera)">
+      <ellipse cx="460" cy="778" rx="42" ry="52" fill="url(#gIris)" stroke="#2E2A66" stroke-width="4"/>
+      <ellipse cx="460" cy="784" rx="18" ry="26" fill="#271F5E"/>
+      <path d="M402 740 L520 740 L520 760 Q460 748 402 762Z" fill="#2E2A66" opacity=".22"/>
+    </g>
+    <circle cx="441" cy="758" r="13" fill="#fff"/><circle cx="478" cy="801" r="6.5" fill="#fff"/>
+    <path d="M390 754C406 710 504 704 522 748L534 736L524 764C506 728 412 728 398 766Z" fill="#2E2A66"/>
+    <path d="M428 830Q455 838 486 826" fill="none" stroke="#2E2A66" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+  <g id="mataTutup">
+    <path d="M398 772Q455 812 514 768" fill="none" stroke="#2E2A66" stroke-width="10" stroke-linecap="round"/>
+    <path d="M512 770l18 -12M402 776l-14 -8" fill="none" stroke="#2E2A66" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</defs>
+
+<!-- ================= ADEGAN 1A: wajah & tarikan napas ================= -->
+<g id="a1">
+  <rect width="1080" height="1920" fill="url(#gLangit)"/>
+  <rect width="1080" height="1920" fill="url(#gCahaya)"/>
+  <g id="bokeh"></g>
+  <g id="dunia">
+    <!-- tubuh -->
+    <g id="badan">
+      <path d="M110 1920L128 1290C134 1160 290 1110 470 1072Q540 1112 610 1072C790 1110 946 1160 952 1290L970 1920Z" fill="#A6E8D6" stroke="#2E2A66" stroke-width="8" stroke-linejoin="round"/>
+      <path d="M128 1290C134 1160 290 1110 470 1072L445 1112C320 1140 230 1180 222 1300L232 1920L110 1920Z" fill="#78CDB9"/>
+      <path d="M262 1330L268 1920M818 1330L812 1920" fill="none" stroke="#2E2A66" stroke-width="7" stroke-linecap="round"/>
+      <path d="M840 1350L846 1920L960 1920L948 1300C940 1250 900 1215 860 1200Z" fill="#78CDB9" opacity=".55"/>
+      <path d="M455 1066Q540 1140 625 1066" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round"/>
+      <path d="M455 1066Q540 1140 625 1066" fill="none" stroke="#2E2A66" stroke-width="5" stroke-linecap="round" transform="translate(0,10)"/>
+      <!-- leher -->
+      <path d="M493 950L493 1080Q540 1112 587 1080L587 950Z" fill="#FFE3D3" stroke="#2E2A66" stroke-width="7"/>
+      <path d="M493 968Q540 1010 587 968L587 1012Q540 1046 493 1012Z" fill="#F5BFAE"/>
+    </g>
+    <!-- paru-paru tembus pandang -->
+    <g id="paru" filter="url(#fGlow)">
+      <path d="M528 1000L528 1200M552 1000L552 1200" stroke="#2E2A66" stroke-width="6"/>
+      <rect x="528" y="1000" width="24" height="200" fill="#FFD7E2"/>
+      <g id="cincin" stroke="#E06E96" stroke-width="5"></g>
+      <path d="M528 1196Q500 1214 480 1250M552 1196Q580 1214 600 1250" fill="none" stroke="#2E2A66" stroke-width="22" stroke-linecap="round"/>
+      <path d="M528 1196Q500 1214 480 1250M552 1196Q580 1214 600 1250" fill="none" stroke="#FFD7E2" stroke-width="11" stroke-linecap="round"/>
+      <g id="paruGrup">
+        <path d="M520 1215C500 1180 450 1175 420 1200C370 1250 350 1360 352 1450C354 1510 400 1535 450 1525C500 1515 528 1490 530 1450Z" fill="url(#gParu)" stroke="#2E2A66" stroke-width="7" stroke-linejoin="round"/>
+        <path d="M560 1215C580 1180 630 1175 660 1200C710 1250 730 1360 728 1450C726 1510 680 1535 630 1525C600 1518 590 1505 585 1480C600 1440 580 1400 560 1390Z" fill="url(#gParu)" stroke="#2E2A66" stroke-width="7" stroke-linejoin="round"/>
+        <g fill="none" stroke="#FFE7EE" stroke-width="6" stroke-linecap="round">
+          <path d="M478 1250Q460 1320 440 1360M466 1300Q420 1320 400 1360M455 1330Q470 1400 450 1460M445 1400Q410 1430 395 1470"/>
+          <path d="M602 1250Q620 1320 640 1360M614 1300Q660 1320 680 1360M625 1330Q640 1400 670 1450M632 1400Q680 1430 690 1470"/>
+        </g>
+        <path d="M395 1240Q380 1280 378 1320" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".85"/>
+        <path d="M672 1232Q690 1260 696 1290" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".85"/>
+      </g>
+    </g>
+    <!-- kepala -->
+    <g id="kepala">
+      <path d="M290 960C250 760 270 470 540 445C810 470 830 760 790 960C770 990 730 990 715 955C735 850 730 760 700 700L380 700C350 760 345 850 365 955C350 990 310 990 290 960Z" fill="url(#gRambut)" stroke="#2E2A66" stroke-width="8" stroke-linejoin="round"/>
+      <ellipse cx="344" cy="800" rx="28" ry="42" fill="#FFE3D3" stroke="#2E2A66" stroke-width="7"/>
+      <ellipse cx="736" cy="800" rx="28" ry="42" fill="#FFE3D3" stroke="#2E2A66" stroke-width="7"/>
+      <use href="#pWajah" fill="#FFE3D3"/>
+      <g clip-path="url(#cWajah)">
+        <path d="M318 760C300 580 400 488 540 488C680 488 780 580 762 760Q745 700 712 680Q705 730 690 752Q670 680 628 650Q620 710 598 730Q580 665 548 640Q530 700 505 725Q495 665 462 650Q445 715 420 740Q410 690 378 680Q345 710 318 760Z" fill="#F5C3B2"/>
+        <path d="M345 880Q360 960 540 1000Q420 960 400 880Z" fill="#F5C3B2" opacity=".7"/>
+      </g>
+      <use href="#pWajah" fill="none" stroke="#2E2A66" stroke-width="8"/>
+      <ellipse cx="412" cy="868" rx="44" ry="20" fill="#FF8FB0" opacity=".55"/>
+      <ellipse cx="668" cy="868" rx="44" ry="20" fill="#FF8FB0" opacity=".55"/>
+      <g stroke="#FF6F9C" stroke-width="4" stroke-linecap="round" opacity=".8"><path d="M392 860l-8 16M410 860l-8 16M428 860l-8 16M652 860l-8 16M670 860l-8 16M688 860l-8 16"/></g>
+      <g id="mataB"><use href="#mataBuka"/><use href="#mataBuka" transform="translate(1085,0) scale(-1,1)"/></g>
+      <g id="mataT" opacity="0"><use href="#mataTutup"/><use href="#mataTutup" transform="translate(1085,0) scale(-1,1)"/></g>
+      <path id="hidungGaris" d="M536 836q10 12 0 18" fill="none" stroke="#2E2A66" stroke-width="5" stroke-linecap="round"/>
+      <g id="lubangHidung" opacity="0"><ellipse cx="528" cy="856" rx="5" ry="3.4" fill="#2E2A66"/><ellipse cx="552" cy="856" rx="5" ry="3.4" fill="#2E2A66"/></g>
+      <path id="mulut" d="M508 908Q540 930 572 908" fill="none" stroke="#2E2A66" stroke-width="6" stroke-linecap="round"/>
+      <path d="M318 720C300 540 400 448 540 448C680 448 780 540 762 720Q745 660 712 640Q705 690 690 712Q670 640 628 610Q620 670 598 690Q580 625 548 600Q530 660 505 685Q495 625 462 610Q445 675 420 700Q410 650 378 640Q345 670 318 720Z" fill="url(#gRambut)" stroke="#2E2A66" stroke-width="8" stroke-linejoin="round"/>
+      <path d="M352 640C318 760 326 890 356 962C376 900 384 800 398 700Z" fill="url(#gRambut)" stroke="#2E2A66" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M728 640C762 760 754 890 724 962C704 900 696 800 682 700Z" fill="url(#gRambut)" stroke="#2E2A66" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M360 600Q540 520 720 600" fill="none" stroke="#5A4FB0" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+      <path d="M380 540Q540 470 700 540" fill="none" stroke="#D8D3FF" stroke-width="16" stroke-linecap="round" stroke-dasharray="70 34" opacity=".9"/>
+      <path d="M540 450C520 380 610 360 600 410" fill="none" stroke="#2E2A66" stroke-width="20" stroke-linecap="round"/>
+      <path d="M540 450C520 380 610 360 600 410" fill="none" stroke="#8C80E0" stroke-width="9" stroke-linecap="round"/>
+    </g>
+    <!-- aliran udara -->
+    <g id="udara" fill="none" stroke-linecap="round">
+      <path id="ud1" d="M40 640C200 600 330 830 524 852" stroke="#7FD3FF" stroke-width="16"/>
+      <path id="ud2" d="M1040 690C880 650 720 862 556 852" stroke="#7FD3FF" stroke-width="16"/>
+      <path id="ud1b" d="M40 640C200 600 330 830 524 852" stroke="#FFFFFF" stroke-width="5"/>
+      <path id="ud2b" d="M1040 690C880 650 720 862 556 852" stroke="#FFFFFF" stroke-width="5"/>
+    </g>
+    <g id="kepulan"></g>
+  </g>
+  <g id="garisCepat" opacity="0"></g>
+</g>
+
+<!-- ================= ADEGAN 1B: di dalam rongga hidung ================= -->
+<g id="b1" opacity="0">
+  <rect x="-1200" y="-1600" width="3480" height="5120" fill="url(#gTerowongan)"/>
+  <circle cx="540" cy="860" r="170" fill="#FFFFFF" filter="url(#fBlur)" opacity=".9"/>
+  <g id="cincinT"></g>
+  <g id="partikel"></g>
+  <g id="dindingG">
+    <g id="dindingKiri"></g>
+    <g id="dindingKanan" transform="translate(1080,0) scale(-1,1)"></g>
+  </g>
+  <g id="lendir"></g>
+  <g id="debu"></g>
+  <g id="bulu"></g>
+  <g id="tetes"></g>
+  <rect id="hangat" width="1080" height="1920" fill="url(#gHangat)" opacity="0"/>
+  <g id="chip"></g>
+</g>
+<g id="label"></g>
+</svg>
+<div id="flash"></div>
+<div id="judul" class="jd"><div class="l1"><span>Setiap kali menarik napas…</span></div><div class="l2">PARU-PARU<br><em>NGAPAIN?</em></div></div>
+<div id="subs"></div>
+</div>
+<div id="mft-ui"><button id="pp">▶</button><input id="sk" type="range" min="0" max="1000" value="0"><span id="tt">0.00</span></div>
+
+<script>
+gsap.registerPlugin(MotionPathPlugin);
+const NS = 'http://www.w3.org/2000/svg', INK = '#2E2A66';
+const $ = s => document.querySelector(s);
+function el(tag, at, par) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (par) par.appendChild(e); return e; }
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const R = (a, b) => a + (b - a) * rnd();
+/* kurva halus melalui titik-titik tertutup (Catmull-Rom → Bezier) */
+function halus(p) {
+  let d = `M${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}`; const n = p.length;
+  for (let i = 0; i < n; i++) { const a = p[(i - 1 + n) % n], b = p[i], c = p[(i + 1) % n], e = p[(i + 2) % n];
+    d += `C${(b[0] + (c[0] - a[0]) / 6).toFixed(1)} ${(b[1] + (c[1] - a[1]) / 6).toFixed(1)} ${(c[0] - (e[0] - b[0]) / 6).toFixed(1)} ${(c[1] - (e[1] - b[1]) / 6).toFixed(1)} ${c[0].toFixed(1)} ${c[1].toFixed(1)}`; }
+  return d + 'Z';
+}
+function cincinGoyang(cx, cy, rx, ry, amp, n) { const p = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, k = 1 + R(-amp, amp); p.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]); } return halus(p); }
+function bulat(cx, cy, r, amp, n) { return cincinGoyang(cx, cy, r, r, amp, n); }
+/* sehelai rambut meruncing dari pangkal (bx,by) ke ujung (tx,ty) */
+function helai(bx, by, tx, ty, bend, w) {
+  const mx = (bx + tx) / 2, my = (by + ty) / 2, dx = tx - bx, dy = ty - by, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L;
+  const cx = mx + nx * bend, cy = my + ny * bend;
+  return `M${bx + nx * w} ${by + ny * w}Q${cx + nx * w * .6} ${cy + ny * w * .6} ${tx} ${ty}Q${cx - nx * w * .6} ${cy - ny * w * .6} ${bx - nx * w} ${by - ny * w}Z`;
+}
+function awan(par, s, warna) { const g = el('g', {}, par);
+  [[0, 0, 26], [-26, 8, 18], [26, 8, 18], [0, 14, 20]].forEach(([x, y, r]) => el('circle', { cx: x * s, cy: y * s, r: r * s, fill: warna, stroke: INK, 'stroke-width': 4 }, g));
+  [[0, 0, 26], [-26, 8, 18], [26, 8, 18], [0, 14, 20]].forEach(([x, y, r]) => el('circle', { cx: x * s, cy: y * s, r: (r - 2.5) * s, fill: warna, class: 'isi' }, g));
+  el('circle', { cx: -8 * s, cy: -8 * s, r: 6 * s, fill: '#fff' }, g); return g; }
+
+/* ---------- label nama organ dengan garis penunjuk ---------- */
+function label(par, o) {
+  const g = el('g', { opacity: 0 }, par);
+  const ln = el('path', { d: `M${o.x} ${o.y}L${o.tx} ${o.ty}`, stroke: INK, 'stroke-width': 6, fill: 'none', 'stroke-linecap': 'round' }, g);
+  const ln2 = el('path', { d: `M${o.x} ${o.y}L${o.tx} ${o.ty}`, stroke: '#fff', 'stroke-width': 2.5, fill: 'none', 'stroke-linecap': 'round' }, g);
+  const dot = el('g', {}, g); el('circle', { cx: o.tx, cy: o.ty, r: 15, fill: '#fff', stroke: INK, 'stroke-width': 5 }, dot); el('circle', { cx: o.tx, cy: o.ty, r: 7, fill: o.warna || '#FF7FAE' }, dot);
+  const pill = el('g', {}, g);
+  const t = el('text', { x: o.x, y: o.y + 16, 'text-anchor': 'middle', 'font-family': 'Fredoka', 'font-weight': 700, 'font-size': o.fs || 50, fill: INK }, pill); t.textContent = o.teks;
+  const bb = t.getBBox(), padX = 30, h = (o.fs || 50) * 1.36;
+  const w = bb.width + padX * 2 + 26;
+  const r = el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: h / 2, fill: '#fff', stroke: INK, 'stroke-width': 6 }, pill);
+  const cap = el('circle', { cx: o.x - w / 2 + 30, cy: o.y, r: 11, fill: o.warna || '#FF7FAE', stroke: INK, 'stroke-width': 4 }, pill);
+  t.setAttribute('x', o.x + 13); pill.appendChild(t);
+  el('rect', { x: o.x - w / 2 + 6, y: o.y + h / 2 - 2, width: w - 12, height: 9, rx: 4.5, fill: INK, opacity: .25 }, pill).parentNode.insertBefore(pill.lastChild, r);
+  const L = Math.hypot(o.tx - o.x, o.ty - o.y);
+  [ln, ln2].forEach(p => { p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+  return { g, ln: [ln, ln2], dot, pill, masuk(tl, at) {
+    tl.set(g, { opacity: 1 }, at)
+      .from(pill, { scale: 0, svgOrigin: `${o.x} ${o.y}`, duration: .45, ease: 'back.out(2.4)' }, at)
+      .to([ln, ln2], { strokeDashoffset: 0, duration: .35, ease: 'power2.out' }, at + .15)
+      .from(dot, { scale: 0, svgOrigin: `${o.tx} ${o.ty}`, duration: .35, ease: 'back.out(3)' }, at + .42);
+  }, keluar(tl, at) { tl.to(g, { opacity: 0, duration: .25 }, at); } };
+}
+
+/* ---------- subtitle tebal ---------- */
+function subtitle(tl, list) {
+  const box = $('#subs');
+  list.forEach(([a, b, s]) => {
+    const d = document.createElement('div'); d.className = 'sub';
+    let on = false;
+    d.innerHTML = s.split(/\s+/).map(w => { let pre = '', post = '';
+      if (w.startsWith('*')) { on = true; w = w.slice(1); }
+      let body = w; const i = w.indexOf('*');
+      if (i >= 0) { body = w.slice(0, i); post = w.slice(i + 1); }
+      const html = on ? `<em>${body}</em>${post}` : body + post; if (i >= 0) on = false;
+      return `<span class="w">${html}</span>`; }).join(' ');
+    box.appendChild(d);
+    const w = d.querySelectorAll('.w');
+    tl.set(d, { opacity: 1 }, a).from(w, { y: 26, scale: .6, opacity: 0, duration: .26, ease: 'back.out(2.6)', stagger: Math.min(.09, (b - a - .4) / w.length) }, a)
+      .to(d, { opacity: 0, duration: .14 }, b - .14);
+  });
+}
+
+function bangun(tl) {
+  /* ===== latar 1A ===== */
+  const bok = $('#bokeh');
+  [[140, 420, 90, '#FFFFFF', .5], [930, 300, 120, '#FFF3B8', .55], [960, 1180, 80, '#FFFFFF', .45], [110, 1300, 70, '#FFE0EF', .7], [880, 1650, 110, '#E0F4FF', .6]].forEach(([x, y, r, c, o]) => el('circle', { cx: x, cy: y, r, fill: c, opacity: o }, bok));
+  const bintang = (x, y, s) => el('path', { d: `M${x} ${y - 30 * s}Q${x + 5 * s} ${y - 5 * s} ${x + 30 * s} ${y}Q${x + 5 * s} ${y + 5 * s} ${x} ${y + 30 * s}Q${x - 5 * s} ${y + 5 * s} ${x - 30 * s} ${y}Q${x - 5 * s} ${y - 5 * s} ${x} ${y - 30 * s}Z`, fill: '#FFF7A8', stroke: INK, 'stroke-width': 4 }, bok);
+  const bt = [bintang(205, 560, 1.1), bintang(890, 520, .8), bintang(950, 980, 1), bintang(120, 1090, .7)];
+  bt.forEach((b, i) => tl.fromTo(b, { scale: .6, transformOrigin: '50% 50%' }, { scale: 1.15, duration: .7, repeat: 13, yoyo: true, ease: 'sine.inOut' }, i * .2));
+
+  const cin = $('#cincin'); for (let y = 1018; y < 1196; y += 22) el('path', { d: `M530 ${y}Q540 ${y + 6} 550 ${y}`, fill: 'none' }, cin);
+
+  /* ===== 0.0 – 3.6: muncul & menarik napas ===== */
+  tl.from('#dunia', { y: 260, duration: .7, ease: 'back.out(1.4)' }, 0)
+    .from('#judul .l1', { y: -60, opacity: 0, duration: .45, ease: 'back.out(2)' }, .1)
+    .from('#judul .l2', { scale: .3, opacity: 0, duration: .6, ease: 'back.out(2.2)', transformOrigin: '50% 40%' }, .25)
+    .to('#judul .l2', { rotation: -2, duration: .5, yoyo: true, repeat: 5, ease: 'sine.inOut' }, .9);
+  // kedip lalu pejam saat menghirup
+  tl.to('#mataB', { scaleY: .1, svgOrigin: '540 772', duration: .08, yoyo: true, repeat: 1 }, .7)
+    .set('#mataB', { opacity: 0 }, 1.05).set('#mataT', { opacity: 1 }, 1.05)
+    .set('#mataB', { opacity: 1 }, 3.4).set('#mataT', { opacity: 0 }, 3.4);
+  // aliran udara masuk hidung
+  ['#ud1', '#ud2', '#ud1b', '#ud2b'].forEach(s => { const p = $(s), L = p.getTotalLength(); p.style.strokeDasharray = s.endsWith('b') ? '26 60' : `${L}`; p.style.strokeDashoffset = L; });
+  tl.to(['#ud1', '#ud2'], { strokeDashoffset: 0, duration: .9, ease: 'power2.inOut' }, 1.0)
+    .to(['#ud1b', '#ud2b'], { strokeDashoffset: -600, duration: 2.6, ease: 'none' }, 1.0)
+    .to(['#ud1', '#ud2', '#ud1b', '#ud2b'], { opacity: 0, duration: .3 }, 3.5);
+  const kep = $('#kepulan');
+  for (let i = 0; i < 6; i++) { const g = awan(kep, .7, '#E9F7FF'); const path = i % 2 ? '#ud2' : '#ud1';
+    tl.fromTo(g, { opacity: 0, scale: .9 }, { opacity: 1, duration: .15 }, 1.15 + i * .3)
+      .to(g, { motionPath: { path, align: path, alignOrigin: [.5, .5] }, scale: .25, duration: 1.1, ease: 'power1.in' }, 1.15 + i * .3)
+      .to(g, { opacity: 0, duration: .12 }, 2.15 + i * .3); }
+  // dada mengembang, paru-paru membesar
+  tl.to('#paruGrup', { scale: 1.08, transformOrigin: '540px 1300px', duration: 2.2, ease: 'sine.inOut' }, 1.1)
+    .to('#badan', { y: -10, duration: 2.2, ease: 'sine.inOut' }, 1.1)
+    .to('#kepala', { y: -8, duration: 2.2, ease: 'sine.inOut' }, 1.1)
+    .to('#paru', { opacity: 1, duration: .1 }, 0);
+
+  const lb = $('#label');
+  const Lparu = label(lb, { x: 205, y: 1160, tx: 405, ty: 1330, teks: 'Paru-paru', warna: '#FF7FAE' });
+  const Lhid = label(lb, { x: 840, y: 1010, tx: 552, ty: 852, teks: 'Hidung', warna: '#7FD3FF' });
+  Lparu.masuk(tl, 1.55); Lhid.masuk(tl, 2.25);
+  Lparu.keluar(tl, 3.45); Lhid.keluar(tl, 3.45);
+
+  /* ===== 3.6 – 4.9: kamera menyelam ke lubang hidung ===== */
+  const gc = $('#garisCepat');
+  for (let i = 0; i < 44; i++) { const a = i / 44 * Math.PI * 2 + R(-.05, .05), r1 = R(430, 620), r2 = 1300, w = R(.012, .03);
+    el('path', { d: `M${540 + Math.cos(a) * r1} ${852 + Math.sin(a) * r1}L${540 + Math.cos(a - w) * r2} ${852 + Math.sin(a - w) * r2}L${540 + Math.cos(a + w) * r2} ${852 + Math.sin(a + w) * r2}Z`, fill: '#fff' }, gc); }
+  tl.to('#judul', { y: -420, opacity: 0, duration: .5, ease: 'power2.in' }, 3.45)
+    .set('#lubangHidung', { opacity: 1 }, 3.6).to('#hidungGaris', { opacity: 0, duration: .2 }, 3.6)
+    .to('#dunia', { scale: 3.2, svgOrigin: '540 852', duration: .7, ease: 'power2.inOut' }, 3.55)
+    .to('#dunia', { scale: 60, svgOrigin: '540 852', duration: .7, ease: 'power3.in' }, 4.25)
+    .to('#bokeh', { scale: 1.6, svgOrigin: '540 852', opacity: 0, duration: 1.2, ease: 'power2.in' }, 3.7)
+    .to(gc, { opacity: .85, duration: .3 }, 4.0)
+    .fromTo(gc, { scale: 1.25, svgOrigin: '540 852' }, { scale: .9, duration: 1, ease: 'none' }, 4.0)
+    .to('#flash', { opacity: 1, duration: .22, ease: 'power1.in' }, 4.72)
+    .set('#a1', { opacity: 0 }, 4.95)
+    .set('#b1', { opacity: 1 }, 4.95)
+    .to('#flash', { opacity: 0, duration: .45, ease: 'power1.out' }, 4.95)
+    .from('#b1', { scale: .78, svgOrigin: '540 860', duration: 1.0, ease: 'power3.out' }, 4.95);
+
+  /* ===== 4.95 – 10: rongga hidung ===== */
+  const VP = [540, 860];
+  // cincin terowongan yang terus melaju
+  const ct = $('#cincinT'), P = 2.4, NR = 8;
+  for (let i = 0; i < NR; i++) {
+    const g = el('g', {}, ct);
+    const d = cincinGoyang(VP[0], VP[1], 300, 430, .08, 14);
+    el('path', { d, fill: 'none', stroke: '#D9608A', 'stroke-width': 9, opacity: .9 }, g);
+    el('path', { d, fill: 'none', stroke: '#FFE6EE', 'stroke-width': 4, transform: 'translate(0,-10)', opacity: .9 }, g);
+    const t0 = 4.95 - P + i * P / NR;
+    tl.fromTo(g, { scale: .05, svgOrigin: `${VP[0]} ${VP[1]}` }, { scale: 2.8, duration: P, ease: 'power2.in', repeat: 3, immediateRender: false }, t0)
+      .fromTo(g, { opacity: 0 }, { opacity: 1, duration: .5, repeat: 3, repeatDelay: P - .5, immediateRender: false }, t0);
+  }
+  // dinding dengan lipatan (konka) — kiri dan cermin kanan
+  const dindingD = 'M-500 250L0 250C130 300 250 420 236 560C222 700 110 730 130 850C150 970 290 1000 278 1150C266 1300 120 1310 132 1440C144 1560 250 1600 236 1720C226 1800 150 1860 120 1920L120 2400L-500 2400Z';
+  ['#dindingKiri', '#dindingKanan'].forEach(s => { const g = $(s);
+    el('path', { d: dindingD, fill: 'url(#gDinding)', stroke: INK, 'stroke-width': 8, 'stroke-linejoin': 'round' }, g);
+    ['M150 380Q215 450 205 560', 'M200 960Q255 1030 245 1130', 'M150 1370Q200 1410 205 1480'].forEach(d => el('path', { d, fill: 'none', stroke: '#fff', 'stroke-width': 12, 'stroke-linecap': 'round', opacity: .85 }, g));
+    ['M60 600Q120 640 150 700', 'M70 1180Q140 1230 170 1290'].forEach(d => el('path', { d, fill: 'none', stroke: '#D2577F', 'stroke-width': 6, 'stroke-linecap': 'round', opacity: .7 }, g)); });
+  tl.fromTo('#dindingG', { scale: .94, svgOrigin: '540 860' }, { scale: 1.03, duration: 5, ease: 'sine.inOut' }, 4.95);
+
+  // lendir mengilap
+  const ld = $('#lendir');
+  const blob = (x, y, r) => { const g = el('g', {}, ld);
+    el('path', { d: bulat(x, y, r, .14, 9), fill: '#D9F7A2', stroke: '#5E9E54', 'stroke-width': 5, opacity: .95 }, g);
+    el('path', { d: `M${x - r * .1} ${y + r * .8}q${r * .2} ${r * .9} ${r * .05} ${r * 1.2}q${-r * .25} ${-r * .3} ${-r * .05} ${-r * 1.2}Z`, fill: '#D9F7A2', stroke: '#5E9E54', 'stroke-width': 4 }, g);
+    el('ellipse', { cx: x - r * .35, cy: y - r * .35, rx: r * .28, ry: r * .16, fill: '#fff', transform: `rotate(-30 ${x - r * .35} ${y - r * .35})` }, g);
+    el('circle', { cx: x + r * .3, cy: y - r * .45, r: r * .08, fill: '#fff' }, g); return g; };
+  const m1 = blob(205, 1135, 62), m2 = blob(858, 705, 70), m3 = blob(860, 1300, 48);
+  [m1, m2, m3].forEach((m, i) => tl.from(m, { scale: 0, transformOrigin: '50% 50%', duration: .5, ease: 'back.out(2)' }, 5.25 + i * .12)
+    .to(m, { scaleX: 1.06, scaleY: .95, transformOrigin: '50% 50%', duration: .6, yoyo: true, repeat: 6, ease: 'sine.inOut' }, 5.8 + i * .2));
+
+  // bulu hidung di tepi depan
+  const bl = $('#bulu');
+  const buluSet = [];
+  for (let i = 0; i < 9; i++) { const bx = -20 + i * 38, by = 1960, tx = 60 + i * 30 + R(-20, 20), ty = R(1330, 1470); buluSet.push([bx, by, tx, ty, R(-60, 40), R(13, 18)]); }
+  for (let i = 0; i < 7; i++) { const bx = 1100 - i * 40, by = -40, tx = 1020 - i * 34 + R(-20, 20), ty = R(300, 430); buluSet.push([bx, by, tx, ty, R(-40, 60), R(12, 17)]); }
+  for (let i = 0; i < 5; i++) { const bx = 1100 - i * 34, by = 1960, tx = 1040 - i * 26 + R(-15, 15), ty = R(1460, 1560); buluSet.push([bx, by, tx, ty, R(-30, 40), R(11, 15)]); }
+  buluSet.forEach(([bx, by, tx, ty, bend, w], i) => { const g = el('g', {}, bl);
+    el('path', { d: helai(bx, by, tx, ty, bend, w), fill: '#5A4A92', stroke: INK, 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+    el('path', { d: `M${bx + (tx - bx) * .3} ${by + (ty - by) * .3}Q${(bx + tx) / 2 + bend * .3} ${(by + ty) / 2} ${bx + (tx - bx) * .75} ${by + (ty - by) * .75}`, fill: 'none', stroke: '#9A8EE8', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+    tl.fromTo(g, { rotation: -3, svgOrigin: `${bx} ${by}` }, { rotation: 3, duration: .9 + (i % 3) * .2, yoyo: true, repeat: 5, ease: 'sine.inOut', immediateRender: false }, 5 + (i % 4) * .1); });
+  tl.from(bl, { scale: 1.35, svgOrigin: '540 960', opacity: 0, duration: .9, ease: 'power3.out' }, 4.95);
+
+  // debu imut yang tertangkap
+  const db = $('#debu');
+  const debu = (x, y, s) => { const g = el('g', { transform: `translate(${x} ${y})` }, db); const k = el('g', {}, g);
+    el('path', { d: bulat(0, 0, 34 * s, .22, 12), fill: '#B9AA98', stroke: INK, 'stroke-width': 5 }, k);
+    el('circle', { cx: -10 * s, cy: -12 * s, r: 7 * s, fill: '#9C8C7A' }, k); el('circle', { cx: 14 * s, cy: 10 * s, r: 5 * s, fill: '#9C8C7A' }, k);
+    const mata = el('g', {}, k);
+    el('path', { d: `M${-14 * s} ${-4 * s}l${8 * s} ${6 * s}M${-14 * s} ${2 * s}l${8 * s} ${-6 * s}M${6 * s} ${-4 * s}l${8 * s} ${6 * s}M${6 * s} ${2 * s}l${8 * s} ${-6 * s}`, stroke: INK, 'stroke-width': 4, 'stroke-linecap': 'round' }, mata);
+    el('path', { d: `M${-7 * s} ${14 * s}q${7 * s} ${-6 * s} ${14 * s} 0`, fill: 'none', stroke: INK, 'stroke-width': 4, 'stroke-linecap': 'round' }, k);
+    return { g, k }; };
+  const target = [[175, 1418, 1.1, 5.35], [205, 1120, 1, 5.7], [880, 720, 1.15, 6.05], [985, 395, .95, 6.4], [858, 1292, .9, 6.75]];
+  target.forEach(([x, y, s, at]) => { const d = debu(x, y, s);
+    tl.from(d.g, { x: VP[0], y: VP[1], scale: .15, duration: .55, ease: 'power2.in' }, at - .55)
+      .from(d.g, { opacity: 0, duration: .15 }, at - .55)
+      .to(d.k, { scaleX: 1.3, scaleY: .75, duration: .08, yoyo: true, repeat: 1, ease: 'power2.out' }, at)
+      .to(d.k, { rotation: 10, duration: .25, yoyo: true, repeat: 7, ease: 'sine.inOut' }, at + .16); });
+
+  // kepulan udara: dingin (biru muda) → hangat (peach)
+  const pt = $('#partikel'), puffs = [];
+  for (let i = 0; i < 14; i++) { const a = R(0, Math.PI * 2), x0 = VP[0] + Math.cos(a) * R(300, 420), y0 = VP[1] + Math.sin(a) * R(380, 600);
+    const g = awan(pt, R(2.0, 2.6), '#E3F4FF'); puffs.push(g);
+    const t0 = 5.0 + (i % 7) * .62, d = 2.6;
+    tl.fromTo(g, { x: x0, y: y0, scale: 1, opacity: 0 }, { x: VP[0] + R(-40, 40), y: VP[1] + R(-40, 40), scale: .12, duration: d, ease: 'power1.out', immediateRender: false }, t0 + (i >= 7 ? 1.0 : 0))
+      .fromTo(g, { opacity: 0 }, { opacity: 1, duration: .3, immediateRender: false }, t0 + (i >= 7 ? 1.0 : 0))
+      .to(g, { opacity: 0, duration: .4 }, t0 + (i >= 7 ? 1.0 : 0) + d - .4); }
+  tl.set(puffs, { opacity: 0 }, 0);
+  tl.to(pt.querySelectorAll('.isi'), { attr: { fill: '#FFD2B0' }, duration: .8 }, 7.7)
+    .to(pt.querySelectorAll('circle[stroke]'), { attr: { fill: '#FFD2B0' }, duration: .8 }, 7.7)
+    .to('#hangat', { opacity: .6, duration: 1.0, ease: 'sine.out' }, 7.6);
+
+  // tetes air (lembap)
+  const tt = $('#tetes');
+  [[250, 820], [280, 1240], [830, 980], [800, 1500], [300, 480], [790, 520]].forEach(([x, y], i) => { const g = el('g', {}, tt);
+    el('path', { d: `M${x} ${y - 26}C${x + 6} ${y - 12} ${x + 18} ${y} ${x + 18} ${y + 10}A18 18 0 0 1 ${x - 18} ${y + 10}C${x - 18} ${y} ${x - 6} ${y - 12} ${x} ${y - 26}Z`, fill: '#8FDBFF', stroke: INK, 'stroke-width': 4 }, g);
+    el('ellipse', { cx: x - 6, cy: y + 6, rx: 4, ry: 7, fill: '#fff' }, g);
+    tl.from(g, { scale: 0, transformOrigin: '50% 80%', duration: .35, ease: 'back.out(3)' }, 8.45 + i * .08)
+      .to(g, { y: 10, duration: .6, yoyo: true, repeat: 2, ease: 'sine.inOut' }, 8.8 + i * .05); });
+
+  // chip HANGAT & LEMBAP
+  const cp = $('#chip');
+  const chip = (x, y, teks, warna, ikon) => { const g = el('g', {}, cp);
+    const t = el('text', { x: x + 24, y: y + 17, 'text-anchor': 'middle', 'font-family': 'Fredoka', 'font-weight': 700, 'font-size': 50, fill: '#fff', stroke: INK, 'stroke-width': 10, 'paint-order': 'stroke fill' }, g); t.textContent = teks;
+    const w = t.getBBox().width + 120, h = 86;
+    const r = el('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 43, fill: warna, stroke: INK, 'stroke-width': 6 }, g); g.insertBefore(r, t);
+    ikon(g, x - w / 2 + 46, y); return g; };
+  const termo = (g, x, y) => { el('rect', { x: x - 9, y: y - 30, width: 18, height: 44, rx: 9, fill: '#fff', stroke: INK, 'stroke-width': 4 }, g); el('circle', { cx: x, cy: y + 18, r: 14, fill: '#FF5C5C', stroke: INK, 'stroke-width': 4 }, g); el('rect', { x: x - 4, y: y - 12, width: 8, height: 26, fill: '#FF5C5C' }, g); };
+  const tetes = (g, x, y) => el('path', { d: `M${x} ${y - 28}C${x + 8} ${y - 12} ${x + 20} ${y} ${x + 20} ${y + 10}A20 20 0 0 1 ${x - 20} ${y + 10}C${x - 20} ${y} ${x - 8} ${y - 12} ${x} ${y - 28}Z`, fill: '#fff', stroke: INK, 'stroke-width': 4 }, g);
+  const c1 = chip(365, 880, 'HANGAT', '#FF9F5A', termo), c2 = chip(715, 880, 'LEMBAP', '#5CC0F5', tetes);
+  tl.from(c1, { scale: 0, rotation: -12, transformOrigin: '50% 50%', duration: .5, ease: 'back.out(2.5)' }, 7.85)
+    .from(c2, { scale: 0, rotation: 12, transformOrigin: '50% 50%', duration: .5, ease: 'back.out(2.5)' }, 8.45)
+    .to([c1, c2], { y: -10, duration: .5, yoyo: true, repeat: 2, ease: 'sine.inOut' }, 8.95);
+
+  const Lrongga = label(lb, { x: 450, y: 250, tx: 222, ty: 470, teks: 'Rongga hidung', warna: '#FFB24D' });
+  const Lbulu = label(lb, { x: 470, y: 1250, tx: 200, ty: 1400, teks: 'Bulu hidung', warna: '#9A8EE8' });
+  const Llendir = label(lb, { x: 690, y: 470, tx: 830, ty: 650, teks: 'Lendir', warna: '#9ED36A' });
+  Lrongga.masuk(tl, 5.35); Lbulu.masuk(tl, 5.95); Llendir.masuk(tl, 6.55);
+
+  subtitle(tl, [
+    [0.25, 1.95, 'Setiap kali kamu *menarik napas*…'],
+    [1.95, 3.6, 'apa yang terjadi di *paru-paru*?'],
+    [3.6, 5.2, 'Yuk, kita *menyelam* lewat hidung!'],
+    [5.3, 7.6, '*Bulu hidung* dan *lendir* menangkap debu,'],
+    [7.6, 10.0, 'lalu udara *dihangatkan* dan *dilembapkan*.']
+  ]);
+}
+
+/* ---------- jam timeline deterministik (untuk potret & render) ---------- */
+const DURASI = 10;
+window.OPENER = { ready: false, W: 1080, H: 1920 };
+function paskan() { const s = Math.min(innerWidth / 1080, innerHeight / 1920); $('#stage').style.transform = `translate(-50%,-50%) scale(${s})`; }
+addEventListener('resize', paskan); paskan();
+document.fonts.ready.then(() => Promise.all(['700 50px Fredoka', '900 68px Nunito'].map(f => document.fonts.load(f)))).then(() => {
+  const tl = gsap.timeline({ paused: true }); window.AUDIO_PLAN = { vo: [], sfx: [], music: null };
+  bangun(tl); tl.to({}, { duration: .001 }, DURASI - .001);
+  const seek = t => { tl.pause(); tl.time(Math.min(t, DURASI), false); };
+  Object.assign(window.OPENER, { tl, DURATION: DURASI, seek, seekFrame: t => { seek(t); return Promise.resolve(); }, ready: true });
+  const Q = new URLSearchParams(location.search);
+  if (Q.has('t')) seek(+Q.get('t'));
+  else if (!Q.has('render')) { tl.play(0); tl.eventCallback('onComplete', () => setTimeout(() => tl.play(0), 900)); }
+  if (Q.has('debug')) { const ui = $('#mft-ui'), sk = $('#sk'), tt = $('#tt'); ui.classList.add('on');
+    sk.oninput = () => { seek(sk.value / 1000 * DURASI); };
+    $('#pp').onclick = () => tl.paused() ? tl.play() : tl.pause();
+    gsap.ticker.add(() => { tt.textContent = tl.time().toFixed(2); if (!tl.paused()) sk.value = tl.time() / DURASI * 1000; }); }
+});
+</script>
+</body>
+</html>
