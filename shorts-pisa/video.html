@@ -89,7 +89,9 @@ const COLORS = { '*': '#ffc65a', '!': '#ff5a4a', '~': '#6fd3ff' }, ACTIVE = '#ff
 const syl = w => Math.max(1, (w.toLowerCase().match(/[aiueo]+/g) || []).length);
 const WORDS = [];
 SENT.forEach((s, si) => {
-  s.words = s.t.split(/\s+/).map(raw => {
+  // penanda yang mencakup beberapa kata (*tiga meter*) dipecah per kata (*tiga* *meter*)
+  const tt = s.t.replace(/([*!~])([^*!~]+?)\1/g, (m, k, inner) => inner.split(' ').map(x => k + x + k).join(' '));
+  s.words = tt.split(/\s+/).map(raw => {
     const m = raw.match(/^([*!~])(.+?)\1(.*)$/);
     const text = m ? m[2] + m[3] : raw, color = m ? COLORS[m[1]] : null;
     const bare = text.replace(/[.,…?!]/g, '');
