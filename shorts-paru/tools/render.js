@@ -38,11 +38,13 @@ const keAnim = v => W ? interp(W.anchors, v, 0, 1) : v, keVideo = a => W ? inter
   const ins = [], flt = [], mix = [];
   if (plan.music) { ins.push('-i', path.join(dir, plan.music.src)); flt.push(`[0:a]atrim=0:${dur},volume=${opt('--musik-vol', plan.music.vol)}[m]`); mix.push('[m]'); }
   if (W && W.vo) { const k = ins.length / 2, v = W.vo, ms = Math.round(v.at * 1000); ins.push('-i', path.join(dir, v.src));
-    flt.push(`[${k}:a]atrim=${v.mulai_sumber}:${v.akhir_sumber},asetpts=PTS-STARTPTS,atempo=${v.tempo},aresample=48000,aformat=channel_layouts=stereo,volume=${v.vol},adelay=${ms}|${ms}[vo]`); mix.push('[vo]'); }
+    flt.push(`[${k}:a]atrim=${v.mulai_sumber}:${v.akhir_sumber + 0.3},asetpts=PTS-STARTPTS,atempo=${v.tempo},aresample=48000,aformat=channel_layouts=stereo,volume=${v.vol},adelay=${ms}|${ms},apad=whole_dur=${dur},asplit[vo][vosc]`); mix.push('[vo]');
+    // ducking: musik mengecil saat narator bicara
+    if (plan.music) { flt[0] = flt[0].replace('[m]', '[m0]'); flt.push('[m0][vosc]sidechaincompress=threshold=0.02:ratio=5:attack=30:release=450:makeup=1[m]'); } }
   plan.sfx.map(s => Object.assign({}, s, { at: keVideo(s.at) })).filter(s => s.at < dur).forEach((s, i) => {
     const k = ins.length / 2; ins.push('-i', path.join(dir, s.src));
     const ms = Math.round(s.at * 1000);
-    flt.push(`[${k}:a]aresample=48000,aformat=channel_layouts=stereo,volume=${s.vol},adelay=${ms}|${ms}[s${i}]`); mix.push(`[s${i}]`);
+    flt.push(`[${k}:a]aresample=48000,aformat=channel_layouts=stereo,volume=${(s.vol * +opt('--sfx-vol', 1)).toFixed(3)},adelay=${ms}|${ms}[s${i}]`); mix.push(`[s${i}]`);
   });
   const audio = out.replace(/\.mp4$/, '.audio.wav');
   flt.push(`${mix.join('')}amix=inputs=${mix.length}:normalize=0:dropout_transition=0,atrim=0:${dur},alimiter=limit=0.89[a]`);

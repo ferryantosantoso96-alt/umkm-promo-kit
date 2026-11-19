@@ -51,12 +51,16 @@ for k in range(n - 2, -1, -1): pilih.append(j); j = prev[k][j]
 pilih.reverse()
 
 V = [mulai] + [cand[j][1] - 0.04 for j in pilih]
+if '--batas' in sys.argv:  # batas kalimat yang sudah diperiksa manual (detik awal tiap kalimat di file VO)
+    V = [float(x) - 0.06 for x in sys.argv[sys.argv.index('--batas') + 1].split(',')]
+    assert len(V) == n, f'butuh {n} batas'
+    if '--akhir' in sys.argv: akhir = float(sys.argv[sys.argv.index('--akhir') + 1])
 skala = 1.0
 if target:  # percepat VO sedikit (tanpa mengubah nada) bila melebihi target
     perlu = (akhir - mulai) + JEDA_AWAL + EKOR
     skala = min(1.0, (target - JEDA_AWAL - EKOR) / (akhir - mulai)) if perlu > target else 1.0
 tempo = 1 / skala
-V = [JEDA_AWAL + (v - mulai) * skala for v in V]
+V = [max(0.05, JEDA_AWAL + (v - mulai) * skala) for v in V]
 v_end = JEDA_AWAL + (akhir - mulai) * skala + EKOR
 anchors = [[0.0, 0.0]] + [[round(v, 3), a] for v, a in zip(V, A)] + [[round(v_end, 3), 45.0]]
 rasio = [(anchors[i + 1][1] - anchors[i][1]) / (anchors[i + 1][0] - anchors[i][0]) for i in range(len(anchors) - 1)]

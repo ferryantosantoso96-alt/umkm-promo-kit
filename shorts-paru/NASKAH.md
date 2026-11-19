@@ -1,29 +1,29 @@
 # Paru-paru Ngapain? — naskah & timecode
 
-Video 9:16, 45 detik, 1080×1920, 30 fps. Narasi = teks subtitle di bawah (sudah ditanam di video).
-Kalau mau menambah suara: rekam sendiri, atau pakai fitur *Teks ke ucapan* gratis di CapCut/TikTok
-(pilih suara perempuan bahasa Indonesia), lalu taruh tiap kalimat di detik yang tertulis.
+Video 9:16, 49.1 detik, 1080×1920, 30 fps.
+Voiceover: ElevenLabs, model eleven_v4, suara **honeypie** (1 take, 693 kredit). Naskah lengkap: `audio/naskah-vo.txt`.
+Animasi diselaraskan ke voiceover (`tools/selaras.py` → `audio/warp.json`): tiap kalimat mulai tepat saat diucapkan.
 
 | Detik | Adegan | Narasi / subtitle |
 |---|---|---|
-| 00.2 – 01.9 | 1 · wajah, menarik napas | Setiap kali kamu menarik napas… |
-| 01.9 – 03.6 | | apa yang terjadi di paru-paru? |
-| 03.6 – 05.2 | 1 · kamera menyelam ke hidung | Yuk, kita menyelam lewat hidung! |
-| 05.3 – 07.6 | 1 · rongga hidung | Bulu hidung dan lendir menangkap debu, |
-| 07.6 – 09.9 | | lalu udara dihangatkan dan dilembapkan. |
-| 10.1 – 13.4 | 2 · trakea | Udara meluncur turun lewat trakea, |
-| 13.5 – 16.8 | 2 · percabangan | lalu bercabang ke dua bronkus: kanan dan kiri. |
-| 17.1 – 19.9 | 3 · bronkiolus | Cabangnya makin kecil, namanya bronkiolus. |
-| 20.0 – 22.3 | 3 · alveolus | Ujungnya gugusan balon mungil: alveolus! |
-| 22.4 – 24.9 | 3 · penghitung | Jumlahnya sekitar 480 juta! |
-| 25.1 – 27.4 | 4 · alveolus & kapiler | Alveolus dikelilingi pembuluh kapiler. |
-| 27.5 – 30.2 | 4 · O₂ biru masuk darah | Oksigen menembus dinding tipis ke dalam darah, |
-| 30.3 – 32.0 | | lalu menumpang di sel darah merah. |
-| 32.1 – 34.7 | 4 · CO₂ abu-abu keluar | Sebaliknya, karbon dioksida keluar dari darah… |
-| 34.8 – 37.0 | | …masuk ke alveolus untuk dibuang. |
-| 37.3 – 40.3 | 5 · kamera keluar, embus napas | Saat kita mengembuskan napas, diafragma naik… |
-| 40.4 – 42.3 | | …dan karbon dioksida ikut keluar! |
-| 42.4 – 45.0 | 5 · penutup | Semua itu terjadi di setiap tarikan napasmu! |
+| 00.29 – 02.63 | 1 · wajah, menarik napas | Setiap kali menarik napas… |
+| 02.63 – 04.43 |  | apa yang terjadi di paru-paru? |
+| 04.43 – 06.16 | 1 · kamera menyelam ke hidung | Yuk, menyelam lewat hidung! |
+| 06.16 – 08.84 | 1 · rongga hidung | Bulu hidung dan lendir menangkap debu, |
+| 08.84 – 11.99 |  | lalu udara dihangatkan dan dilembapkan. |
+| 11.99 – 14.41 | 2 · trakea | Udara meluncur turun lewat trakea, |
+| 14.41 – 16.67 | 2 · percabangan | lalu bercabang ke dua bronkus. |
+| 16.67 – 19.46 | 3 · bronkiolus | Cabangnya makin kecil: bronkiolus. |
+| 19.46 – 22.50 | 3 · alveolus | Ujungnya balon-balon mungil: alveolus! |
+| 22.50 – 25.99 | 3 · penghitung | Jumlahnya sekitar 480 juta! |
+| 25.99 – 28.71 | 4 · alveolus & kapiler | Alveolus dikelilingi pembuluh kapiler. |
+| 28.71 – 31.41 | 4 · O₂ biru masuk darah | Oksigen menembus dinding tipis ke darah, |
+| 31.41 – 33.73 |  | lalu menumpang di sel darah merah. |
+| 33.73 – 37.10 | 4 · CO₂ abu-abu keluar | Sebaliknya, karbon dioksida keluar dari darah… |
+| 37.10 – 39.48 |  | …masuk ke alveolus untuk dibuang. |
+| 39.48 – 42.48 | 5 · kamera keluar, embus napas | Saat napas diembuskan, diafragma naik… |
+| 42.48 – 44.76 |  | …dan karbon dioksida ikut keluar! |
+| 44.76 – 49.09 | 5 · penutup | Semua itu terjadi di setiap tarikan napasmu! |
 
 ## Sumber fakta
 
@@ -36,13 +36,15 @@ Kalau mau menambah suara: rekam sendiri, atau pakai fitur *Teks ke ucapan* grati
 
 - Musik: disintesis sendiri (`tools/musik.py`), bebas lisensi.
 - Efek suara: Bonus Sound Effect Motion Format (`sfx/`), boleh dipakai untuk video sendiri/klien.
-- Tanpa ElevenLabs (tidak ada kredit terpakai).
+- Narator: ElevenLabs (honeypie, eleven_v4). Musik otomatis mengecil saat narator bicara (ducking).
 
 ## Render ulang
 
 ```
 npm install            # gsap + font
-python3 tools/musik.py audio/musik.wav 45
-NODE_PATH=$(npm root -g) node tools/render.js video.html render/paru-paru-9x16.mp4
+python3 tools/musik.py audio/musik.wav 49.1
+python3 tools/selaras.py audio/vo-elevenlabs.mp3 video.html audio/warp.json \
+  --batas 0.10,2.44,4.24,5.97,8.65,11.80,14.22,16.48,19.27,22.31,25.80,28.52,31.22,33.54,36.91,39.29,42.29,44.57 --akhir 47.44
+NODE_PATH=$(npm root -g) node tools/render.js video.html render/paru-paru-vo-9x16.mp4 --warp audio/warp.json --musik-vol .34 --sfx-vol .8
 ```
 Pratinjau di browser: buka `video.html` (`?debug=1` = panel geser waktu, `?t=12.5` = berhenti di detik 12,5).
