@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Lima Vidyaraja Acalanatha</title>
+<style>
+@font-face{font-family:Cinzel;src:url(vendor/fonts/cinzel-latin-700-normal.woff2) format('woff2');font-weight:700}
+@font-face{font-family:Cormorant;src:url(vendor/fonts/cormorant-garamond-latin-600-normal.woff2) format('woff2');font-weight:600}
+@font-face{font-family:Cormorant;src:url(vendor/fonts/cormorant-garamond-latin-500-italic.woff2) format('woff2');font-weight:500;font-style:italic}
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;background:#05030f;transform-origin:0 0}
+.scene{position:absolute;inset:0;opacity:0;overflow:hidden}
+.L{position:absolute;inset:0}
+canvas{position:absolute;left:0;top:0;width:1920px;height:1080px}
+img{position:absolute;display:block;max-width:none}
+svg.mandala{position:absolute;overflow:visible}
+svg.mandala .d{stroke-dasharray:1;stroke-dashoffset:1;stroke-linecap:round;stroke-linejoin:round}
+.glowGold{filter:drop-shadow(0 0 6px rgba(255,210,110,.9)) drop-shadow(0 0 22px rgba(255,170,40,.55))}
+.glow5{filter:drop-shadow(0 0 5px rgba(255,255,255,.7)) drop-shadow(0 0 18px rgba(255,220,150,.5))}
+.screen{mix-blend-mode:screen}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
+/* teks */
+.cap{position:absolute;left:0;right:0;text-align:center;opacity:0}
+.cap::before{content:"";position:absolute;left:50%;top:50%;width:1500px;height:330px;transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse at center,rgba(8,3,20,.72) 0%,rgba(8,3,20,.45) 45%,rgba(8,3,20,0) 72%);z-index:-1}
+.cap .t{font:700 74px/1.1 Cinzel,serif;letter-spacing:.11em;color:#ffe4a0;
+  background:linear-gradient(180deg,#fff6d8 0%,#ffd36a 48%,#e09a22 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 3px 0 rgba(90,40,0,.55)) drop-shadow(0 0 18px rgba(255,190,80,.55))}
+.cap .s{margin-top:14px;font:italic 500 46px/1.2 Cormorant,serif;color:#fff2d6;letter-spacing:.02em;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+/* label adegan 2 */
+.lab{position:absolute;left:1160px;top:300px;width:680px;opacity:0}
+.lab .k{font:600 34px/1 Cormorant,serif;letter-spacing:.35em;color:rgba(255,255,255,.75)}
+.lab .a{margin-top:10px;font:700 128px/1 Cinzel,serif;letter-spacing:.06em}
+.lab .ln{height:3px;margin:26px 0 22px;width:560px;transform-origin:0 50%}
+.lab .w{font:600 66px/1.1 Cormorant,serif;color:#fff;letter-spacing:.03em;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.lab .n{margin-top:14px;font:italic 500 40px/1.2 Cormorant,serif;color:rgba(255,255,255,.82)}
+.fig{transform-origin:50% 100%}
+.lab::before{content:"";position:absolute;left:-140px;top:-90px;width:900px;height:560px;background:radial-gradient(ellipse at 40% 50%,rgba(0,0,0,.55) 0%,rgba(0,0,0,.3) 45%,rgba(0,0,0,0) 72%);z-index:-1}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ADEGAN 1: turunnya lima pelindung -->
+  <div class="scene" id="s1">
+    <canvas id="s1b"></canvas>
+    <div class="L" id="s1cam"><img id="s1img" src="assets/penuh.jpg" style="left:-41px;top:0;width:2001px;height:1080px;opacity:0"></div>
+    <svg class="mandala glowGold screen" id="m1" style="left:510px;top:-20px;width:900px;height:900px"></svg>
+    <canvas id="s1f"></canvas>
+  </div>
+
+  <!-- ADEGAN 2: lima warna, lima elemen (dibangun oleh JS) -->
+  <div id="shots"></div>
+
+  <!-- ADEGAN 3: melindungi negeri dan kota -->
+  <div class="scene" id="s3">
+    <div class="L" style="background:linear-gradient(180deg,#140a35 0%,#3a1d63 38%,#a5577a 70%,#f2b07a 100%)"></div>
+    <canvas id="s3b"></canvas>
+    <svg class="mandala glow5 screen" id="m3" style="left:610px;top:-90px;width:700px;height:700px"></svg>
+    <div class="L" id="s3city"><img src="assets/kota.jpg" style="left:-1190px;top:609px;width:4305px;height:471px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 32%);mask-image:linear-gradient(180deg,transparent 0%,#000 32%)"></div>
+    <canvas id="s3f"></canvas>
+    <div class="L" id="s3figs"></div>
+  </div>
+
+  <!-- ADEGAN 4: simabandhana -->
+  <div class="scene" id="s4">
+    <div class="L" style="background:radial-gradient(ellipse at 50% 40%,#3b2160 0%,#1a0d33 55%,#07030f 100%)"></div>
+    <canvas id="s4b"></canvas>
+    <img id="s4img" src="assets/kuil.jpg" style="left:231px;top:250px;width:1458px;height:701px;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 55%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 55%,#000 55%,transparent 100%)">
+    <div class="L" style="perspective:1100px;perspective-origin:50% 0%">
+      <svg class="mandala glow5 screen" id="m4" style="left:560px;top:520px;width:800px;height:800px;transform:rotateX(76deg);transform-origin:50% 50%"></svg>
+    </div>
+    <canvas id="s4f"></canvas>
+  </div>
+
+  <!-- ADEGAN 5: perlindungan pribadi -->
+  <div class="scene" id="s5">
+    <div class="L" style="background:radial-gradient(ellipse at 50% 70%,#2a1a4a 0%,#120a26 50%,#040210 100%)"></div>
+    <canvas id="s5b"></canvas>
+    <div class="L" style="perspective:1000px;perspective-origin:50% 0%">
+      <svg class="mandala glow5 screen" id="m5" style="left:610px;top:760px;width:700px;height:700px;transform:rotateX(78deg);transform-origin:50% 50%"></svg>
+    </div>
+    <svg id="monk" viewBox="0 0 600 600" style="position:absolute;left:610px;top:380px;width:700px;height:700px;overflow:visible">
+      <defs>
+        <linearGradient id="robe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a1a1a"/><stop offset="1" stop-color="#220810"/></linearGradient>
+        <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a8"/><stop offset=".5" stop-color="#ffb347"/><stop offset="1" stop-color="#ff7a2a"/></linearGradient>
+        <radialGradient id="skin" cx=".45" cy=".35" r=".7"><stop offset="0" stop-color="#7a4a35"/><stop offset="1" stop-color="#2a140c"/></radialGradient>
+        <linearGradient id="cushion" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d89a2a"/><stop offset="1" stop-color="#6b3c08"/></linearGradient>
+      </defs>
+      <ellipse cx="300" cy="575" rx="250" ry="38" fill="url(#cushion)"/>
+      <path d="M78 540 Q300 440 522 540 Q536 590 300 592 Q66 590 78 540Z" fill="url(#robe)" stroke="url(#rim)" stroke-width="3"/>
+      <path d="M196 540 Q178 400 222 318 Q300 276 378 318 Q422 400 404 540Z" fill="url(#robe)" stroke="url(#rim)" stroke-width="3"/>
+      <path d="M222 318 Q300 300 336 330 Q300 420 250 540 L200 540 Q182 410 222 318Z" fill="#7a2a1a" opacity=".55"/>
+      <rect x="282" y="262" width="36" height="36" rx="10" fill="url(#skin)"/>
+      <ellipse cx="300" cy="226" rx="50" ry="58" fill="url(#skin)" stroke="url(#rim)" stroke-width="2.5"/>
+      <path d="M276 232 Q284 236 292 232 M308 232 Q316 236 324 232" stroke="#1a0a06" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="300" cy="512" rx="54" ry="20" fill="url(#skin)" stroke="url(#rim)" stroke-width="2"/>
+    </svg>
+    <canvas id="s5f"></canvas>
+  </div>
+
+  <!-- ADEGAN AKHIR: lima pelindung bersatu -->
+  <div class="scene" id="s6">
+    <div class="L" id="s6cam"><img src="assets/penuh.jpg" style="left:-41px;top:0;width:2001px;height:1080px"></div>
+    <canvas id="s6b"></canvas>
+    <svg class="mandala glow5 screen" id="m6" style="left:510px;top:-120px;width:900px;height:900px"></svg>
+    <canvas id="s6f"></canvas>
+  </div>
+
+  <div id="caps"></div>
+  <div id="flash"></div>
+  <div id="fade"></div>
+</div>
+
+<script src="vendor/gsap.min.js"></script>
+<script>
+// ====== dasar ======
+const W = 1920, H = 1080, TAU = Math.PI * 2, D = 62;
+const $ = id => document.getElementById(id);
+const R = (i, k = 0) => { const x = Math.sin(i * 127.1 + k * 311.7 + 0.5) * 43758.5453; return x - Math.floor(x); };
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const sm = x => { x = clamp(x); return x * x * (3 - 2 * x); };
+const lerp = (a, b, p) => a + (b - a) * p;
+const V = {};   // nilai yang di-tween timeline, dibaca saat menggambar canvas
+
+// warna lima arah (mengikuti gambar referensi)
+const C5 = {
+  W: { nama: 'putih',  hex: '#f2f5ff', rgb: [242, 245, 255] },   // Barat · Putih · Logam
+  S: { nama: 'merah',  hex: '#ff4326', rgb: [255, 67, 38] },     // Selatan · Merah · Api
+  N: { nama: 'biru',   hex: '#3f7dff', rgb: [63, 125, 255] },    // Utara · Biru · Air
+  C: { nama: 'kuning', hex: '#ffcf2e', rgb: [255, 207, 46] },    // Tengah · Kuning · Bumi
+  E: { nama: 'hijau',  hex: '#2fdc72', rgb: [47, 220, 114] },    // Timur · Hijau · Kayu
+};
+const rgba = (rgb, a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+// arah layar: kanan = Timur, atas/belakang = Utara, bawah/depan = Selatan, kiri = Barat
+function dirOfAngle(a) { // a: radian, 0 = kanan, positif = searah jarum jam (ke bawah)
+  const d = ((a * 180 / Math.PI) % 360 + 360) % 360;
+  if (d >= 315 || d < 45) return 'E'; if (d < 135) return 'S'; if (d < 225) return 'W'; return 'N';
+}
+
+// sprite cahaya lembut (lebih cepat daripada membuat gradient tiap partikel)
+const spriteCache = {};
+function sprite(rgb, core = 1) {
+  const key = rgb.join(',') + core;
+  if (spriteCache[key]) return spriteCache[key];
+  const s = document.createElement('canvas'); s.width = s.height = 128;
+  const c = s.getContext('2d'), g = c.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, `rgba(${Math.min(255, rgb[0] + 80 * core)},${Math.min(255, rgb[1] + 80 * core)},${Math.min(255, rgb[2] + 80 * core)},1)`);
+  g.addColorStop(.25, rgba(rgb, .75)); g.addColorStop(.6, rgba(rgb, .22)); g.addColorStop(1, rgba(rgb, 0));
+  c.fillStyle = g; c.fillRect(0, 0, 128, 128);
+  return spriteCache[key] = s;
+}
+function blob(c, rgb, x, y, r, a, core) { if (a <= 0.003 || r <= 0) return; c.globalAlpha = Math.min(1, a); c.drawImage(sprite(rgb, core), x - r, y - r, r * 2, r * 2); c.globalAlpha = 1; }
+function glint(c, x, y, r, a) {
+  c.save(); c.globalAlpha = a; c.strokeStyle = '#fff'; c.lineWidth = 1.6;
+  c.beginPath(); c.moveTo(x - r, y); c.lineTo(x + r, y); c.moveTo(x, y - r); c.lineTo(x, y + r); c.stroke(); c.restore();
+  blob(c, [255, 255, 255], x, y, r * .5, a, 1);
+}
+function ctxOf(id) { const cv = $(id); cv.width = W; cv.height = H; return cv.getContext('2d'); }
+
+// ====== mandala SVG ======
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, at, p) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); p.appendChild(e); return e; }
+function arcPath(r, a0, a1) { const p = a => [r * Math.cos(a * Math.PI / 180), r * Math.sin(a * Math.PI / 180)]; const [x0, y0] = p(a0), [x1, y1] = p(a1);
+  return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; }
+function petal(r0, r1, w) { const m = (r0 + r1) / 2; return `M${r0} 0 Q${m} ${w} ${r1} 0 Q${m} ${-w} ${r0} 0Z`; }
+function palaceSide(s, g) { return [[-s, -s], [-g, -s], [-g, -s - 34], [-g - 14, -s - 34], [-g - 14, -s - 52], [g + 14, -s - 52], [g + 14, -s - 34], [g, -s - 34], [g, -s], [s, -s]]; }
+function buildMandala(svg, five) {
+  svg.setAttribute('viewBox', '-470 -470 940 940');
+  const gold = '#ffd877';
+  const col = a => five ? C5[dirOfAngle(a)].hex : gold;
+  const S = (c, w) => ({ fill: 'none', stroke: c, 'stroke-width': w, pathLength: 1, class: 'd' });
+  const gA = el('g', {}, svg), gB = el('g', {}, svg), gC = el('g', {}, svg);
+  if (!five) { el('circle', { r: 446, ...S(gold, 4) }, gA); el('circle', { r: 422, ...S(gold, 1.6) }, gA); }
+  else for (const [a0, a1] of [[-135, -45], [-45, 45], [45, 135], [135, 225]]) {
+    const c = col((a0 + 45) * Math.PI / 180);
+    el('path', { d: arcPath(446, a0 + 3, a1 - 3), ...S(c, 8) }, gA); el('path', { d: arcPath(422, a0 + 3, a1 - 3), ...S(c, 2.4) }, gA);
+  }
+  for (let i = 0; i < 72; i++) { const a = i / 72 * TAU; el('circle', { cx: (434 * Math.cos(a)).toFixed(1), cy: (434 * Math.sin(a)).toFixed(1), r: 3.4, fill: col(a), class: 'dot' }, gA); }
+  for (let i = 0; i < 24; i++) { const a = i / 24 * TAU, x = 396 * Math.cos(a), y = 396 * Math.sin(a);
+    el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 16, ...S(col(a), 2) }, gA);
+    el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 5.5, fill: col(a), class: 'dot' }, gA); }
+  el('circle', { r: 368, ...S(gold, 2.2) }, gA);
+  // istana persegi dengan gerbang
+  for (let k = 0; k < 4; k++) {
+    const rot = k * 90, a = (rot - 90) * Math.PI / 180, c = col(a);
+    for (const [s, g, w] of [[300, 62, 3.4], [284, 54, 1.5]]) {
+      const pts = palaceSide(s, g).map(([x, y]) => { const r = rot * Math.PI / 180; return [x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r)]; });
+      el('path', { d: 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L'), ...S(c, w) }, gB);
+    }
+  }
+  for (let i = 0; i < 16; i++) { const a = i * 22.5; el('path', { d: petal(152, 262, 44), transform: `rotate(${a})`, ...S(col(a * Math.PI / 180), 2.4) }, gB); }
+  el('circle', { r: 268, ...S(gold, 1.6) }, gB);
+  el('circle', { r: 150, ...S(five ? C5.C.hex : gold, 2.6) }, gC);
+  for (let i = 0; i < 8; i++) { const a = i * 45 + 22.5; el('path', { d: petal(62, 146, 36), transform: `rotate(${a})`, ...S(five ? C5.C.hex : gold, 2.2) }, gC); }
+  el('circle', { r: 60, ...S(five ? C5.C.hex : gold, 3) }, gC);
+  const star = []; for (let i = 0; i < 16; i++) { const r = i % 2 ? 22 : 50, a = i / 16 * TAU - Math.PI / 2; star.push((r * Math.cos(a)).toFixed(1) + ' ' + (r * Math.sin(a)).toFixed(1)); }
+  el('path', { d: 'M' + star.join(' L') + 'Z', ...S('#fff3c4', 2) }, gC);
+  el('circle', { r: 10, fill: '#fff6d8', class: 'dot' }, gC);
+  return { svg, gA, gB, gC, d: svg.querySelectorAll('.d'), dots: svg.querySelectorAll('.dot') };
+}
+
+// ====== data lima pelindung (adegan 2) ======
+const G = [
+  { id: 'putih',  arah: 'BARAT',   warna: 'Putih',  elemen: 'Logam', img: 'assets/putih.png',  w: 650,  h: 1060, hd: 1180, cx: 690, rgb: C5.W.rgb, aks: '#e8eefc', bg: 'radial-gradient(ellipse at 36% 45%,#5d6a84 0%,#283044 45%,#0b0e17 100%)', fx: 'logam' },
+  { id: 'merah',  arah: 'SELATAN', warna: 'Merah',  elemen: 'Api',   img: 'assets/merah.png',  w: 680,  h: 1110, hd: 1200, cx: 700, rgb: C5.S.rgb, aks: '#ff6a3a', bg: 'radial-gradient(ellipse at 36% 55%,#7a1608 0%,#3a0703 45%,#0e0101 100%)', fx: 'api' },
+  { id: 'biru',   arah: 'UTARA',   warna: 'Biru',   elemen: 'Air',   img: 'assets/biru.png',   w: 640,  h: 1060, hd: 1180, cx: 690, rgb: C5.N.rgb, aks: '#6aa2ff', bg: 'radial-gradient(ellipse at 36% 40%,#123f9a 0%,#071d55 45%,#01061a 100%)', fx: 'air' },
+  { id: 'kuning', arah: 'TENGAH',  warna: 'Kuning', elemen: 'Bumi',  img: 'assets/kuning-mentah.jpg', w: 1080, h: 1450, hd: 1290, cx: 690, rgb: C5.C.rgb, aks: '#ffd23a', bg: 'radial-gradient(ellipse at 36% 45%,#8a5a06 0%,#3d2502 45%,#120a00 100%)', fx: 'bumi', mask: true },
+  { id: 'hijau',  arah: 'TIMUR',   warna: 'Hijau',  elemen: 'Kayu',  img: 'assets/hijau.png',  w: 700,  h: 1110, hd: 1200, cx: 700, rgb: C5.E.rgb, aks: '#4cf08a', bg: 'radial-gradient(ellipse at 36% 50%,#0f6a3e 0%,#06331d 45%,#010d07 100%)', fx: 'kayu' },
+];
+const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
+const T2 = 9, SHOT = 5;
+const shotsEl = $('shots');
+G.forEach((g, i) => {
+  const wd = g.w * g.hd / g.h, left = g.cx - wd / 2, top = H + 120 - g.hd;
+  const mask = g.mask ? '-webkit-mask-image:radial-gradient(ellipse 47% 49% at 50% 47%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 47% 49% at 50% 47%,#000 62%,transparent 100%);' : '';
+  shotsEl.insertAdjacentHTML('beforeend', `
+  <div class="scene" id="g-${g.id}">
+    <div class="L" style="background:${g.bg}"></div>
+    <canvas id="g-${g.id}-b"></canvas>
+    <div class="L fig" id="g-${g.id}-fig"><img src="${g.img}" style="left:${left.toFixed(0)}px;top:${top.toFixed(0)}px;width:${wd.toFixed(0)}px;height:${g.hd}px;${mask}"></div>
+    <canvas id="g-${g.id}-f"></canvas>
+    <div class="L" style="background:linear-gradient(180deg,rgba(0,0,0,0) 80%,rgba(0,0,0,.3) 100%)"></div>
+    <div class="lab" id="g-${g.id}-lab">
+      <div class="k">PELINDUNG ${ROMAN[i]}</div>
+      <div class="a" style="color:${g.aks};text-shadow:0 0 30px ${rgba(g.rgb, .7)},0 4px 0 rgba(0,0,0,.45)">${g.arah}</div>
+      <div class="ln" style="background:linear-gradient(90deg,${g.aks},${rgba(g.rgb, 0)})"></div>
+      <div class="w">${g.warna} &nbsp;·&nbsp; ${g.elemen}</div>
+      <div class="n">Vidyaraja Acalanatha</div>
+    </div>
+  </div>`);
+});
+
+// figur kecil di lima arah (adegan 3)
+const POS3 = [ // arah, x, y kaki, tinggi
+  ['N', 'biru', 960, 735, 96], ['W', 'putih', 250, 930, 190], ['E', 'hijau', 1670, 930, 190], ['C', 'kuning', 960, 870, 140], ['S', 'merah', 960, 1078, 210],
+];
+const srcOf = { putih: ['assets/putih.png', 650, 1060], merah: ['assets/merah.png', 680, 1110], biru: ['assets/biru.png', 640, 1060], hijau: ['assets/hijau.png', 700, 1110], kuning: ['assets/kuning-mentah.jpg', 1080, 1450] };
+POS3.forEach(([d, k, x, y, h]) => {
+  const [src, w0, h0] = srcOf[k], w = w0 * h / h0;
+  const mask = k === 'kuning' ? '-webkit-mask-image:radial-gradient(ellipse 45% 47% at 50% 47%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 45% 47% at 50% 47%,#000 55%,transparent 100%);' : '';
+  $('s3figs').insertAdjacentHTML('beforeend', `<img class="mini" src="${src}" style="left:${(x - w / 2).toFixed(0)}px;top:${(y - h).toFixed(0)}px;width:${w.toFixed(0)}px;height:${h}px;opacity:0;filter:drop-shadow(0 0 14px ${rgba(C5[d].rgb, .9)});${mask}">`);
+});
+
+// teks
+const CAPS = [
+  { at: 6.0, dur: 2.7, y: 800, t: 'Lima Vidyaraja Acalanatha', s: 'Lima warna · lima elemen · lima arah' },
+  { at: 38.4, dur: 3.2, y: 90, t: 'Melindungi Negeri &amp; Kota', s: 'Mandala lima warna menjadi kubah cahaya' },
+  { at: 44.4, dur: 3.2, y: 80, t: 'Simabandhana', s: 'Batas suci yang tak tertembus energi gelap' },
+  { at: 50.6, dur: 3.0, y: 80, t: 'Perlindungan Pribadi', s: 'Aura lima warna menyelimuti sang praktisi' },
+  { at: 57.4, dur: 3.6, y: 820, t: 'Lima Pelindung Bersatu', s: 'Negeri · Kota · Batas Suci · Praktisi' },
+];
+CAPS.forEach((c, i) => $('caps').insertAdjacentHTML('beforeend', `<div class="cap" id="cap${i}" style="top:${c.y}px"><div class="t">${c.t.toUpperCase()}</div><div class="s">${c.s}</div></div>`));
+
+// ====== mandala ======
+const M1 = buildMandala($('m1'), false), M3 = buildMandala($('m3'), true), M4 = buildMandala($('m4'), true), M5 = buildMandala($('m5'), true), M6 = buildMandala($('m6'), true);
+
+// ====== canvas per adegan ======
+const CX = {};
+['s1b', 's1f', 's3b', 's3f', 's4b', 's4f', 's5b', 's5f', 's6b', 's6f'].forEach(id => CX[id] = ctxOf(id));
+G.forEach(g => { CX[`g-${g.id}-b`] = ctxOf(`g-${g.id}-b`); CX[`g-${g.id}-f`] = ctxOf(`g-${g.id}-f`); });
+
+// ---- bintang & nebula ----
+function stars(c, t, n = 260, a = 1) {
+  blob(c, [120, 60, 200], 500, 300, 700, .35 * a, 0); blob(c, [40, 80, 200], 1500, 420, 650, .3 * a, 0); blob(c, [200, 90, 160], 1100, 900, 600, .18 * a, 0);
+  for (let i = 0; i < n; i++) {
+    const x = R(i, 1) * W, y = R(i, 2) * H, s = .6 + R(i, 3) * 1.9, tw = .35 + .65 * (.5 + .5 * Math.sin(t * (1 + R(i, 4) * 3) + R(i, 5) * 6.3));
+    c.globalAlpha = tw * a; c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, s, 0, TAU); c.fill();
+  }
+  c.globalAlpha = 1;
+}
+
+// ---- adegan 1 ----
+const FIG_IMG = [[178, 470, 'biru'], [541, 470, 'merah'], [960, 420, 'kuning'], [1411, 470, 'hijau'], [1761, 470, 'putih']];
+const RGB_OF = { biru: C5.N.rgb, merah: C5.S.rgb, kuning: C5.C.rgb, hijau: C5.E.rgb, putih: C5.W.rgb };
+function draw1(t) {
+  const b = CX.s1b, f = CX.s1f;
+  b.clearRect(0, 0, W, H); f.clearRect(0, 0, W, H);
+  stars(b, t, 300, 1);
+  b.globalCompositeOperation = 'lighter';
+  blob(b, [255, 190, 80], 960, 430, 380 + 120 * V.m1glow, .55 * V.m1glow, 1);
+  b.globalCompositeOperation = 'source-over';
+  // lima bola cahaya turun dari mandala
+  f.globalCompositeOperation = 'lighter';
+  FIG_IMG.forEach(([x, y, k], i) => {
+    const p = clamp(V.orbs * 1.6 - i * .15);
+    if (p <= 0 || V.orbFade >= 1) return;
+    const e = sm(p), ox = lerp(960, x, e), oy = lerp(430, y, e) - Math.sin(e * Math.PI) * 160;
+    const a = (1 - V.orbFade);
+    blob(f, RGB_OF[k], ox, oy, 150, .9 * a, 1); blob(f, [255, 255, 255], ox, oy, 40, .9 * a, 1);
+    for (let j = 1; j < 14; j++) { const q = sm(clamp(p - j * .025)); blob(f, RGB_OF[k], lerp(960, x, q), lerp(430, y, q) - Math.sin(q * Math.PI) * 160, 60 - j * 3.5, .35 * a * (1 - j / 14), 0); }
+  });
+  // cahaya sisa di belakang tiap figur setelah muncul
+  if (V.aura1 > 0) FIG_IMG.forEach(([x, y, k], i) => blob(f, RGB_OF[k], x, y - 40, 260 + 20 * Math.sin(t * 2 + i), .28 * V.aura1, 0));
+  f.globalCompositeOperation = 'source-over';
+}
+
+// ---- efek elemen (adegan 2) ----
+function fxLogam(c, u, front, g) {
+  const cx = g.cx, cy = 470;
+  c.globalCompositeOperation = 'lighter';
+  if (!front) {
+    blob(c, [230, 238, 255], cx, cy, 680, .55, 1);
+    c.save(); c.translate(cx, cy); c.rotate(u * .12);
+    for (let i = 0; i < 22; i++) { const a = i / 22 * TAU, w = .035 + .03 * R(i, 7); c.fillStyle = `rgba(220,232,255,${.045 + .05 * R(i, 8)})`;
+      c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.cos(a - w) * 1600, Math.sin(a - w) * 1600); c.lineTo(Math.cos(a + w) * 1600, Math.sin(a + w) * 1600); c.fill(); }
+    c.restore();
+    for (let k = 0; k < 4; k++) { const tt = u + k * 1.25; if (tt < 0) continue; const p = (tt % 5) / 5, r = 140 + p * 950;
+      c.strokeStyle = `rgba(232,240,255,${(1 - p) * .55})`; c.lineWidth = 4 * (1 - p) + 1; c.beginPath(); c.ellipse(cx, cy + 260, r, r * .3, 0, 0, TAU); c.stroke(); }
+  }
+  for (let i = 0; i < 170; i++) {
+    const a = R(i, 1) * TAU + u * (.35 + R(i, 2) * .55), s = Math.sin(a); if ((s > 0) !== front) continue;
+    const rx = 260 + R(i, 3) * 460, ry = rx * .32, yo = (R(i, 4) - .5) * 760;
+    const x = cx + Math.cos(a) * rx, y = cy + 60 + yo + s * ry, sz = (4 + R(i, 5) * 10) * (front ? 1.35 : .8), rot = u * (1 + R(i, 6) * 3) + i;
+    const tw = Math.pow(Math.max(0, Math.sin(u * 3.5 + R(i, 7) * 20)), 10);
+    c.save(); c.translate(x, y); c.rotate(rot);
+    const gr = c.createLinearGradient(-sz, -sz, sz, sz); gr.addColorStop(0, '#ffffff'); gr.addColorStop(.5, '#9aa8c4'); gr.addColorStop(1, '#e8eeff');
+    c.globalAlpha = .55 + .45 * tw; c.fillStyle = gr; c.beginPath(); c.moveTo(0, -sz); c.lineTo(sz * .45, 0); c.lineTo(0, sz); c.lineTo(-sz * .45, 0); c.fill();
+    c.restore(); c.globalAlpha = 1;
+    if (tw > .25) glint(c, x, y, sz * 5 * tw, tw);
+  }
+  if (front) { for (let i = 0; i < 26; i++) blob(c, [210, 220, 240], R(i, 11) * W, 1060 + Math.sin(u * .8 + i) * 20, 160 + R(i, 12) * 120, .16, 0); }
+  c.globalCompositeOperation = 'source-over';
+}
+function fxApi(c, u, front, g) {
+  const cx = g.cx;
+  c.globalCompositeOperation = 'lighter';
+  if (!front) {
+    blob(c, [255, 90, 20], cx, 560, 760, .55, 0);
+    for (let i = 0; i < 340; i++) {
+      const L = 1.2 + R(i, 1) * 1.3, p = (((u + R(i, 2) * 9) % L) + L) % L / L;
+      const side = R(i, 9) < .5 ? -1 : 1, x0 = cx + side * (120 + R(i, 3) * 430), y = 1180 - p * (760 + R(i, 4) * 520);
+      const x = x0 + Math.sin(p * 5 + R(i, 5) * 9 + u * 2) * 55 * (.4 + p) - side * p * 60, sz = (90 + R(i, 6) * 150) * (1 - p * .7);
+      const rgb = p < .22 ? [255, 210, 110] : p < .55 ? [255, 120, 25] : [220, 40, 10];
+      blob(c, rgb, x, y, sz, (1 - p) * Math.min(1, p * 10) * .6, p < .22 ? 1 : 0);
+    }
+    // gelombang api naik
+    for (let k = 0; k < 3; k++) { const tt = u + k * 1.4; if (tt < 0) continue; const p = (tt % 4.2) / 4.2, r = 200 + p * 820;
+      c.strokeStyle = `rgba(255,${120 + 80 * (1 - p) | 0},40,${(1 - p) * .5})`; c.lineWidth = 18 * (1 - p) + 2;
+      c.beginPath(); c.ellipse(cx, 1000 - p * 120, r, r * .22, 0, Math.PI, TAU); c.stroke(); }
+  } else {
+    for (let k = 0; k < 3; k++) {
+      const gr = c.createLinearGradient(0, 1080, 0, 1080 - 260 + k * 50);
+      gr.addColorStop(0, `rgba(255,${200 - k * 50},80,${.75 - k * .15})`); gr.addColorStop(.6, `rgba(255,${80 - k * 20},10,${.35 - k * .08})`); gr.addColorStop(1, 'rgba(200,20,0,0)');
+      c.fillStyle = gr; c.beginPath(); c.moveTo(0, 1080);
+      for (let x = 0; x <= W; x += 16) {
+        const n = Math.sin(x * .011 + u * 5.5 + k * 2) * .5 + Math.sin(x * .029 - u * 8.3 + k) * .3 + Math.sin(x * .053 + u * 12 + k * 4) * .2;
+        c.lineTo(x, 1080 - (110 + 55 * k) * (.65 + .45 * n));
+      }
+      c.lineTo(W, 1080); c.closePath(); c.fill();
+    }
+    for (let i = 0; i < 70; i++) {
+      const L = 1.1 + R(i, 51) * 1.0, p = (((u + R(i, 52) * 9) % L) + L) % L / L, side = R(i, 53) < .5 ? -1 : 1;
+      const x = cx + side * (250 + R(i, 54) * 300) + Math.sin(p * 6 + i + u * 2) * 40, y = 1150 - p * (600 + R(i, 55) * 300), sz = (50 + R(i, 56) * 80) * (1 - p * .7);
+      blob(c, p < .3 ? [255, 200, 90] : [255, 90, 20], x, y, sz, (1 - p) * Math.min(1, p * 8) * .45, p < .3 ? 1 : 0);
+    }
+    for (let i = 0; i < 130; i++) {
+      const L = 1.4 + R(i, 21) * 1.6, p = (((u + R(i, 22) * 7) % L) + L) % L / L;
+      const x = R(i, 23) * W + Math.sin(p * 7 + i) * 60, y = 1100 - p * 1150, fl = .5 + .5 * Math.sin(u * 20 + i);
+      blob(c, [255, 150 + 90 * R(i, 24) | 0, 60], x, y, 6 + 6 * R(i, 25), (1 - p) * .9 * fl, 1);
+    }
+  }
+  c.globalCompositeOperation = 'source-over';
+}
+function ribbon(c, u, front, cx, cy, n, colA, speed) {
+  for (let k = 0; k < n; k++) {
+    const rx = 360 + k * 58, ry = 110 + k * 26, tilt = -.22 + k * .09, a0 = u * (speed + .15 * k) + k * 1.7, len = 2.0;
+    for (let j = 0; j < 60; j++) {
+      const q = j / 60, a = a0 + q * len, s = Math.sin(a); if ((s > 0) !== front) continue;
+      const x = Math.cos(a) * rx, y = s * ry, X = cx + x * Math.cos(tilt) - y * Math.sin(tilt), Y = cy + x * Math.sin(tilt) + y * Math.cos(tilt);
+      blob(c, colA, X, Y, 10 + 22 * Math.sin(q * Math.PI), .22 * Math.sin(q * Math.PI), 1);
+    }
+  }
+}
+function fxAir(c, u, front, g) {
+  const cx = g.cx;
+  c.globalCompositeOperation = 'lighter';
+  if (!front) {
+    blob(c, [40, 110, 255], cx, 500, 720, .5, 0);
+    for (let k = 0; k < 16; k++) { c.strokeStyle = `rgba(120,200,255,${.05 + .04 * R(k, 3)})`; c.lineWidth = 2 + R(k, 4) * 3; c.beginPath();
+      for (let x = 0; x <= W; x += 24) { const y = 60 + k * 62 + Math.sin(x * .008 + u * (.8 + R(k, 5)) + k) * 18 + Math.sin(x * .021 - u * 1.3) * 8; x ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+    for (let i = 0; i < 80; i++) { const L = 3 + R(i, 31) * 3, p = (((u + R(i, 32) * 9) % L) + L) % L / L, x = cx + (R(i, 33) - .5) * 1300 + Math.sin(p * 9 + i) * 20, y = 1080 - p * 1150, r = 3 + R(i, 34) * 9;
+      c.strokeStyle = `rgba(180,235,255,${(1 - p) * .6})`; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, r, 0, TAU); c.stroke(); }
+  }
+  ribbon(c, u, front, cx, 600, 6, [90, 200, 255], .9);
+  if (front) {
+    c.globalCompositeOperation = 'source-over';
+    for (let L = 0; L < 4; L++) {
+      const base = 900 + L * 48, amp = 26 + L * 9, gr = c.createLinearGradient(0, base - amp, 0, H);
+      gr.addColorStop(0, `rgba(${40 + L * 10},${130 - L * 15},255,${.62 + L * .08})`); gr.addColorStop(1, 'rgba(3,15,60,.97)');
+      c.fillStyle = gr; c.beginPath(); c.moveTo(0, H); const pts = [];
+      for (let x = 0; x <= W; x += 16) { const y = base + Math.sin(x * .0055 * (1 + L * .3) + u * (1.6 + L * .5) + L) * amp + Math.sin(x * .017 - u * 2.3 + L * 2) * amp * .35; pts.push([x, y]); c.lineTo(x, y); }
+      c.lineTo(W, H); c.closePath(); c.fill();
+      c.strokeStyle = 'rgba(210,245,255,.75)'; c.lineWidth = 2.5; c.beginPath(); pts.forEach(([x, y], j) => j ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
+    }
+    c.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 90; i++) { const L = .9 + R(i, 41) * .8, p = (((u + R(i, 42) * 5) % L) + L) % L / L, x0 = R(i, 43) * W, vx = (R(i, 44) - .5) * 260;
+      const x = x0 + vx * p, y = 930 - Math.sin(p * Math.PI) * (120 + R(i, 45) * 160); blob(c, [200, 240, 255], x, y, 4 + 4 * R(i, 46), .8 * (1 - p), 1); }
+  }
+  c.globalCompositeOperation = 'source-over';
+}
+function ridge(seed, n, base, vary, step) { const p = []; for (let i = 0; i <= n; i++) p.push([-120 + i * step, base - R(i, seed) * vary - (i % 2 ? 0 : vary * .35)]); return p; }
+const RIDGES = [ridge(51, 18, 760, 300, 125), ridge(52, 22, 880, 220, 100), ridge(53, 26, 1000, 140, 85)];
+function fxBumi(c, u, front, g) {
+  const cx = g.cx;
+  if (!front) {
+    c.globalCompositeOperation = 'lighter'; blob(c, [255, 190, 60], cx, 470, 760, .6, 1); c.globalCompositeOperation = 'source-over';
+    RIDGES.forEach((pts, r) => {
+      const off = (1 - sm((u + .6 - r * .3) / 1.8)) * 520;
+      const gr = c.createLinearGradient(0, 500, 0, H); gr.addColorStop(0, ['#a8761c', '#7a4f0e', '#4d3006'][r]); gr.addColorStop(1, '#1a0f02');
+      c.fillStyle = gr; c.beginPath(); c.moveTo(-120, H + 10); pts.forEach(([x, y]) => c.lineTo(x, y + off)); c.lineTo(W + 120, H + 10); c.closePath(); c.fill();
+      c.globalCompositeOperation = 'lighter'; c.strokeStyle = `rgba(255,210,90,${.55 - r * .12})`; c.lineWidth = 3; c.beginPath(); pts.forEach(([x, y], j) => j ? c.lineTo(x, y + off) : c.moveTo(x, y + off)); c.stroke();
+      c.globalCompositeOperation = 'source-over';
+    });
+  }
+  // batu bercahaya melayang
+  const n0 = front ? 14 : 22;
+  for (let i = 0; i < n0; i++) {
+    const k = i + (front ? 100 : 0), L = 6 + R(k, 61) * 4, p = (((u + R(k, 62) * 12) % L) + L) % L / L;
+    const x = (front ? R(k, 63) * W : cx + (R(k, 63) - .5) * 1400), y = 1120 - p * 1250, sz = (front ? 26 : 14) + R(k, 64) * (front ? 40 : 26), rot = u * (.3 + R(k, 65)) + k;
+    c.save(); c.translate(x, y); c.rotate(rot); c.beginPath();
+    for (let j = 0; j < 7; j++) { const a = j / 7 * TAU, rr = sz * (.7 + .3 * R(k * 7 + j, 66)); j ? c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : c.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+    c.closePath(); c.fillStyle = '#3a2408'; c.fill(); c.strokeStyle = 'rgba(255,190,70,.9)'; c.lineWidth = 2.2; c.stroke();
+    c.beginPath(); c.moveTo(-sz * .5, -sz * .1); c.lineTo(0, sz * .15); c.lineTo(sz * .4, -sz * .2); c.strokeStyle = 'rgba(255,220,120,.95)'; c.lineWidth = 1.6; c.stroke();
+    c.restore();
+    c.globalCompositeOperation = 'lighter'; blob(c, [255, 170, 40], x, y, sz * 2.2, .35, 0); c.globalCompositeOperation = 'source-over';
+  }
+  if (front) {
+    const off = (1 - sm(u / 1.4)) * 300;
+    const pts = ridge(57, 30, 1040, 70, 70);
+    c.fillStyle = '#1e1203'; c.beginPath(); c.moveTo(-120, H + 10); pts.forEach(([x, y]) => c.lineTo(x, y + off)); c.lineTo(W + 120, H + 10); c.closePath(); c.fill();
+    c.globalCompositeOperation = 'lighter'; c.strokeStyle = 'rgba(255,200,80,.85)'; c.lineWidth = 3; c.beginPath(); pts.forEach(([x, y], j) => j ? c.lineTo(x, y + off) : c.moveTo(x, y + off)); c.stroke();
+    for (let j = 0; j < 12; j++) { let x = R(j, 71) * W, y = 1070 + off; c.strokeStyle = `rgba(255,${180 + 60 * R(j, 72) | 0},60,${.6 + .3 * Math.sin(u * 3 + j)})`; c.lineWidth = 2; c.beginPath(); c.moveTo(x, y);
+      for (let s = 0; s < 4; s++) { x += (R(j * 4 + s, 73) - .5) * 60; y -= 12 + R(j * 4 + s, 74) * 14; c.lineTo(x, y); } c.stroke(); }
+    for (let i = 0; i < 160; i++) { const L = 4 + R(i, 81) * 4, p = (((u + R(i, 82) * 9) % L) + L) % L / L, x = R(i, 83) * W + Math.sin(p * 6 + i) * 40, y = 1080 - p * 1100;
+      blob(c, [255, 210, 90], x, y, 3 + 4 * R(i, 84), (1 - p) * (.5 + .5 * Math.sin(u * 6 + i)), 1); }
+    c.globalCompositeOperation = 'source-over';
+  }
+}
+function branch(c, x, y, ang, len, depth, grow, u, id, tips) {
+  const gp = clamp(grow * 8 - (7 - depth)); if (gp <= 0) return;
+  const a = ang + Math.sin(u * 1.1 + depth + id) * .025, l = len * gp, x2 = x + Math.cos(a) * l, y2 = y + Math.sin(a) * l;
+  c.strokeStyle = '#1d4f2e'; c.lineWidth = depth * 4.6 + 2; c.beginPath(); c.moveTo(x, y); c.lineTo(x2, y2); c.stroke();
+  c.globalCompositeOperation = 'lighter'; c.strokeStyle = 'rgba(110,255,180,.45)'; c.lineWidth = Math.max(1.5, depth * 1.3); c.stroke(); c.globalCompositeOperation = 'source-over';
+  if (depth > 0 && gp >= 1) {
+    const sp = .32 + R(id, 91) * .28;
+    branch(c, x2, y2, a - sp, len * (.7 + R(id, 92) * .12), depth - 1, grow, u, id * 2 + 1, tips);
+    branch(c, x2, y2, a + sp * .9, len * (.68 + R(id, 93) * .12), depth - 1, grow, u, id * 2 + 2, tips);
+  } else if (depth === 0) tips.push([x2, y2, gp]);
+}
+function leaf(c, x, y, s, rot, hue, a) { c.save(); c.translate(x, y); c.rotate(rot); c.globalAlpha = a; c.fillStyle = `hsl(${hue},75%,${42 + (hue - 130) / 3}%)`;
+  c.beginPath(); c.moveTo(-s, 0); c.quadraticCurveTo(0, -s * .55, s, 0); c.quadraticCurveTo(0, s * .55, -s, 0); c.fill();
+  c.strokeStyle = 'rgba(220,255,220,.5)'; c.lineWidth = 1; c.beginPath(); c.moveTo(-s, 0); c.lineTo(s, 0); c.stroke(); c.restore(); c.globalAlpha = 1; }
+function fxKayu(c, u, front, g) {
+  const cx = g.cx;
+  if (!front) {
+    c.globalCompositeOperation = 'lighter'; blob(c, [40, 220, 170], cx, 520, 760, .45, 0); blob(c, [40, 140, 255], cx + 200, 300, 500, .2, 0); c.globalCompositeOperation = 'source-over';
+    const grow = sm((u + .5) / 2.8), tips = [];
+    branch(c, 90, 1110, -1.30, 300, 7, grow, u, 1, tips);
+    branch(c, 1260, 1110, -1.86, 250, 7, grow, u, 7, tips);
+    tips.forEach(([x, y, gp], j) => { leaf(c, x, y, 16 * gp, j + u * .5, 125 + 40 * R(j, 95), .9); });
+  }
+  for (let i = 0; i < 180; i++) {
+    const k = i, a = R(k, 1) * TAU + u * (.6 + R(k, 2) * .6), s = Math.sin(a); if ((s > 0) !== front) continue;
+    const r = 250 + R(k, 3) * 460, L = 9 + R(k, 4) * 6, p = (((u + R(k, 5) * 20) % L) + L) % L / L;
+    const x = cx + Math.cos(a) * r, y = 1120 - p * 1250 + s * r * .2;
+    leaf(c, x, y, (8 + R(k, 6) * 9) * (front ? 1.5 : .9), a * 2 + u * (1 + R(k, 7)), 120 + 55 * R(k, 8), front ? .95 : .7);
+  }
+  if (front) {
+    for (let i = 0; i < 70; i++) { const x = i * 28 + R(i, 97) * 20, h = 60 + R(i, 98) * 90, sw = Math.sin(u * 1.6 + i * .7) * 12;
+      c.strokeStyle = `hsl(${120 + 30 * R(i, 99)},60%,${16 + 10 * R(i, 96)}%)`; c.lineWidth = 7; c.beginPath(); c.moveTo(x, H + 5); c.quadraticCurveTo(x + sw * .5, H - h * .5, x + sw, H - h); c.stroke(); }
+    c.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 60; i++) { const L = 4 + R(i, 101) * 3, p = (((u + R(i, 102) * 9) % L) + L) % L / L; blob(c, [120, 255, 190], R(i, 103) * W + Math.sin(p * 6 + i) * 30, 1080 - p * 1000, 4 + 4 * R(i, 104), (1 - p) * .8, 1); }
+    c.globalCompositeOperation = 'source-over';
+  }
+}
+const FX = { logam: fxLogam, api: fxApi, air: fxAir, bumi: fxBumi, kayu: fxKayu };
+function drawShot(i, t) {
+  const g = G[i], u = t - (T2 + i * SHOT), b = CX[`g-${g.id}-b`], f = CX[`g-${g.id}-f`];
+  b.clearRect(0, 0, W, H); f.clearRect(0, 0, W, H);
+  FX[g.fx](b, u, false, g); FX[g.fx](f, u, true, g);
+}
+
+// ---- adegan 3: kota ----
+const BEAM_TO = { N: [0, -1], S: [0, 1], W: [-1, 0], E: [1, 0], C: [0, 0] };
+function draw3(t) {
+  const u = t - 34, b = CX.s3b, f = CX.s3f;
+  b.clearRect(0, 0, W, H); f.clearRect(0, 0, W, H);
+  stars(b, t, 140, .6);
+  for (let i = 0; i < 14; i++) blob(b, [255, 220, 235], (R(i, 1) * 2400 - 240 + u * 25 * (.5 + R(i, 2))) % 2400 - 200, 380 + R(i, 3) * 160, 260 + R(i, 4) * 200, .12, 0);
+  const sy = parseFloat(gsap.getProperty('#s3city', 'y')) || 0, my = parseFloat(gsap.getProperty('#m3', 'y')) || 0;
+  const mc = [960, 260 + my], mr = 350 * (gsap.getProperty('#m3', 'scale') || 1) * .95;
+  f.globalCompositeOperation = 'lighter';
+  POS3.forEach(([d, k, x, y, h], i) => {
+    const p = clamp(V.beams * 1.5 - i * .12); if (p <= 0) return;
+    const base = [x, y - h * .55 + sy], to = [mc[0] + BEAM_TO[d][0] * mr, mc[1] + BEAM_TO[d][1] * mr], rgb = C5[d].rgb;
+    const N = 40;
+    for (let j = 0; j <= N * p; j++) { const q = j / N, bx = lerp(base[0], to[0], q) + Math.sin(q * Math.PI) * (d === 'W' ? -120 : d === 'E' ? 120 : 0), by = lerp(base[1], to[1], q);
+      blob(f, rgb, bx, by, 46 - q * 18, .22, 1); }
+    blob(f, rgb, base[0], base[1], 170, .5 * p, 1);
+  });
+  // kubah cahaya
+  if (V.dome > 0) {
+    const cx = 960, cy = 1110, rx = 1180, ry = 820, top = cy - ry * sm(V.dome);
+    f.save(); f.beginPath(); f.rect(0, top - 10, W, H); f.clip();
+    const cg = f.createConicGradient(-Math.PI / 2, cx, cy - 300);
+    cg.addColorStop(0, C5.N.hex); cg.addColorStop(.25, C5.E.hex); cg.addColorStop(.5, C5.S.hex); cg.addColorStop(.75, C5.W.hex); cg.addColorStop(1, C5.N.hex);
+    f.globalAlpha = .1 + .05 * Math.sin(u * 3); f.fillStyle = cg; f.beginPath(); f.ellipse(cx, cy, rx, ry, 0, Math.PI, TAU); f.fill();
+    f.globalAlpha = .9; f.strokeStyle = cg; f.lineWidth = 10; f.stroke();
+    f.globalAlpha = .5; f.lineWidth = 34; f.stroke();
+    f.globalAlpha = .35; f.strokeStyle = 'rgba(255,240,200,1)'; f.lineWidth = 1.5;
+    for (let k = 1; k < 7; k++) { f.beginPath(); f.ellipse(cx, cy, rx * k / 7, ry, 0, Math.PI, TAU); f.stroke(); }
+    for (let k = 1; k < 5; k++) { const yy = cy - ry * k / 5, xx = rx * Math.sqrt(1 - (k / 5) ** 2); f.beginPath(); f.ellipse(cx, yy, xx, xx * .08, 0, 0, TAU); f.stroke(); }
+    const sw = ((u - 4) % 2.2) / 2.2; if (u > 4) { f.globalAlpha = .5 * (1 - sw); blob(f, [255, 255, 255], cx - rx + sw * rx * 2, cy - ry * .55, 200, .6 * (1 - sw), 1); }
+    f.restore();
+  }
+  f.globalCompositeOperation = 'source-over';
+}
+
+// ---- adegan 4: simabandhana ----
+const R4 = { cx: 960, cy: 905, rx: 880, ry: 150 };
+const strip = {}; function stripOf(rgb) { const k = rgb.join(); if (strip[k]) return strip[k]; const s = document.createElement('canvas'); s.width = 4; s.height = 256; const c = s.getContext('2d');
+  const g = c.createLinearGradient(0, 256, 0, 0); g.addColorStop(0, rgba(rgb, 1)); g.addColorStop(.3, rgba(rgb, .45)); g.addColorStop(1, rgba(rgb, 0)); c.fillStyle = g; c.fillRect(0, 0, 4, 256); return strip[k] = s; }
+let _ps; function pillarStrip() { if (_ps) return _ps; const s = document.createElement('canvas'); s.width = 4; s.height = 256; const c = s.getContext('2d'), g = c.createLinearGradient(0, 256, 0, 0), rgb = C5.C.rgb;
+  g.addColorStop(0, rgba(rgb, 0)); g.addColorStop(.12, rgba(rgb, 1)); g.addColorStop(.4, rgba(rgb, .45)); g.addColorStop(1, rgba(rgb, 0)); c.fillStyle = g; c.fillRect(0, 0, 4, 256); return _ps = s; }
+function ringPt(a, d = 1) { return [R4.cx + Math.cos(a) * R4.rx * d, R4.cy + Math.sin(a) * R4.ry * d]; }
+function ringDraw(c, u, front) {
+  const order = { N: 0, E: 1, S: 2, W: 3 };
+  c.globalCompositeOperation = 'lighter';
+  for (let j = 0; j < 360; j += 1.5) {
+    const a = j * Math.PI / 180, s = Math.sin(a); if ((s >= 0) !== front) continue;
+    const d = dirOfAngle(a), rgb = C5[d].rgb, local = ((j - [270, 0, 90, 180][order[d]] + 45 + 360) % 360) / 90;
+    const p = clamp(V.ring * 4 - order[d] * .8 - local * .9); if (p <= 0) continue;
+    const [x, y] = ringPt(a);
+    blob(c, rgb, x, y, 22, .5 * p, 1);
+    const h = 420 * V.wall * (.85 + .15 * Math.sin(a * 6 + u * 2)); if (h > 2) { c.globalAlpha = .12; c.drawImage(stripOf(rgb), x - 6, y - h, 12, h); c.globalAlpha = 1; }
+  }
+  c.globalCompositeOperation = 'source-over';
+}
+function draw4(t) {
+  const u = t - 42, b = CX.s4b, f = CX.s4f;
+  b.clearRect(0, 0, W, H); f.clearRect(0, 0, W, H);
+  stars(b, t, 160, .7);
+  ringDraw(b, u, false);
+  // energi gelap mendekat lalu terpental
+  for (let i = 0; i < 20; i++) {
+    const th = R(i, 1) * TAU, t0 = 2.4 + R(i, 2) * 2.2, sp = .45 + R(i, 3) * .3, hgt = 80 + R(i, 4) * 300;
+    const d = 2.3 - Math.max(0, u - t0) * sp; const hitT = t0 + (2.3 - 1.06) / sp;
+    let a = 1, dd = Math.max(d, 1.06);
+    if (u > hitT) { const q = (u - hitT) / .7; a = 1 - q; dd = 1.06 + q * .5; if (q < 1) { const [hx, hy] = ringPt(th, 1.04); const rgb = C5[dirOfAngle(th)].rgb;
+      f.globalCompositeOperation = 'lighter'; blob(f, rgb, hx, hy - hgt * .4, 160 * (1 - q * .5), .9 * (1 - q), 1); blob(f, [255, 255, 255], hx, hy - hgt * .4, 50, .9 * (1 - q), 1); f.globalCompositeOperation = 'source-over'; } }
+    if (a <= 0 || u < t0 - .5) continue;
+    const [x, y] = ringPt(th, dd), Y = y - hgt;
+    const cv = Math.sin(th) > 0 ? f : b;
+    for (let k = 0; k < 5; k++) { cv.globalAlpha = .55 * a; cv.fillStyle = k % 2 ? 'rgba(40,0,50,1)' : 'rgba(10,0,15,1)'; cv.beginPath(); cv.arc(x + Math.sin(u * 2 + k * 1.7 + i) * 26, Y + Math.cos(u * 1.6 + k * 2.1) * 20, 40 + k * 6, 0, TAU); cv.fill(); }
+    cv.globalAlpha = 1; cv.globalCompositeOperation = 'lighter'; blob(cv, [140, 20, 160], x, Y, 110, .25 * a, 0); cv.globalCompositeOperation = 'source-over';
+  }
+  ringDraw(f, u, true);
+  // pilar kuning di tengah
+  if (V.pillar > 0) { f.globalCompositeOperation = 'lighter'; const h = 700 * sm(V.pillar);
+    [[260, .10], [150, .16], [80, .24], [34, .4], [12, .7]].forEach(([w, a]) => { f.globalAlpha = a; f.drawImage(pillarStrip(), 960 - w / 2, 800 - h, w, h); }); f.globalAlpha = 1;
+    for (let k = 0; k < 24; k++) { const q = ((u * .4 + R(k, 7)) % 1); blob(f, [255, 240, 170], 960 + Math.sin(k * 3 + u) * 30, 760 - q * h, 10, .7 * (1 - q), 1); }
+    blob(f, C5.C.rgb, 960, 700, 240, .45 * V.pillar, 1); f.globalCompositeOperation = 'source-over'; }
+}
+
+// ---- adegan 5: praktisi ----
+const ORB5 = [['W', 400, 700], ['N', 564, 360], ['C', 960, 210], ['S', 1356, 360], ['E', 1520, 700]];
+const HEART = [960, 800];
+function bez(p0, p1, p2, q) { return [lerp(lerp(p0[0], p1[0], q), lerp(p1[0], p2[0], q), q), lerp(lerp(p0[1], p1[1], q), lerp(p1[1], p2[1], q), q)]; }
+function draw5(t) {
+  const u = t - 48, b = CX.s5b, f = CX.s5f;
+  b.clearRect(0, 0, W, H); f.clearRect(0, 0, W, H);
+  stars(b, t, 220, .8);
+  b.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 18; i++) blob(b, [255, 200, 140], R(i, 5) * W, R(i, 6) * 700, 30 + R(i, 7) * 60, .08 + .05 * Math.sin(u + i), 0);
+  const br = 1 + .035 * Math.sin(u * 1.5);
+  const ring = [['C', 230], ['E', 290], ['S', 350], ['N', 410], ['W', 470]];
+  ring.forEach(([d, r], i) => { const p = clamp(V.aura * 1.8 - i * .2); if (p <= 0) return; const rgb = C5[d].rgb;
+    b.strokeStyle = rgba(rgb, .18 * p); b.lineWidth = 30; b.beginPath(); b.ellipse(960, 790, r * br * sm(p), r * 1.18 * br * sm(p), 0, 0, TAU); b.stroke();
+    b.strokeStyle = rgba(rgb, .7 * p); b.lineWidth = 3; b.stroke(); });
+  blob(b, [255, 210, 120], 960, 760, 420, .45 * V.aura, 1);
+  b.globalCompositeOperation = 'source-over';
+  f.globalCompositeOperation = 'lighter';
+  ORB5.forEach(([d, x, y], i) => {
+    const rgb = C5[d].rgb, pin = clamp(u / .8 - i * .15);
+    blob(f, rgb, x, y, 120 + 10 * Math.sin(u * 3 + i), .75 * pin, 1); blob(f, [255, 255, 255], x, y, 30, .8 * pin, 1);
+    const p = clamp(V.stream * 1.4 - i * .1); if (p <= 0) return;
+    const ctl = [lerp(x, 960, .35), Math.min(y, 300) - 40];
+    for (let j = 0; j <= 50 * p; j++) { const q = j / 50, [bx, by] = bez([x, y], ctl, HEART, q); blob(f, rgb, bx, by, 26, .2, 1); }
+    for (let k = 0; k < 6; k++) { const q = ((u * .7 + k / 6) % 1) * p; const [bx, by] = bez([x, y], ctl, HEART, q); blob(f, [255, 255, 255], bx, by, 16, .7, 1); }
+  });
+  if (V.aura > 0) blob(f, [255, 230, 170], HEART[0], HEART[1], 90 * br, .5 * V.aura, 1);
+  f.globalCompositeOperation = 'source-over';
+}
+
+// ---- adegan akhir ----
+function draw6(t) {
+  const u = t - 54, b = CX.s6b, f = CX.s6f;
+  b.clearRect(0, 0, W, H); f.clearRect(0, 0, W, H);
+  b.globalCompositeOperation = 'lighter';
+  blob(b, [255, 200, 90], 960, 330, 900, .5 * V.glow6, 1);
+  b.globalCompositeOperation = 'source-over';
+  f.globalCompositeOperation = 'lighter';
+  const mc = [960, 330];
+  FIG_IMG.forEach(([x, y, k], i) => {
+    const rgb = RGB_OF[k], p = clamp(V.streams6 * 1.3 - i * .06); if (p <= 0) return;
+    blob(f, rgb, x, y - 30, 220, .35 * Math.min(1, p * 3), 0);
+    const N = 60;
+    for (let j = 0; j <= N * p; j++) { const q = j / N, ang = q * 2.6 * (x < 960 ? 1 : -1), px = lerp(x, mc[0], q), py = lerp(y - 60, mc[1], q) - Math.sin(q * Math.PI) * 140;
+      const ox = Math.cos(ang + u) * 30 * (1 - q), oy = Math.sin(ang + u) * 30 * (1 - q);
+      blob(f, rgb, px + ox, py + oy, 30 - q * 12, .26, 1); }
+    for (let k2 = 0; k2 < 5; k2++) { const q = ((u * .5 + k2 / 5) % 1) * p, px = lerp(x, mc[0], q), py = lerp(y - 60, mc[1], q) - Math.sin(q * Math.PI) * 140; blob(f, [255, 255, 255], px, py, 14, .8, 1); }
+  });
+  blob(f, [255, 240, 200], mc[0], mc[1], 260, .6 * V.glow6, 1);
+  f.globalCompositeOperation = 'source-over';
+}
+
+// ====== timeline ======
+const tl = gsap.timeline({ paused: true });
+function inOut(sel, tIn, tOut, d = .6) { tl.set(sel, { opacity: 0 }, 0); tl.to(sel, { opacity: 1, duration: d, ease: 'none' }, tIn); if (tOut != null) tl.to(sel, { opacity: 0, duration: d, ease: 'none' }, tOut); }
+function drawM(M, at, dur) { tl.fromTo(M.d, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: 'power2.inOut', stagger: { amount: dur * .6, from: 'random' } }, at);
+  tl.fromTo(M.dots, { opacity: 0 }, { opacity: 1, duration: .4, stagger: { amount: dur * .7 } }, at + dur * .2); }
+function spin(M, at, dur, k = 1) { tl.fromTo(M.gA, { rotation: 0 }, { rotation: 24 * k, svgOrigin: '0 0', duration: dur, ease: 'none' }, at); tl.fromTo(M.gB, { rotation: 0 }, { rotation: -16 * k, svgOrigin: '0 0', duration: dur, ease: 'none' }, at); tl.fromTo(M.gC, { rotation: 0 }, { rotation: 40 * k, svgOrigin: '0 0', duration: dur, ease: 'none' }, at); }
+Object.assign(V, { m1glow: 0, orbs: 0, orbFade: 0, aura1: 0, beams: 0, dome: 0, ring: 0, wall: 0, pillar: 0, stream: 0, aura: 0, streams6: 0, glow6: 0 });
+
+// Adegan 1 (0 – 9)
+tl.set('#s1', { opacity: 1 }, 0);
+tl.fromTo('#stage', { opacity: 1 }, { opacity: 1, duration: .01 }, 0);
+tl.fromTo('#m1', { scale: .55, opacity: 0 }, { scale: 1, opacity: 1, duration: 3.2, ease: 'power2.out' }, .3);
+drawM(M1, .4, 3.0); spin(M1, 0, 9);
+tl.to(V, { m1glow: 1, duration: 2.5 }, 1.2);
+tl.to(V, { orbs: 1, duration: 2.0, ease: 'power1.inOut' }, 2.9);
+tl.to('#flash', { opacity: 1, duration: .14, ease: 'none' }, 4.86).to('#flash', { opacity: 0, duration: 1.0, ease: 'power2.out' }, 5.0);
+tl.set('#s1img', { opacity: 1 }, 5.0); tl.set(V, { orbFade: 1 }, 5.0);
+tl.fromTo('#s1img', { filter: 'brightness(1.8) saturate(.7)' }, { filter: 'brightness(1) saturate(1)', duration: 2.2, ease: 'power2.out' }, 5.0);
+tl.fromTo('#s1cam', { scale: 1.16, transformOrigin: '50% 45%' }, { scale: 1.0, duration: 4.0, ease: 'power2.out' }, 5.0);
+tl.to('#m1', { opacity: .32, scale: 1.08, duration: 1.5 }, 5.0);
+tl.to(V, { aura1: 1, duration: 1.2 }, 5.2);
+tl.to('#s1', { opacity: 0, duration: .6, ease: 'none' }, 8.7);
+
+// Adegan 2 (9 – 34)
+G.forEach((g, i) => {
+  const t0 = T2 + i * SHOT, s = `#g-${g.id}`;
+  inOut(s, t0 - .3, i < 4 ? t0 + SHOT - .3 : t0 + SHOT - .3);
+  tl.fromTo(`${s}-fig`, { scale: 1.0, y: 70, filter: 'brightness(1.7)' }, { scale: 1.1, y: -10, filter: 'brightness(1)', duration: SHOT + .4, ease: 'power1.out' }, t0 - .3);
+  tl.fromTo(`${s}-lab`, { opacity: 0, x: 70 }, { opacity: 1, x: 0, duration: .8, ease: 'power3.out' }, t0 + .5);
+  tl.fromTo(`${s}-lab .ln`, { scaleX: 0 }, { scaleX: 1, duration: .9, ease: 'power3.out' }, t0 + .7);
+  tl.fromTo(`${s}-lab .a`, { letterSpacing: '.3em' }, { letterSpacing: '.06em', duration: 1.2, ease: 'power3.out' }, t0 + .5);
+  tl.to(`${s}-lab`, { opacity: 0, duration: .4 }, t0 + SHOT - .55);
+  tl.to('#flash', { opacity: .55, duration: .12, ease: 'none' }, t0 - .12).to('#flash', { opacity: 0, duration: .5 }, t0);
+});
+
+// Adegan 3 (34 – 42)
+inOut('#s3', 33.7, 41.7);
+tl.fromTo('#s3city', { y: 380 }, { y: 0, duration: 2.6, ease: 'power2.inOut' }, 33.7);
+tl.fromTo('#s3city img', { x: 160 }, { x: -260, duration: 8.6, ease: 'none' }, 33.7);
+tl.fromTo('#m3', { scale: .15, opacity: 0, y: 120 }, { scale: 1, opacity: .95, y: 0, duration: 2.6, ease: 'power3.out' }, 34.6);
+drawM(M3, 34.6, 2.2); spin(M3, 34, 8.5);
+tl.fromTo('#s3figs .mini', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .6, stagger: .18 }, 35.6);
+tl.to(V, { beams: 1, duration: 1.6, ease: 'power1.inOut' }, 36.3);
+tl.to(V, { dome: 1, duration: 1.7, ease: 'power2.out' }, 37.8);
+tl.to('#m3', { scale: 1.12, duration: 3, ease: 'sine.inOut' }, 38.5);
+
+// Adegan 4 (42 – 48)
+inOut('#s4', 41.7, 47.7);
+tl.fromTo('#s4img', { scale: 1.08, transformOrigin: '50% 80%' }, { scale: 1.0, duration: 6.3, ease: 'power1.out' }, 41.7);
+drawM(M4, 42.4, 2.2); spin(M4, 41.7, 6.5, 1.5);
+tl.fromTo('#m4', { opacity: 0 }, { opacity: .85, duration: 1.2 }, 42.4);
+tl.to(V, { ring: 1, duration: 2.0, ease: 'power1.inOut' }, 42.4);
+tl.to(V, { wall: 1, duration: 1.1, ease: 'power2.out' }, 44.1);
+tl.to(V, { pillar: 1, duration: 1.0, ease: 'power2.out' }, 44.5);
+
+// Adegan 5 (48 – 54)
+inOut('#s5', 47.7, 53.7);
+tl.fromTo('#monk', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: 'power2.out' }, 47.8);
+drawM(M5, 49.4, 2.0); spin(M5, 47.7, 6.5, 1.2);
+tl.fromTo('#m5', { opacity: 0 }, { opacity: .8, duration: 1 }, 49.6);
+tl.to(V, { stream: 1, duration: 1.8, ease: 'power1.inOut' }, 48.6);
+tl.to(V, { aura: 1, duration: 1.8, ease: 'power2.out' }, 50.1);
+
+// Adegan akhir (54 – 62)
+inOut('#s6', 53.7, null);
+tl.to('#flash', { opacity: .7, duration: .15, ease: 'none' }, 53.7).to('#flash', { opacity: 0, duration: .9 }, 53.85);
+tl.fromTo('#s6cam', { scale: 1.0, transformOrigin: '50% 40%' }, { scale: 1.07, duration: 8.3, ease: 'none' }, 53.7);
+tl.to(V, { streams6: 1, duration: 2.8, ease: 'power1.inOut' }, 54.4);
+tl.fromTo('#m6', { scale: .1, opacity: 0 }, { scale: 1.0, opacity: .95, duration: 3.0, ease: 'power3.out' }, 55.6);
+drawM(M6, 55.6, 2.6); spin(M6, 53.7, 8.3, 1.3);
+tl.to(V, { glow6: 1, duration: 3, ease: 'sine.inOut' }, 56.5);
+tl.to('#flash', { opacity: .9, duration: .5, ease: 'power1.in', backgroundColor: '#fff2cc' }, 61.0);
+tl.to('#fade', { opacity: 1, duration: .5, ease: 'none' }, 61.5);
+
+// teks
+CAPS.forEach((c, i) => { const s = `#cap${i}`;
+  tl.fromTo(s, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .7, ease: 'power2.out' }, c.at);
+  tl.fromTo(`${s} .t`, { letterSpacing: '.28em' }, { letterSpacing: '.11em', duration: 1.4, ease: 'power3.out' }, c.at);
+  tl.to(s, { opacity: 0, duration: .5 }, c.at + c.dur); });
+tl.set({}, {}, D);
+
+// ====== menggambar canvas sesuai waktu ======
+function vis(id) { return parseFloat(getComputedStyle($(id)).opacity) > .003; }
+function draw(t) {
+  if (vis('s1')) draw1(t);
+  G.forEach((g, i) => { if (vis(`g-${g.id}`)) drawShot(i, t); });
+  if (vis('s3')) draw3(t);
+  if (vis('s4')) draw4(t);
+  if (vis('s5')) draw5(t);
+  if (vis('s6')) draw6(t);
+}
+function seek(t) { tl.seek(t, false); draw(t); }
+
+// ====== mode pratinjau / render ======
+const Q = new URLSearchParams(location.search);
+function fit() { const s = Q.has('render') ? 1 : Math.min(innerWidth / W, innerHeight / H); $('stage').style.transform = `scale(${s})`; }
+fit(); addEventListener('resize', fit);
+Promise.all([document.fonts.ready, ...[...document.images].map(im => im.complete ? 1 : new Promise(r => { im.onload = im.onerror = r; }))]).then(() => {
+  window.OPENER = { ready: true, DURATION: D, seek };
+  window.AUDIO_PLAN = { music: null, sfx: [] };
+  if (Q.has('render')) { seek(0); return; }
+  if (Q.has('t')) { seek(+Q.get('t')); return; }
+  const t0 = performance.now(); (function loop() { const t = ((performance.now() - t0) / 1000) % D; seek(t); requestAnimationFrame(loop); })();
+});
+</script>
+</body>
+</html>
