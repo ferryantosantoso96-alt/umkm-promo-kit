@@ -1,11 +1,13 @@
 # 800 Tahun Melawan Keruntuhan? — naskah (draf)
 
 Shorts 9:16 (TikTok/Reels), 1080×1920, 30 fps. Gaya: 3D realistik sinematik, nuansa misterius-horor.
+Dibuat dengan HTML + Three.js (`pisa3d.js`, `adegan1.html`), dirender lewat `tools/render.js` — **tanpa kredit ElevenLabs**.
+`arsip-kling/` = percobaan lama dengan Kling (tidak dipakai).
 Durasi rencana: **±42 detik** (6 adegan). Voiceover ElevenLabs (narator perempuan, misterius) dibuat setelah gambar disetujui.
 
 | Detik | Adegan | Visual | Narasi (draf) |
 |---|---|---|---|
-| 0 – 8 | 1 · Hook | Menara saat golden hour, piazza kosong, kabut tipis, gagak. Dolly-in → tilt-up → diam. Judul + subtitle. Garis tegak vs garis sumbu menara. | "Delapan ratus tahun… ia terus condong ke tanah. Tapi entah kenapa… ia tak pernah jatuh." |
+| 0 – 9 | 1 · Hook | Menara saat golden hour, piazza kosong, kabut tipis, gagak. Dolly-in → tilt-up → diam. Judul + subtitle. Garis tegak vs garis sumbu menara. | "Delapan ratus tahun… ia terus condong ke tanah. Tapi entah kenapa… ia tak pernah jatuh." |
 | 8 – 15 | 2 · Kutukan sejak awal | Batu fondasi 1173, menara baru 3 lantai sudah mulai miring; konstruksi terhenti hampir seabad. | "Baru tiga lantai dibangun, menara ini sudah mulai miring. Tahun 1178, pembangunan dihentikan… hampir seratus tahun." |
 | 15 – 23 | 3 · Rahasia di bawah tanah | Potongan melintang: fondasi cuma ±3 m, lumpur sungai purba & lempung lunak puluhan meter. | "Rahasianya ada di bawah. Fondasinya hanya sedalam tiga meter… bertumpu di atas lumpur sungai purba." |
 | 23 – 30 | 4 · Malam yang mencekam | Malam, menara gelap, lonceng diturunkan, kabel baja; kilas balik debu runtuhan. | "Maret 1989, sebuah menara tua di Pavia runtuh tiba-tiba. Empat orang tewas. Sepuluh bulan kemudian, Pisa ditutup. Kemiringannya sudah lima setengah derajat." |

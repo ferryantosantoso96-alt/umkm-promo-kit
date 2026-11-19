@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Adegan 1 · Menara Pisa</title>
+<style>
+  @font-face { font-family: "Cormorant"; font-weight: 600; src: url(vendor/fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Montserrat"; font-weight: 300; src: url(vendor/fonts/montserrat-latin-300-normal.woff2) format("woff2"); }
+  html, body { margin: 0; width: 1080px; height: 1920px; background: #000; overflow: hidden; }
+  canvas#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+  #judul, #sub { position: absolute; left: 0; right: 0; text-align: center; color: #fff; }
+  #judul {
+    top: 92px; font-family: "Cormorant", serif; font-weight: 600; font-size: 80px; line-height: 1.0;
+    font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1;
+    text-shadow: 0 2px 30px rgba(0,0,0,.6), 0 0 2px rgba(0,0,0,.3);
+  }
+  #sub { top: 278px; font-family: "Montserrat", sans-serif; font-weight: 300; font-size: 28px; letter-spacing: 12px; padding-left: 12px; text-shadow: 0 2px 18px rgba(0,0,0,.7); }
+  svg { position: absolute; inset: 0; }
+</style>
+</head>
+<body>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<div id="judul">800 TAHUN<br>MELAWAN KERUNTUHAN?</div>
+<div id="sub">RAHASIA MENARA MIRING PISA</div>
+<svg width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs><filter id="bay" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#000" flood-opacity="0.85"/></filter></defs>
+  <g filter="url(#bay)">
+  <line id="tegak" stroke="#ffffff" stroke-width="5" stroke-dasharray="20 14" stroke-linecap="round"/>
+  <line id="sumbu" stroke="#ffc65a" stroke-width="6" stroke-linecap="round"/>
+  <text id="lblTegak" fill="#fff" font-family="Montserrat" font-weight="300" font-size="28" letter-spacing="6" text-anchor="end">TEGAK</text>
+  <text id="lblMiring" fill="#ffc65a" font-family="Montserrat" font-weight="300" font-size="28" letter-spacing="6">MIRING ±4°</text>
+  </g>
+</svg>
+<script src="vendor/three.min.js"></script>
+<script src="pisa3d.js"></script>
+<script>
+// Adegan 1 (9,0 dtk): dolly-in pelan dari permukaan tanah → tilt-up mengikuti menara → berhenti,
+// lalu garis tegak vs sumbu menara. Judul di langit, di atas puncak menara.
+const DUR = 9.0;
+Pisa.init(document.getElementById('gl'));
+const cam = Pisa.camera;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+const eOut = t => 1 - Math.pow(1 - t, 3);
+const prog = (t, a, b, f = ease) => f(clamp((t - a) / (b - a)));
+const $ = id => document.getElementById(id);
+const top3 = Pisa.axisTop.clone().add(new THREE.Vector3(0, 0.9, 0));
+
+function setCamera(t) {
+  const p = prog(t, 0.0, 6.4, x => 1 - Math.pow(1 - x, 2.2));   // dolly-in pelan, melambat sampai berhenti
+  const D = 120 - 40 * p;
+  const camX = 15 - 5 * p, camY = 1.25 + 0.15 * p;
+  cam.position.set(camX, camY, D);
+  // tilt-up: arah pandang naik mengikuti menara; puncak dijaga di ±81% → 80% tinggi bingkai
+  const fTop = 0.795 - 0.01 * p;
+  let yT = 20;
+  for (let i = 0; i < 6; i++) {          // cari tinggi titik bidik agar puncak jatuh di fTop
+    cam.lookAt(2.0, yT, 0); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+    const s = Pisa.project(top3); const want = (1 - fTop) * Pisa.H;
+    yT += (s.y - want) * -0.035;
+  }
+  cam.lookAt(2.0, yT, 0); cam.updateMatrixWorld();
+}
+
+window.render = function (t) {
+  setCamera(t);
+  Pisa.post.uniforms.fade.value = prog(t, 0, 1.0);
+  Pisa.frame(t);
+
+  // judul & subtitle
+  const pj = prog(t, 1.0, 2.8), ps = prog(t, 2.0, 3.4);
+  const redup = 1 - prog(t, 6.1, 6.7);
+  const J = $('judul'), S = $('sub');
+  J.style.opacity = pj * redup; J.style.filter = `blur(${(1 - pj) * 14}px)`; J.style.letterSpacing = `${(1 - pj) * 16}px`;
+  S.style.opacity = ps * 0.92 * redup; S.style.transform = `translateY(${(1 - ps) * 12}px)`;
+
+  // garis pembanding (diproyeksikan dari 3D, jadi selalu menempel pada menara)
+  const b = Pisa.project(Pisa.baseCenter);
+  // garis diperpanjang 25% melewati puncak supaya selisih tegak–miring jelas di langit
+  const v = Pisa.project(new THREE.Vector3(0, Pisa.axisTop.y * 1.25, 0));
+  const a = Pisa.project(Pisa.axisTop.clone().multiplyScalar(1.25));
+  const pt = prog(t, 6.4, 7.3), pm = prog(t, 7.1, 8.0);
+  const tg = $('tegak'), sm = $('sumbu');
+  tg.setAttribute('x1', b.x); tg.setAttribute('y1', b.y); tg.setAttribute('x2', b.x + (v.x - b.x) * pt); tg.setAttribute('y2', b.y + (v.y - b.y) * pt);
+  tg.style.opacity = pt > 0 ? 0.8 : 0;
+  sm.setAttribute('x1', b.x); sm.setAttribute('y1', b.y); sm.setAttribute('x2', b.x + (a.x - b.x) * pm); sm.setAttribute('y2', b.y + (a.y - b.y) * pm);
+  sm.style.opacity = pm > 0 ? 0.95 : 0;
+  const lt = $('lblTegak'), lm = $('lblMiring');
+  lt.setAttribute('x', v.x - 22); lt.setAttribute('y', v.y + 10);
+  lm.setAttribute('x', a.x + 22); lm.setAttribute('y', a.y + 10);
+  lt.style.opacity = 0.9 * prog(t, 6.9, 7.4); lm.style.opacity = prog(t, 7.6, 8.2);
+};
+window.DUR = DUR;
+window.render(0);
+</script>
+</body>
+</html>
