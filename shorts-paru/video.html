@@ -113,7 +113,7 @@ html,body{height:100%;overflow:hidden;background:#0B0D1C}
       <g id="cincin" stroke="#E06E96" stroke-width="5"></g>
       <path d="M528 1196Q500 1214 480 1250M552 1196Q580 1214 600 1250" fill="none" stroke="#2E2A66" stroke-width="22" stroke-linecap="round"/>
       <path d="M528 1196Q500 1214 480 1250M552 1196Q580 1214 600 1250" fill="none" stroke="#FFD7E2" stroke-width="11" stroke-linecap="round"/>
-      <g id="diafragma" opacity="0">
+      <g id="diafragma">
         <path d="M318 1590Q540 1430 762 1590" fill="none" stroke="#2E2A66" stroke-width="40" stroke-linecap="round"/>
         <path d="M318 1590Q540 1430 762 1590" fill="none" stroke="#FF9F8E" stroke-width="26" stroke-linecap="round"/>
         <path d="M380 1548Q540 1450 700 1548" fill="none" stroke="#FFD2C8" stroke-width="6" stroke-linecap="round" stroke-dasharray="26 18"/>
@@ -297,9 +297,8 @@ function bangun(tl) {
       .to(g, { motionPath: { path, align: path, alignOrigin: [.5, .5] }, scale: .25, duration: 1.1, ease: 'power1.in' }, 1.15 + i * .3)
       .to(g, { opacity: 0, duration: .12 }, 2.15 + i * .3); }
   // dada mengembang, paru-paru membesar
-  tl.to('#paruGrup', { scale: 1.08, transformOrigin: '540px 1300px', duration: 2.2, ease: 'sine.inOut' }, 1.1)
-    .to('#badan', { y: -10, duration: 2.2, ease: 'sine.inOut' }, 1.1)
-    .to('#kepala', { y: -8, duration: 2.2, ease: 'sine.inOut' }, 1.1)
+  tl.fromTo('#paruGrup', { scaleX: 1, scaleY: 1, svgOrigin: '540 1195' }, { scaleX: 1.09, scaleY: 1.15, duration: 2.2, ease: 'sine.inOut' }, 1.1)
+    .fromTo('#diafragma', { y: 0 }, { y: 46, duration: 2.2, ease: 'sine.inOut' }, 1.1)
     .to('#paru', { opacity: 1, duration: .1 }, 0);
 
   const lb = $('#label');

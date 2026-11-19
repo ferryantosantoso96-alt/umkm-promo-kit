@@ -292,10 +292,8 @@ function adegan5(tl, lb) {
     .to('#garisCepat', { opacity: 0, duration: .5 }, 37.0)
     .set('#lubangHidung', { opacity: 0 }, 38.2).to('#hidungGaris', { opacity: 1, duration: .2 }, 38.2);
   // diafragma muncul, lalu naik saat mengembuskan napas
-  tl.to('#diafragma', { opacity: 1, duration: .4 }, 38.3)
-    .to('#diafragma', { y: -34, duration: 2.2, ease: 'sine.inOut' }, 38.7)
-    .to('#paruGrup', { scale: .95, transformOrigin: '540px 1300px', duration: 2.2, ease: 'sine.inOut' }, 38.7)
-    .to(['#badan', '#kepala'], { y: 0, duration: 2.2, ease: 'sine.inOut' }, 38.7)
+  tl.to('#diafragma', { y: 0, duration: 2.2, ease: 'sine.inOut' }, 38.7)
+    .to('#paruGrup', { scaleX: 1, scaleY: 1, svgOrigin: '540 1195', duration: 2.2, ease: 'sine.inOut' }, 38.7)
     .set('#mataB', { opacity: 0 }, 38.6).set('#mataT', { opacity: 1 }, 38.6)
     .set('#mataB', { opacity: 1 }, 41.2).set('#mataT', { opacity: 0 }, 41.2);
   // kepulan CO₂ keluar dari hidung
@@ -314,8 +312,7 @@ function adegan5(tl, lb) {
     .from('#akhir .l1', { y: -60, opacity: 0, duration: .45, ease: 'back.out(2)' }, 42.3)
     .from('#akhir .a', { scale: .3, opacity: 0, duration: .55, ease: 'back.out(2.2)', transformOrigin: '50% 50%' }, 42.5)
     .from('#akhir .b', { scale: .3, opacity: 0, duration: .55, ease: 'back.out(2.2)', transformOrigin: '50% 50%' }, 42.85)
-    .to('#akhir .a, #akhir .b', { rotation: 2, duration: .45, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 43.4)
-    .to('#paruGrup', { scale: 1.04, transformOrigin: '540px 1300px', duration: 1.6, ease: 'sine.inOut' }, 43.0);
+    .to('#akhir .a, #akhir .b', { rotation: 2, duration: .45, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 43.4);
   sfx('whoosh-panjang', 36.7, .45); sfx('klik-lembut', 39.35, .5);
   sfx('swoosh-turun', 38.8, .35); sfx('swoosh-turun', 39.6, .3);
   sfx('logo-sting', 42.3, .45);
